@@ -1,0 +1,12 @@
+[versions]
+kotlin-jvm = "2.2.0"
+kotest = "6.0.3"
+
+[libraries]
+kotest-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
+kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-jvm"}
+kotest = { id = "io.kotest", version.ref = "kotest" }
+
