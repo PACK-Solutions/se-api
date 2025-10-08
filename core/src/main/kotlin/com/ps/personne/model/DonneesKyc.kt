@@ -8,4 +8,3 @@ value class IdPersonne(val id: String) {
         require(id.isNotBlank()) { "Id personne ne peut pas être vide: $id" }
     }
 }
-

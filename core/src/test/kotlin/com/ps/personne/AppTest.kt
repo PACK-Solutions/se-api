@@ -6,7 +6,7 @@ import com.ps.personne.ports.driving.FakeEnregistrerDonneesKyc
 import io.kotest.core.spec.style.ExpectSpec
 import io.kotest.matchers.shouldBe
 
-class AppTest: ExpectSpec( {
+class AppTest : ExpectSpec({
     context("Enregistrement des donnees KYC") {
         expect("Enregistrement avec succès") {
             val enregistrerDonneesKyc = FakeEnregistrerDonneesKyc()
