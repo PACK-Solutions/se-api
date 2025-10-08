@@ -8,7 +8,7 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotest)
-    application
+    alias(libs.plugins.detekt)
 }
 
 repositories {
@@ -19,6 +19,8 @@ repositories {
 dependencies {
     testImplementation(libs.kotest.engine)
     testImplementation(libs.kotest.assertions)
+
+    detektPlugins(libs.detekt.formatting)
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -26,9 +28,4 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
-}
-
-application {
-    // Define the main class for the application.
-    mainClass = "com.ps.AppKt"
 }

@@ -1,12 +1,15 @@
 [versions]
 kotlin-jvm = "2.2.0"
 kotest = "6.0.3"
+detekt = "1.23.8"
 
 [libraries]
 kotest-engine = { module = "io.kotest:kotest-framework-engine", version.ref = "kotest" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
+detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 
 [plugins]
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-jvm"}
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-jvm" }
 kotest = { id = "io.kotest", version.ref = "kotest" }
+detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 
