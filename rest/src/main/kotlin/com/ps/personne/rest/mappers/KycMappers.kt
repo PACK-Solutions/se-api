@@ -17,7 +17,7 @@ private fun StatutPPE.toDto(): StatutPPEDto = when (this) {
         vigilanceRenforcee = vigilance.vigilanceRenforcee,
         motif = (vigilance as? AvecVigilanceRenforcee)?.motif?.name
     )
-    is StatutPPE.PPE -> StatutPPEDto(
+    is StatutPPE.StatutPPE -> StatutPPEDto(
         type = "PPE",
         vigilanceRenforcee = vigilance.vigilanceRenforcee,
         motif = vigilance.motif.name,
