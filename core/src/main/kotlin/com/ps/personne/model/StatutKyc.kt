@@ -2,11 +2,14 @@ package com.ps.personne.model
 
 import java.time.LocalDate
 
-sealed interface StatutPPE {
+data class Mandat(val fonction: FonctionPPE, val dateFin: LocalDate?)
+
+sealed interface StatutKyc {
+    val dateDebut: LocalDate
     val vigilance: Vigilance
-    class PPE(val fonction: FonctionPPE, val dateFin: LocalDate?, override val vigilance: AvecVigilanceRenforcee) : StatutPPE
-    class PROCHE_PPE(val lienParente: LienParente, val ppe: PPE, override val vigilance: Vigilance) : StatutPPE
-    class STANDARD(override val vigilance: Vigilance) : StatutPPE
+    class Ppe(val mandat: Mandat, override val dateDebut: LocalDate, override val vigilance: AvecVigilanceRenforcee) : StatutKyc
+    class ProchePpe(val lienParente: LienParente, val mandat: Mandat, override val dateDebut: LocalDate, override val vigilance: Vigilance) : StatutKyc
+    class Standard(override val dateDebut: LocalDate, override val vigilance: Vigilance) : StatutKyc
 }
 
 sealed interface Vigilance {

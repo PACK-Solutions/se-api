@@ -3,7 +3,7 @@ package com.ps.personne.model
 data class DonneesKyc(
     val idPersonne: IdPersonne,
     val update: UpdateInfo,
-    val statutPPE: StatutPPE,
+    val statutKyc: StatutKyc,
 )
 
 @JvmInline

@@ -9,29 +9,30 @@ object DonneesKycFixtures {
         id: Long = 123_456_789L,
         user: String = "tester",
         date: Instant = Instant.now(),
-        statut: StatutPPE = StatutPPE.STANDARD(SansVigilanceRenforcee)
+        statutKyc: StatutKyc = StatutKyc.Standard(LocalDate.now(), SansVigilanceRenforcee),
     ): DonneesKyc = DonneesKyc(
         idPersonne = IdPersonne(id),
         update = UpdateInfo(User(user), date),
-        statutPPE = statut,
+        statutKyc = statutKyc,
     )
 
     fun standard(
         id: Long = 1L,
         user: String = "std_user",
         date: Instant = Instant.now(),
-        vigilanceRenforcee: Boolean = false
+        vigilanceRenforcee: Boolean = false,
     ): DonneesKyc = default(
         id = id,
         user = user,
         date = date,
-        statut = if (vigilanceRenforcee) {
-            StatutPPE.STANDARD(
-                AvecVigilanceRenforcee(MotifVigilance.SANS_JUSTIFICATION)
+        statutKyc = if (vigilanceRenforcee) {
+            StatutKyc.Standard(
+                LocalDate.now(),
+                AvecVigilanceRenforcee(MotifVigilance.SANS_JUSTIFICATION),
             )
         } else {
-            StatutPPE.STANDARD(SansVigilanceRenforcee)
-        }
+            StatutKyc.Standard(LocalDate.now(), SansVigilanceRenforcee)
+        },
     )
 
     fun ppe(
@@ -45,11 +46,14 @@ object DonneesKycFixtures {
         id = id,
         user = user,
         date = date,
-        statut = StatutPPE.PPE(
-            fonction = fonction,
-            dateFin = dateFin,
-            vigilance = AvecVigilanceRenforcee(motif)
-        )
+        statutKyc = StatutKyc.Ppe(
+            Mandat(
+                fonction = fonction,
+                dateFin = dateFin,
+            ),
+            LocalDate.now(),
+            vigilance = AvecVigilanceRenforcee(motif),
+        ),
     )
 
     fun prochePpe(
@@ -59,25 +63,25 @@ object DonneesKycFixtures {
         lien: LienParente = LienParente.CONJOINT,
         ppeFonction: FonctionPPE = FonctionPPE.MEMBRE_PARLEMENT,
         ppeDateFin: LocalDate? = null,
-        vigilanceRenforcee: Boolean = false
+        vigilanceRenforcee: Boolean = false,
     ): DonneesKyc = default(
         id = id,
         user = user,
         date = date,
-        statut = StatutPPE.PROCHE_PPE(
+        statutKyc = StatutKyc.ProchePpe(
             lienParente = lien,
-            ppe = StatutPPE.PPE(
+            mandat = Mandat(
                 fonction = ppeFonction,
                 dateFin = ppeDateFin,
-                vigilance = AvecVigilanceRenforcee(MotifVigilance.SANS_JUSTIFICATION)
             ),
+            LocalDate.now(),
             vigilance = if (vigilanceRenforcee) {
                 AvecVigilanceRenforcee(
-                    MotifVigilance.DEMANDE_ASSUREUR
+                    MotifVigilance.DEMANDE_ASSUREUR,
                 )
             } else {
                 SansVigilanceRenforcee
-            }
-        )
+            },
+        ),
     )
 }

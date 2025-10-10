@@ -26,7 +26,7 @@ fun main() {
                     prettyPrint = true
                     ignoreUnknownKeys = true
                     explicitNulls = false
-                }
+                },
             )
         }
         routing {
@@ -48,13 +48,13 @@ fun prochePpe(
 ): DonneesKyc = DonneesKyc(
     idPersonne = IdPersonne(id = id),
     update = UpdateInfo(User(login = user), date = date),
-    statutPPE = StatutPPE.PROCHE_PPE(
+    statutKyc = StatutKyc.ProchePpe(
         lienParente = lien,
-        ppe = StatutPPE.PPE(
+        mandat = Mandat(
             fonction = ppeFonction,
             dateFin = ppeDateFin,
-            vigilance = AvecVigilanceRenforcee(MotifVigilance.SANS_JUSTIFICATION),
         ),
+        LocalDate.now(),
         vigilance = if (vigilanceRenforcee) {
             AvecVigilanceRenforcee(
                 MotifVigilance.DEMANDE_ASSUREUR,

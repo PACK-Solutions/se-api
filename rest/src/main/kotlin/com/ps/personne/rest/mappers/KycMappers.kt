@@ -8,23 +8,23 @@ fun DonneesKyc.toDto(): DonneesKycDto = DonneesKycDto(
     idPersonne = this.idPersonne.id,
     updatedBy = this.update.user.login,
     updatedAt = this.update.date.toString(),
-    statut = this.statutPPE.toDto()
+    statut = this.statutKyc.toDto()
 )
 
-private fun StatutPPE.toDto(): StatutPPEDto = when (this) {
-    is StatutPPE.STANDARD -> StatutPPEDto(
+private fun StatutKyc.toDto(): StatutPPEDto = when (this) {
+    is StatutKyc.Standard -> StatutPPEDto(
         type = "STANDARD",
         vigilanceRenforcee = vigilance.vigilanceRenforcee,
         motif = (vigilance as? AvecVigilanceRenforcee)?.motif?.name
     )
-    is StatutPPE.StatutPPE -> StatutPPEDto(
+    is StatutKyc.Ppe -> StatutPPEDto(
         type = "PPE",
         vigilanceRenforcee = vigilance.vigilanceRenforcee,
         motif = vigilance.motif.name,
-        fonction = fonction.name,
-        dateFin = dateFin?.toString()
+        fonction = mandat.fonction.name,
+        dateFin = mandat.dateFin?.toString()
     )
-    is StatutPPE.PROCHE_PPE -> StatutPPEDto(
+    is StatutKyc.ProchePpe -> StatutPPEDto(
         type = "PROCHE_PPE",
         vigilanceRenforcee = vigilance.vigilanceRenforcee,
         motif = (vigilance as? AvecVigilanceRenforcee)?.motif?.name,

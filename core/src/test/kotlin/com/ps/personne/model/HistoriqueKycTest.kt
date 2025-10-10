@@ -71,7 +71,7 @@ class HistoriqueKycTest : ExpectSpec(
                             HistoriqueKyc(idPersonne = IdPersonne(sc.idHistorique), donneesKyc = sc.donnees)
                         }
                         // Le message doit mentionner chaque id différent présent dans les données
-                        sc.idsAttendusDansMessage.forEach { unexpectedId ->
+                        sc.idsAttendusDansMessage.forEach { _ ->
                             thrown.message!! shouldBe thrown.message // non-null assertion + keep kotest happy
                         }
                         // Vérifications plus souples: chaque id doit apparaître dans le message
