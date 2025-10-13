@@ -1,66 +1,30 @@
 package com.ps.personne.rest
 
-import com.ps.personne.model.*
-import com.ps.personne.model.DonneesKyc
-import com.ps.personne.model.IdPersonne
-import com.ps.personne.model.UpdateInfo
-import com.ps.personne.model.User
-import com.ps.personne.rest.mappers.toDto
-import io.ktor.serialization.kotlinx.json.json
-import io.ktor.server.application.install
-import io.ktor.server.engine.embeddedServer
-import io.ktor.server.netty.Netty
-import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
+import com.ps.personne.rest.config.CorsConfig.configureCors
+import com.ps.personne.rest.config.DatabaseConfig.Companion.configureDatabases
+import com.ps.personne.rest.config.SerializationConfig.configureSerialization
+import com.ps.personne.rest.config.SwaggerConfig.configureSwagger
+import io.ktor.server.application.Application
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import kotlinx.serialization.json.Json
-import java.time.Instant
-import java.time.LocalDate
 
-fun main() {
-    embeddedServer(Netty, port = 8000) {
-        install(ContentNegotiation) {
-            json(
-                Json {
-                    prettyPrint = true
-                    ignoreUnknownKeys = true
-                    explicitNulls = false
-                },
-            )
-        }
-        routing {
-            get("/") {
-                call.respond(prochePpe().toDto())
-            }
-        }
-    }.start(wait = true)
+fun main(args: Array<String>) {
+    io.ktor.server.netty.EngineMain.main(args)
 }
 
-fun prochePpe(
-    id: Long = 3L,
-    user: String = "proche_user",
-    date: Instant = Instant.now(),
-    lien: LienParente = LienParente.CONJOINT,
-    ppeFonction: FonctionPPE = FonctionPPE.MEMBRE_PARLEMENT,
-    ppeDateFin: LocalDate? = null,
-    vigilanceRenforcee: Boolean = false,
-): DonneesKyc = DonneesKyc(
-    idPersonne = IdPersonne(id = id),
-    update = UpdateInfo(User(login = user), date = date),
-    statutKyc = StatutKyc.ProchePpe(
-        lienParente = lien,
-        mandat = Mandat(
-            fonction = ppeFonction,
-            dateFin = ppeDateFin,
-        ),
-        LocalDate.now(),
-        vigilance = if (vigilanceRenforcee) {
-            AvecVigilanceRenforcee(
-                MotifVigilance.DEMANDE_ASSUREUR,
-            )
-        } else {
-            SansVigilanceRenforcee
-        },
-    ),
-)
+/**
+ * Application module configuration
+ * Each configuration function is extracted to its own class
+ */
+fun Application.personne() {
+    configureSwagger()
+    configureCors()
+    configureDatabases()
+    configureSerialization()
+    routing {
+        get("/") {
+            call.respond("Hello World!")
+        }
+    }
+}

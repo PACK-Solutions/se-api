@@ -1,16 +1,40 @@
 package com.ps.personne.model
 
 import java.time.LocalDate
+import java.util.*
 
 data class Mandat(val fonction: FonctionPPE, val dateFin: LocalDate?)
 
-sealed interface StatutKyc {
+sealed interface ExpositionPolitique {
+    val idExpositionPolitique: IdExpositionPolitique
     val dateDebut: LocalDate
     val vigilance: Vigilance
-    class Ppe(val mandat: Mandat, override val dateDebut: LocalDate, override val vigilance: AvecVigilanceRenforcee) : StatutKyc
-    class ProchePpe(val lienParente: LienParente, val mandat: Mandat, override val dateDebut: LocalDate, override val vigilance: Vigilance) : StatutKyc
-    class Standard(override val dateDebut: LocalDate, override val vigilance: Vigilance) : StatutKyc
+
+    class Ppe(
+        override val idExpositionPolitique: IdExpositionPolitique,
+        override val dateDebut: LocalDate,
+        override val vigilance: AvecVigilanceRenforcee,
+        val mandat: Mandat,
+    ) : ExpositionPolitique
+
+    class ProchePpe(
+        override val idExpositionPolitique: IdExpositionPolitique,
+        override val dateDebut: LocalDate,
+        override val vigilance: Vigilance,
+        val lienParente: LienParente,
+        val mandat: Mandat,
+    ) :
+        ExpositionPolitique
+
+    class Standard(
+        override val idExpositionPolitique: IdExpositionPolitique,
+        override val dateDebut: LocalDate,
+        override val vigilance: Vigilance,
+    ) : ExpositionPolitique
 }
+
+@JvmInline
+value class IdExpositionPolitique(val uuid: UUID)
 
 sealed interface Vigilance {
     val vigilanceRenforcee: Boolean
@@ -21,7 +45,7 @@ object SansVigilanceRenforcee : Vigilance {
 }
 
 data class AvecVigilanceRenforcee(
-    val motif: MotifVigilance
+    val motif: MotifVigilance,
 ) : Vigilance {
     override val vigilanceRenforcee: Boolean = true
 }
