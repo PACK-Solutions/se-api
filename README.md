@@ -88,3 +88,22 @@ You can combine steps, for example:
 - If detekt reports unexpected rules, check detekt.yml at the project root.
 - Ensure you are using JDK 21 (the project uses Gradle toolchains set to 21).
 - If you use IntelliJ IDEA, enable Kotlin style = Official and allow trailing commas to match the repository settings.
+
+
+## Updating dependency versions (Version Catalog)
+This project uses Gradle Version Catalogs. To discover and apply available dependency updates:
+
+1) Generate/update the proposed versions file using the pre-defined mise task:
+```sh
+mise tasks run version-catalog-update
+```
+This runs `./gradlew versionCatalogUpdate --interactive --no-configuration-cache` and writes recommendations to `gradle/libs.versions.updates.toml`.
+
+2) Apply the recommended updates to `gradle/libs.versions.toml`:
+```sh
+./gradlew versionCatalogApplyUpdates
+```
+
+Notes:
+- Ensure you have mise installed and are using the repo’s tool versions (Java 21, Gradle via wrapper). If needed: `mise install` then use the provided `./gradlew`.
+- Review the changes in `gradle/libs.versions.toml` before committing.

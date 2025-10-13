@@ -6,3 +6,6 @@ build
 
 .idea
 !/.kotlin/
+
+mise.local.toml
+/gradle/libs.versions.updates.toml

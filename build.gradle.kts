@@ -1,9 +1,12 @@
 import io.gitlab.arturbosch.detekt.extensions.DetektExtension
+import nl.littlerobots.vcu.plugin.resolver.VersionSelectors
 
 plugins {
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.kotest) apply false
     alias(libs.plugins.detekt)
+    alias(libs.plugins.version.catalog.update)
+    alias(libs.plugins.versions)
 }
 
 allprojects {
@@ -46,4 +49,8 @@ val setupCodeConventions = tasks.register("setupCodeConventions", SetupCodeConve
     description = "Download .editorconfig and detekt.yml into the project root from PACK-Solutions/Kotlin-conventions repo"
     rootDir.set(rootProject.layout.projectDirectory)
     overwrite.set(providers.gradleProperty("overwrite").orNull)
+}
+
+versionCatalogUpdate {
+    versionSelector(VersionSelectors.STABLE)
 }
