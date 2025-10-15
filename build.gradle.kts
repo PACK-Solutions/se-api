@@ -44,12 +44,12 @@ subprojects {
 }
 
 // Task to setup code conventions in the root project
-val setupCodeConventions = tasks.register("setupCodeConventions", SetupCodeConventionsTask::class) {
+/*val setupCodeConventions = tasks.register("setupCodeConventions", SetupCodeConventionsTask::class) {
     group = "setup"
     description = "Download .editorconfig and detekt.yml into the project root from PACK-Solutions/Kotlin-conventions repo"
     rootDir.set(rootProject.layout.projectDirectory)
     overwrite.set(providers.gradleProperty("overwrite").orNull)
-}
+}*/
 
 versionCatalogUpdate {
     versionSelector(VersionSelectors.STABLE)

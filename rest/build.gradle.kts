@@ -23,13 +23,14 @@ dependencies {
     implementation(libs.exposed.jdbc)
     implementation(libs.exposed.java.time)
 
-    // h2
-    runtimeOnly(libs.h2)
+    // DB driver
+    runtimeOnly(libs.postgres)
 }
 
 plugins{
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.openapi.gen)
+    alias(libs.plugins.ktor)
 }
 
 //TODO: To configure for client SDK in first time
@@ -47,3 +48,15 @@ openApiValidate {
     inputSpec.set("$rootDir/rest/src/main/resources/openapi/documentation.yaml")
     recommend.set(true)
 }
+
+application {
+    //TODO: Move this main class to the assembly module
+    mainClass.set("com.ps.personne.rest.AppKt")
+}
+
+ktor {
+    fatJar {
+        archiveFileName.set("app.jar")
+    }
+}
+

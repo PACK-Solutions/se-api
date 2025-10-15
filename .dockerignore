@@ -1,0 +1,41 @@
+# Build artifacts
+build/
+.gradle/
+target/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+
+# Docker files
+Dockerfile*
+
+# CI/CD
+.gitlab-ci.yml
+.github/
+
+# Logs
+*.log
+
+# Test results
+# Kubernetes manifests (don't include in Docker build)
+*.yaml
+*.yml
+!gradle/libs.versions.toml
+
+.env
+.env.sample

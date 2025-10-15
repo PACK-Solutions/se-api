@@ -9,3 +9,5 @@ build
 
 mise.local.toml
 /gradle/libs.versions.updates.toml
+.env*
+!.env.sample
