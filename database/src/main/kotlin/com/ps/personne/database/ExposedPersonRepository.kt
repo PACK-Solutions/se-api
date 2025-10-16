@@ -1,15 +1,6 @@
 package com.ps.personne.database
 
-import com.ps.personne.model.AvecVigilanceRenforcee
-import com.ps.personne.model.ExpositionPolitique
-import com.ps.personne.model.HistoriqueExpositionPolitique
-import com.ps.personne.model.IdExpositionPolitique
-import com.ps.personne.model.IdPersonne
-import com.ps.personne.model.Mandat
-import com.ps.personne.model.MotifVigilance
-import com.ps.personne.model.Personne
-import com.ps.personne.model.SansVigilanceRenforcee
-import com.ps.personne.model.TraceAudit
+import com.ps.personne.model.*
 import com.ps.personne.ports.driven.PersonneRepository
 import com.ps.personne.rest.persistence.ExpositionPolitiqueTable
 import org.jetbrains.exposed.sql.ResultRow

@@ -3,6 +3,7 @@ package com.ps.personne.fixtures
 import com.ps.personne.model.ExpositionPolitique
 import com.ps.personne.model.HistoriqueExpositionPolitique
 import com.ps.personne.model.IdPersonne
+import com.ps.personne.model.Personne
 import com.ps.personne.model.TraceAudit
 import com.ps.personne.ports.driving.ExpositionPolitiqueService
 
@@ -11,8 +12,8 @@ class FakeExpositionPolitiqueService : ExpositionPolitiqueService {
         idPersonne: IdPersonne,
         expositionPolitique: ExpositionPolitique,
         traceAudit: TraceAudit,
-    ): Boolean {
-        return true
+    ): Pair<Personne, HistoriqueExpositionPolitique>? {
+        TODO()
     }
 
     override fun getHistorique(idPersonne: IdPersonne): HistoriqueExpositionPolitique {

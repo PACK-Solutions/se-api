@@ -1,7 +1,6 @@
 package com.ps.personne.fixtures
 
 import com.ps.personne.model.ExpositionPolitique
-import com.ps.personne.model.HistoriqueExpositionPolitique
 import com.ps.personne.model.IdPersonne
 import com.ps.personne.model.Personne
 import com.ps.personne.model.TraceAudit
@@ -21,7 +20,7 @@ class FakePersonneRepository : PersonneRepository {
         return PersonneFactory.creerExpositionPpe()
     }
 
-    override fun recupererHistorique(idPersonne: IdPersonne): HistoriqueExpositionPolitique {
+    /*override fun recupererHistorique(idPersonne: IdPersonne): HistoriqueExpositionPolitique {
         return HistoriqueExpositionPolitique(
             idPersonne = idPersonne,
             expositionPolitiques = setOf(
@@ -29,6 +28,6 @@ class FakePersonneRepository : PersonneRepository {
                 PersonneFactory.creerExpositionProchePpe(),
             ),
         )
-    }
+    }*/
 
 }

@@ -4,6 +4,8 @@ import com.ps.personne.rest.config.CorsConfig.configureCors
 import com.ps.personne.rest.config.DatabaseConfig.Companion.configureDatabases
 import com.ps.personne.rest.config.SerializationConfig.configureSerialization
 import com.ps.personne.rest.config.SwaggerConfig.configureSwagger
+import com.ps.personne.rest.health.HealthCheckService
+import com.ps.personne.rest.health.configureHealthRoutes
 import io.ktor.server.application.Application
 import io.ktor.server.response.respond
 import io.ktor.server.routing.get
@@ -22,6 +24,8 @@ fun Application.personne() {
     configureCors()
     configureDatabases()
     configureSerialization()
+    configureHealthRoutes(HealthCheckService())
+
     routing {
         get("/") {
             call.respond("Hello World!")

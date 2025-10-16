@@ -1,5 +1,5 @@
 group = "com.ps"
-version = "unspecified"
+version = rootProject.version as String
 
 dependencies {
     detektPlugins(libs.detekt.formatting)

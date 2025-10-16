@@ -1,3 +1,5 @@
+import org.gradle.jvm.tasks.Jar
+
 dependencies {
     implementation(project(":core"))
     implementation(libs.ktor.server.core)
@@ -57,6 +59,19 @@ application {
 ktor {
     fatJar {
         archiveFileName.set("app.jar")
+    }
+}
+
+
+tasks.withType<Jar>().configureEach {
+    manifest {
+        attributes(
+            mapOf(
+                "Implementation-Title" to project.name,
+                "Implementation-Version" to project.version.toString(),
+                "Implementation-Vendor" to "PACK Solutions"
+            )
+        )
     }
 }
 

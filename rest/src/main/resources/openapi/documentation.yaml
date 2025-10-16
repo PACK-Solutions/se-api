@@ -10,10 +10,10 @@ info:
     - Récupérer l'historique des expositions politiques pour un idPersonne
     - Sauvegarder une exposition politique pour un idPersonne
 servers:
-  - url: http://localhost:8000
+  - url: http://localhost:8080
     description: Environnement local de développement
 paths:
-  /kyc/personnes/{idPersonne}/exposition-politique:
+  /personnes/{idPersonne}/exposition-politique:
     get:
       summary: Exposition politique courante
       description: Retourne l'exposition politique courante d'une personne.
@@ -111,7 +111,7 @@ paths:
           description: Conflit lors de l'enregistrement
         '500':
           description: Erreur serveur
-  /kyc/personnes/{idPersonne}/expositions-politiques:
+  /personnes/{idPersonne}/expositions-politiques:
     get:
       summary: Historique des expositions politiques
       description: Retourne l'ensemble des expositions politiques d'une personne (historique).

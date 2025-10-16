@@ -89,6 +89,46 @@ You can combine steps, for example:
 - Ensure you are using JDK 21 (the project uses Gradle toolchains set to 21).
 - If you use IntelliJ IDEA, enable Kotlin style = Official and allow trailing commas to match the repository settings.
 
+## Versioning: single source of truth and propagation
+- The project’s single source of truth for the application version is Gradle’s project.version, defined in gradle.properties (key: version).
+- The REST module writes this version into the JAR Manifest as Implementation-Version.
+- Datadog Java agent can infer the version directly from the application JAR manifest.
+- The Docker image LABEL version can be set at build time via the APP_VERSION build-arg (optional).
+
+Examples:
+- Build Docker image and set the label from the Gradle version (manual):
+  - APP_VERSION=$(./gradlew -q properties | awk -F': ' '/^version:/ {print $2; exit}')
+  - docker build --build-arg APP_VERSION="$APP_VERSION" -t se-api:${APP_VERSION} .
+
+Notes:
+- OpenAPI documentation.yaml currently contains an explicit version. Keep it in sync or consider tooling to generate it from project.version if needed.
+
+## Datadog agent enablement
+- Runtime toggle: set DD_AGENT_ENABLED to true/false in your .env.
+- The Datadog sidecar (datadog-agent service) is gated behind a Docker Compose profile named `dd-agent`. Compose will start it only when that profile is enabled.
+- When building via Compose, the Dockerfile build arg DD_AGENT_ENABLED is automatically set from your .env so the application image includes the Java agent only if DD_AGENT_ENABLED=true at build time. At runtime, entrypoint.sh will use the agent only if it’s present and DD_AGENT_ENABLED=true.
+
+Examples (Compose):
+- Enable Datadog (agent service + Java agent):
+  - echo "DD_AGENT_ENABLED=true" >> .env
+  - export COMPOSE_PROFILES=dd-agent
+  - docker compose build app
+  - docker compose up app
+- Disable Datadog (no agent service, no Java agent at runtime):
+  - export -n COMPOSE_PROFILES || true  # or unset COMPOSE_PROFILES
+  - echo "DD_AGENT_ENABLED=false" >> .env
+  - docker compose build app
+  - docker compose up app
+
+Plain Docker (without compose):
+- Build without agent (default):
+  - docker build -t se-api:latest .
+- Build with agent included:
+  - docker build --build-arg DD_AGENT_ENABLED=true -t se-api:dd .
+- Run with/without agent:
+  - docker run -p 8080:8080 -e DD_AGENT_ENABLED=false se-api:latest
+  - docker run -p 8080:8080 -e DD_AGENT_ENABLED=true se-api:dd
+
 
 ## Updating dependency versions (Version Catalog)
 This project uses Gradle Version Catalogs. To discover and apply available dependency updates:

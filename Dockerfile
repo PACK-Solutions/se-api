@@ -27,6 +27,11 @@ RUN ./gradlew rest:buildFatJar --no-daemon -x test -x detekt
 # Runtime stage
 FROM eclipse-temurin:21-jre-alpine AS runtime
 
+# Build-time flag to include Datadog Java agent in the image (default: false)
+ARG DD_AGENT_ENABLED=false
+# Persist the build-time flag into the image so runtime sees it by default
+ENV DD_AGENT_ENABLED=$DD_AGENT_ENABLED
+
 # Install wget for healthcheck and create non-root user
 RUN apk add --no-cache wget && \
     addgroup -g 1001 appgroup && \
@@ -35,16 +40,22 @@ RUN apk add --no-cache wget && \
 # Set working directory
 WORKDIR /app
 
-RUN wget -O dd-java-agent.jar 'https://dtdg.co/latest-java-tracer'
 
-# Add metadata labels
+# Add metadata labels (version is provided at build time via APP_VERSION arg)
+ARG APP_VERSION="unknown"
 LABEL maintainer="PACK Solutions" \
     description="Suite Epargne API" \
-    version="1.0.0"
-# TODO get version ?
+    version="$APP_VERSION"
 
 # Copy the fat JAR from the build stage
 COPY --from=build /app/rest/build/libs/app.jar /app/app.jar
+
+# Copy entrypoint script
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+# Optionally include Datadog agent at build time
+RUN if [ "$DD_AGENT_ENABLED" = "true" ]; then wget -q -O /app/dd-java-agent.jar https://dtdg.co/latest-java-tracer; fi
 
 # Change ownership to non-root user
 RUN chown -R appuser:appgroup /app
@@ -63,4 +74,4 @@ EXPOSE 8080
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+ExitOnOutOfMemoryError"
 
 # Set the entrypoint
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -javaagent:dd-java-agent.jar -Ddd.logs.injection=true -Ddd.trace.sample.rate=1 -jar /app/app.jar"]
+ENTRYPOINT ["/app/entrypoint.sh"]
