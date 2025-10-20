@@ -6,11 +6,9 @@ import com.ps.personne.model.IdPersonne
 import com.ps.personne.model.Personne
 import com.ps.personne.model.TraceAudit
 import com.ps.personne.ports.driven.HistoriqueExpositionRepository
-import com.ps.personne.ports.driven.PersonneRepository
 import com.ps.personne.ports.driving.ExpositionPolitiqueService
 
 class ExpositionPolitiqueServiceImpl(
-    private val personneRepository: PersonneRepository,
     private val historiqueExpositionRepository: HistoriqueExpositionRepository,
 ) : ExpositionPolitiqueService {
 
@@ -18,16 +16,22 @@ class ExpositionPolitiqueServiceImpl(
         idPersonne: IdPersonne,
         expositionPolitique: ExpositionPolitique,
         traceAudit: TraceAudit,
-    ): Pair<Personne, HistoriqueExpositionPolitique>? {
-        val personne = personneRepository.sauvegarder(idPersonne, expositionPolitique, traceAudit)
-        historiqueExpositionRepository.sauvegarder(personne.expositionPolitique, idPersonne)
-        val historique = getHistorique(idPersonne)
-        return historique?.let {
-            personne to it
-        }
+    ): HistoriqueExpositionPolitique? {
+
+        // Charger l'historique
+        val historiqueExpositionPolitique = historiqueExpositionRepository.recuperer(idPersonne)
+
+        // Verifier qu'on n'ajoute pas un doublon d'exposition
+        if (historiqueExpositionPolitique?.expositionCourante == expositionPolitique) return null
+
+        // Sauvegarder la nouvelle exposition
+        historiqueExpositionRepository.sauvegarder(idPersonne = idPersonne, expositionPolitique = expositionPolitique, traceAudit = traceAudit)
+
+        // Retourner l'historique
+        return historiqueExpositionRepository.recuperer(idPersonne)
     }
 
     override fun getHistorique(idPersonne: IdPersonne): HistoriqueExpositionPolitique? {
-        return historiqueExpositionRepository.recupererHistorique(idPersonne)
+        return historiqueExpositionRepository.recuperer(idPersonne)
     }
 }

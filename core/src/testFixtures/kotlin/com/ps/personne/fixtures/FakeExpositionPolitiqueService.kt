@@ -12,7 +12,7 @@ class FakeExpositionPolitiqueService : ExpositionPolitiqueService {
         idPersonne: IdPersonne,
         expositionPolitique: ExpositionPolitique,
         traceAudit: TraceAudit,
-    ): Pair<Personne, HistoriqueExpositionPolitique>? {
+    ): HistoriqueExpositionPolitique? {
         TODO()
     }
 

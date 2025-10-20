@@ -1,34 +1,31 @@
 package com.ps.personne.model
 
+import java.time.Instant
 import java.time.LocalDate
 import java.util.*
 
 data class Mandat(val fonction: FonctionPPE, val dateFin: LocalDate?)
 
 sealed interface ExpositionPolitique {
-    val idExpositionPolitique: IdExpositionPolitique
-    val dateDebut: LocalDate
+    val dateDebut: Instant
     val vigilance: Vigilance
 
-    class Ppe(
-        override val idExpositionPolitique: IdExpositionPolitique,
-        override val dateDebut: LocalDate,
+    data class Ppe(
+        override val dateDebut: Instant,
         override val vigilance: AvecVigilanceRenforcee,
         val mandat: Mandat,
     ) : ExpositionPolitique
 
-    class ProchePpe(
-        override val idExpositionPolitique: IdExpositionPolitique,
-        override val dateDebut: LocalDate,
+    data class ProchePpe(
+        override val dateDebut: Instant,
         override val vigilance: Vigilance,
         val lienParente: LienParente,
         val mandat: Mandat,
     ) :
         ExpositionPolitique
 
-    class Standard(
-        override val idExpositionPolitique: IdExpositionPolitique,
-        override val dateDebut: LocalDate,
+    data class Standard(
+        override val dateDebut: Instant,
         override val vigilance: Vigilance,
     ) : ExpositionPolitique
 }

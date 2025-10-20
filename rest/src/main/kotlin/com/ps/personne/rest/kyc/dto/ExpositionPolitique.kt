@@ -4,6 +4,7 @@ import com.ps.personne.model.FonctionPPE
 import com.ps.personne.model.IdExpositionPolitique
 import com.ps.personne.model.LienParente
 import com.ps.personne.model.MotifVigilance
+import com.ps.personne.model.ExpositionPolitique as ExpositionPolitiqueDomain
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.util.UUID
@@ -13,6 +14,11 @@ data class Mandat(val fonction: FonctionPPE, val dateFin: String?)
 
 @Serializable
 sealed interface ExpositionPolitique {
+
+    fun toDomain(): ExpositionPolitiqueDomain {
+        TODO("Not yet implemented")
+    }
+
     val idExpositionPolitique: IdExpositionPolitique
     val dateDebut: LocalDate
     val vigilance: Vigilance

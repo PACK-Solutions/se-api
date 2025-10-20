@@ -4,6 +4,7 @@ import com.ps.personne.rest.config.CorsConfig.configureCors
 import com.ps.personne.rest.config.DatabaseConfig.Companion.configureDatabases
 import com.ps.personne.rest.config.SerializationConfig.configureSerialization
 import com.ps.personne.rest.config.SwaggerConfig.configureSwagger
+import com.ps.personne.rest.exposition_politique.configureExpositionPolitiqueRoutes
 import com.ps.personne.rest.health.HealthCheckService
 import com.ps.personne.rest.health.configureHealthRoutes
 import io.ktor.server.application.Application
@@ -22,9 +23,10 @@ fun main(args: Array<String>) {
 fun Application.personne() {
     configureSwagger()
     configureCors()
-    configureDatabases()
+    //configureDatabases()
     configureSerialization()
     configureHealthRoutes(HealthCheckService())
+    configureExpositionPolitiqueRoutes()
 
     routing {
         get("/") {

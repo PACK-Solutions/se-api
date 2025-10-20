@@ -11,7 +11,7 @@ interface ExpositionPolitiqueService {
         idPersonne: IdPersonne,
         expositionPolitique: ExpositionPolitique,
         traceAudit: TraceAudit,
-    ): Pair<Personne, HistoriqueExpositionPolitique>?
+    ): HistoriqueExpositionPolitique?
 
     fun getHistorique(idPersonne: IdPersonne): HistoriqueExpositionPolitique?
 

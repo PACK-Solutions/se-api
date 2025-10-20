@@ -1,7 +1,6 @@
 package com.ps.personne.database
 
 import com.ps.personne.model.*
-import com.ps.personne.ports.driven.PersonneRepository
 import com.ps.personne.rest.persistence.ExpositionPolitiqueTable
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.selectAll
@@ -11,8 +10,11 @@ import org.jetbrains.exposed.sql.transactions.transaction
  * Exposed implementation of PersonRepository
  */
 class ExposedPersonRepository : PersonneRepository {
+    override fun recuperer(idPersonne: IdPersonne): Personne {
+        TODO("Not yet implemented")
+    }
 
-    override fun sauvegarder(idPersonne: IdPersonne, expositionPolitique: ExpositionPolitique, traceAudit: TraceAudit): Personne {
+    override fun sauvegarder(personne: Personne): Personne {
         TODO("Not yet implemented")
     }
 

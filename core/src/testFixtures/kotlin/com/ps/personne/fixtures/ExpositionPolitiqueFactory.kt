@@ -10,29 +10,27 @@ import com.ps.personne.model.Mandat
 import com.ps.personne.model.MotifVigilance
 import com.ps.personne.model.Personne
 import com.ps.personne.model.SansVigilanceRenforcee
+import java.time.Instant
 import java.time.LocalDate
 import java.util.UUID
 
-object PersonneFactory {
+object ExpositionPolitiqueFactory {
 
     fun creerExpositionPpe() = ExpositionPolitique.Ppe(
-        idExpositionPolitique = IdExpositionPolitique(UUID.randomUUID()),
-        dateDebut = LocalDate.now(),
+        dateDebut = Instant.now(),
         vigilance = AvecVigilanceRenforcee(motif = MotifVigilance.DEMANDE_ASSUREUR),
         mandat = Mandat(FonctionPPE.DIRIGEANT_PARTI, null),
     )
 
     fun creerExpositionProchePpe() = ExpositionPolitique.ProchePpe(
-        idExpositionPolitique = IdExpositionPolitique(UUID.randomUUID()),
-        dateDebut = LocalDate.now(),
+        dateDebut = Instant.now(),
         vigilance = SansVigilanceRenforcee,
         lienParente = LienParente.PARENT,
         mandat = Mandat(FonctionPPE.DIRIGEANT_PARTI, null),
     )
 
     fun creerExpositionStandard() = ExpositionPolitique.Standard(
-        idExpositionPolitique = IdExpositionPolitique(UUID.randomUUID()),
-        dateDebut = LocalDate.now(),
+        dateDebut = Instant.now(),
         vigilance = SansVigilanceRenforcee,
     )
 

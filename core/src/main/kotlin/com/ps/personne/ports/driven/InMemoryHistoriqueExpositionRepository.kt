@@ -11,11 +11,11 @@ class InMemoryHistoriqueExpositionRepository : HistoriqueExpositionRepository {
     override fun sauvegarder(expositionPolitique: ExpositionPolitique, idPersonne: IdPersonne) {
         historiqueExpositionPolitiques.putIfAbsent(
             idPersonne,
-            HistoriqueExpositionPolitique(idPersonne, setOf(expositionPolitique)),
+            HistoriqueExpositionPolitique(idPersonne, setOf(expositionPolitique), expositionPolitique),
         )
     }
 
-    override fun recupererHistorique(idPersonne: IdPersonne): HistoriqueExpositionPolitique? {
+    override fun recuperer(idPersonne: IdPersonne): HistoriqueExpositionPolitique? {
         return historiqueExpositionPolitiques.getValue(idPersonne)
     }
 }
