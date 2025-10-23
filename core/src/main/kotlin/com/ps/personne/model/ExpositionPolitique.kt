@@ -7,27 +7,44 @@ import java.util.*
 data class Mandat(val fonction: FonctionPPE, val dateFin: LocalDate?)
 
 sealed interface ExpositionPolitique {
+    fun cloturer(date: Instant)
+
     val dateDebut: Instant
     val vigilance: Vigilance
+    val dateCloture: Instant?
 
     data class Ppe(
         override val dateDebut: Instant,
         override val vigilance: AvecVigilanceRenforcee,
+        override var dateCloture: Instant?,
         val mandat: Mandat,
-    ) : ExpositionPolitique
+    ) : ExpositionPolitique {
+        override fun cloturer(date: Instant) {
+            dateCloture = date
+        }
+    }
 
     data class ProchePpe(
         override val dateDebut: Instant,
         override val vigilance: Vigilance,
+        override var dateCloture: Instant?,
         val lienParente: LienParente,
         val mandat: Mandat,
-    ) :
-        ExpositionPolitique
+    ) : ExpositionPolitique {
+        override fun cloturer(date: Instant) {
+            dateCloture = date
+        }
+    }
 
     data class Standard(
         override val dateDebut: Instant,
         override val vigilance: Vigilance,
-    ) : ExpositionPolitique
+        override var dateCloture: Instant?,
+    ) : ExpositionPolitique {
+        override fun cloturer(date: Instant) {
+            dateCloture = date
+        }
+    }
 }
 
 @JvmInline

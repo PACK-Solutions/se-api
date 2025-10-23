@@ -11,9 +11,7 @@ data class TraceAudit(
 @JvmInline
 value class User(val login: String)
 
-
-enum class TypeOperation{
+enum class TypeOperation {
     AJOUT,
     MODIFICATION,
 }
-

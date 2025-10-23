@@ -6,7 +6,6 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.slf4j.LoggerFactory
 import java.sql.SQLException
 
-
 /**
  * Health check service to verify connectivity to external dependencies
  */

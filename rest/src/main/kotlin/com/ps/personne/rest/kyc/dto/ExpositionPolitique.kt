@@ -4,10 +4,10 @@ import com.ps.personne.model.FonctionPPE
 import com.ps.personne.model.IdExpositionPolitique
 import com.ps.personne.model.LienParente
 import com.ps.personne.model.MotifVigilance
-import com.ps.personne.model.ExpositionPolitique as ExpositionPolitiqueDomain
 import kotlinx.serialization.Serializable
 import java.time.LocalDate
 import java.util.UUID
+import com.ps.personne.model.ExpositionPolitique as ExpositionPolitiqueDomain
 
 @Serializable
 data class Mandat(val fonction: FonctionPPE, val dateFin: String?)
