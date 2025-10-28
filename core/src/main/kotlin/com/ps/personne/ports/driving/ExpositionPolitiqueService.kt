@@ -1,6 +1,8 @@
 package com.ps.personne.ports.driving
 
+import com.github.michaelbull.result.Result
 import com.ps.personne.model.ExpositionPolitique
+import com.ps.personne.model.ExpositionPolitiqueError
 import com.ps.personne.model.HistoriqueExpositionPolitique
 import com.ps.personne.model.IdPersonne
 import com.ps.personne.model.TraceAudit
@@ -10,7 +12,7 @@ interface ExpositionPolitiqueService {
         idPersonne: IdPersonne,
         expositionPolitique: ExpositionPolitique,
         traceAudit: TraceAudit,
-    ): HistoriqueExpositionPolitique?
+    ): Result<HistoriqueExpositionPolitique, ExpositionPolitiqueError>
 
-    fun getHistorique(idPersonne: IdPersonne): HistoriqueExpositionPolitique?
+    fun getHistorique(idPersonne: IdPersonne): Result<HistoriqueExpositionPolitique?, ExpositionPolitiqueError>
 }

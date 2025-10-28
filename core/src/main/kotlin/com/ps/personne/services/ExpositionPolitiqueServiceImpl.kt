@@ -1,5 +1,7 @@
 package com.ps.personne.services
 
+import com.github.michaelbull.result.andThen
+import com.github.michaelbull.result.map
 import com.ps.personne.model.ExpositionPolitique
 import com.ps.personne.model.HistoriqueExpositionPolitique
 import com.ps.personne.model.IdPersonne
@@ -15,16 +17,12 @@ class ExpositionPolitiqueServiceImpl(
         idPersonne: IdPersonne,
         expositionPolitique: ExpositionPolitique,
         traceAudit: TraceAudit,
-    ): HistoriqueExpositionPolitique? {
-        val historiqueExpositionPolitique = historiqueExpositionPolitiqueRepository.recuperer(idPersonne)
-            ?: HistoriqueExpositionPolitique.vierge(idPersonne)
+    ) = historiqueExpositionPolitiqueRepository
+        .recuperer(idPersonne)
+        .map { it ?: HistoriqueExpositionPolitique.vierge(idPersonne) }
+        .andThen { historique -> historique.ajouterEntree(expositionPolitique, traceAudit) }
+        .andThen(historiqueExpositionPolitiqueRepository::sauvegarder)
 
-        return historiqueExpositionPolitiqueRepository.sauvegarder(
-            historiqueExpositionPolitique.ajouterEntree(expositionPolitique, traceAudit)
-        )
-    }
-
-    override fun getHistorique(idPersonne: IdPersonne): HistoriqueExpositionPolitique? {
-        return historiqueExpositionPolitiqueRepository.recuperer(idPersonne)
-    }
+    override fun getHistorique(idPersonne: IdPersonne) = historiqueExpositionPolitiqueRepository
+        .recuperer(idPersonne)
 }

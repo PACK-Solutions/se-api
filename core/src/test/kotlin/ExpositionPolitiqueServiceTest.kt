@@ -1,3 +1,5 @@
+import com.github.michaelbull.result.getError
+import com.github.michaelbull.result.getOrElse
 import com.ps.personne.fixtures.ExpositionPolitiqueFactory
 import com.ps.personne.model.*
 import com.ps.personne.ports.driven.InMemoryHistoriqueExpositionPolitiqueRepository
@@ -36,14 +38,18 @@ class ExpositionPolitiqueServiceTest : BehaviorSpec(
                         idPersonne,
                         nouvelleExpositionPolitique,
                         traceAudit,
-                    )!!
+                    )
                     then("elle doit être présente dans l'historique") {
-                        historique.shouldContainExactly(
+                        historique.getOrElse { error ->
+                            error(error)
+                        }.shouldContainExactly(
                             EntreeHistoriqueExpositionPolitique(nouvelleExpositionPolitique, traceAudit),
                         )
                     }
                     then("elle doit être l'exposition politique courante") {
-                        historique.expositionCourante shouldBe nouvelleExpositionPolitique
+                        historique.getOrElse { error ->
+                            error(error)
+                        }.expositionCourante shouldBe nouvelleExpositionPolitique
                     }
                 }
             }
@@ -58,7 +64,7 @@ class ExpositionPolitiqueServiceTest : BehaviorSpec(
                         date = Instant.now(),
                         TypeOperation.AJOUT,
                     ),
-                )!!
+                )
 
                 `when`("on lui ajoute une exposition politique") {
                     val expositionPolitiquePpe = ExpositionPolitiqueFactory.creerExpositionPpe()
@@ -70,14 +76,46 @@ class ExpositionPolitiqueServiceTest : BehaviorSpec(
                             date = Instant.now(),
                             TypeOperation.AJOUT,
                         ),
-                    )!!
+                    )
                     then("l'exposition politique précédente doit être cloturée dans l'historique") {
                         historique
+                            .getOrElse { error ->
+                                error(error)
+                            }
                             .find { it.expositionPolitique == expositionProchePpe }
                             ?.expositionPolitique
                             .shouldBeInstanceOf<ExpositionPolitique.ProchePpe> {
                                 it.dateCloture.shouldNotBeNull()
                             }
+                    }
+                }
+            }
+            given("Une personne avec exposition politique préalable") {
+                val expositionProchePpe = ExpositionPolitiqueFactory.creerExpositionProchePpe()
+                val idPersonne = IdPersonne(UUID.randomUUID())
+                expositionPolitiqueService.sauverEtHistoriser(
+                    idPersonne,
+                    expositionProchePpe,
+                    TraceAudit(
+                        user = User("test2"),
+                        date = Instant.now(),
+                        TypeOperation.AJOUT,
+                    ),
+                )
+
+                `when`("on lui ajoute une exposition politique qui est la même que la courante") {
+                    val historique = expositionPolitiqueService.sauverEtHistoriser(
+                        idPersonne,
+                        expositionProchePpe,
+                        TraceAudit(
+                            user = User("test2"),
+                            date = Instant.now(),
+                            TypeOperation.AJOUT,
+                        ),
+                    )
+                    then("on obtient une erreur de type EntreeHistoriqueIdentiqueCourante") {
+                        historique.isErr shouldBe true
+                        historique.getError().shouldBeInstanceOf<ExpositionPolitiqueError.EntreeHistoriqueIdentiqueCourante>()
                     }
                 }
             }
