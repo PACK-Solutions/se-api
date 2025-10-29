@@ -37,6 +37,11 @@ exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", versio
 exposed-jdbc = { module = "org.jetbrains.exposed:exposed-jdbc", version.ref = "exposed" }
 postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 
+[bundles]
+kotest = ["kotest-engine", "kotest-assertions", "kotest-runner"]
+ktor = ["ktor-server-core", "ktor-server-netty", "ktor-server-content-negotiation", "ktor-serialization-kotlinx-json", "ktor-server-swagger", "ktor-server-cors"]
+exposed = ["exposed-core", "exposed-dao", "exposed-java-time", "exposed-jdbc"]
+
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-jvm" }
 ktor = { id = "io.ktor.plugin", version.ref = "ktor" }

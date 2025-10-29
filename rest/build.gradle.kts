@@ -2,15 +2,12 @@ import org.gradle.jvm.tasks.Jar
 
 dependencies {
     implementation(project(":core"))
-    implementation(libs.ktor.server.core)
-    implementation(libs.ktor.server.netty)
-    implementation(libs.ktor.server.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
+
+    // Ktor
+    implementation(libs.bundles.ktor)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.logback)
     detektPlugins(libs.detekt.formatting)
-    implementation(libs.ktor.server.swagger)
-    implementation(libs.ktor.server.cors)
 
     // HikariCP
     implementation(libs.hikaricp)
@@ -20,30 +17,26 @@ dependencies {
     implementation(libs.flyway.postgres)
 
     // Exposed
-    implementation(libs.exposed.core)
-    implementation(libs.exposed.dao)
-    implementation(libs.exposed.jdbc)
-    implementation(libs.exposed.java.time)
+    implementation(libs.bundles.exposed)
 
     // DB driver
     runtimeOnly(libs.postgres)
 }
 
-plugins{
+plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.openapi.gen)
     alias(libs.plugins.ktor)
 }
 
-//TODO: To configure for client SDK in first time
+// TODO: To configure for client SDK in first time
 openApiGenerate {
     generatorName.set("kotlin")
     inputSpec.set("$rootDir/rest/src/main/resources/openapi/documentation.yaml")
-    //TODO: Check deprecated
-    outputDir.set("$buildDir/generated")
+    outputDir.set(layout.buildDirectory.dir("generated").map { it.asFile.absolutePath })
     apiPackage.set("com.ps.personne.rest.api")
     modelPackage.set("com.ps.personne.rest.model")
-    //configOptions.put("dateLibrary", "java8")
+    // configOptions.put("dateLibrary", "java8")
 }
 
 openApiValidate {
@@ -52,7 +45,7 @@ openApiValidate {
 }
 
 application {
-    //TODO: Move this main class to the assembly module
+    // NOTE: Move this main class to the assembly module
     mainClass.set("com.ps.personne.rest.AppKt")
 }
 
@@ -61,7 +54,6 @@ ktor {
         archiveFileName.set("app.jar")
     }
 }
-
 
 tasks.withType<Jar>().configureEach {
     manifest {

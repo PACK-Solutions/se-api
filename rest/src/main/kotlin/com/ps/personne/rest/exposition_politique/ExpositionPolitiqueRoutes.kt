@@ -13,7 +13,7 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.post
 import io.ktor.server.routing.routing
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 import com.ps.personne.rest.kyc.dto.ExpositionPolitique as ExpositionPolitiqueDto
 
 /**
@@ -29,7 +29,11 @@ fun Application.configureExpositionPolitiqueRoutes() {
                 val expositionPolitique = expositionPolitiqueDto.toDomain()
 
                 val service = ExpositionPolitiqueServiceImpl(InMemoryHistoriqueExpositionPolitiqueRepository())
-                val response = service.sauverEtHistoriser(IdPersonne(UUID.randomUUID()), expositionPolitique, TraceAudit(user = User("toto"), date = Instant.now(), TypeOperation.AJOUT))
+                val response = service.sauverEtHistoriser(
+                    IdPersonne(UUID.randomUUID()),
+                    expositionPolitique,
+                    TraceAudit(user = User("toto"), date = Instant.now(), TypeOperation.AJOUT),
+                )
 
                 call.respond(HttpStatusCode.Created, expositionPolitiqueDto)
             } ?: call.respond(HttpStatusCode.BadRequest)
