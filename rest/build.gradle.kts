@@ -25,23 +25,7 @@ dependencies {
 
 plugins {
     alias(libs.plugins.kotlin.serialization)
-    alias(libs.plugins.openapi.gen)
     alias(libs.plugins.ktor)
-}
-
-// TODO: To configure for client SDK in first time
-openApiGenerate {
-    generatorName.set("kotlin")
-    inputSpec.set("$rootDir/rest/src/main/resources/openapi/documentation.yaml")
-    outputDir.set(layout.buildDirectory.dir("generated").map { it.asFile.absolutePath })
-    apiPackage.set("com.ps.personne.rest.api")
-    modelPackage.set("com.ps.personne.rest.model")
-    // configOptions.put("dateLibrary", "java8")
-}
-
-openApiValidate {
-    inputSpec.set("$rootDir/rest/src/main/resources/openapi/documentation.yaml")
-    recommend.set(true)
 }
 
 application {

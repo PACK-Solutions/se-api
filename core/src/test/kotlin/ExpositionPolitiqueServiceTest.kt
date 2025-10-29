@@ -1,14 +1,16 @@
-import com.github.michaelbull.result.getError
+import com.github.michaelbull.result.get
 import com.github.michaelbull.result.getOrElse
 import com.ps.personne.fixtures.ExpositionPolitiqueFactory
 import com.ps.personne.model.*
 import com.ps.personne.ports.driven.InMemoryHistoriqueExpositionPolitiqueRepository
 import com.ps.personne.services.ExpositionPolitiqueServiceImpl
+import io.kotest.assertions.fail
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.types.shouldBeInstanceOf
+import org.junit.jupiter.api.fail
 import java.time.Instant
 import java.util.*
 
@@ -41,14 +43,14 @@ class ExpositionPolitiqueServiceTest : BehaviorSpec(
                     )
                     then("elle doit être présente dans l'historique") {
                         historique.getOrElse { error ->
-                            error(error)
+                            fail(error.toString())
                         }.shouldContainExactly(
                             EntreeHistoriqueExpositionPolitique(nouvelleExpositionPolitique, traceAudit),
                         )
                     }
                     then("elle doit être l'exposition politique courante") {
                         historique.getOrElse { error ->
-                            error(error)
+                            fail(error.toString())
                         }.expositionCourante shouldBe nouvelleExpositionPolitique
                     }
                 }
@@ -79,10 +81,8 @@ class ExpositionPolitiqueServiceTest : BehaviorSpec(
                     )
                     then("l'exposition politique précédente doit être cloturée dans l'historique") {
                         historique
-                            .getOrElse { error ->
-                                error(error)
-                            }
-                            .find { it.expositionPolitique == expositionProchePpe }
+                            .get()
+                            ?.find { it.expositionPolitique == expositionProchePpe }
                             ?.expositionPolitique
                             .shouldBeInstanceOf<ExpositionPolitique.ProchePpe> {
                                 it.dateCloture.shouldNotBeNull()
@@ -115,7 +115,7 @@ class ExpositionPolitiqueServiceTest : BehaviorSpec(
                     )
                     then("on obtient une erreur de type EntreeHistoriqueIdentiqueCourante") {
                         historique.isErr shouldBe true
-                        historique.getError().shouldBeInstanceOf<ExpositionPolitiqueError.EntreeHistoriqueIdentiqueCourante>()
+                        historique.shouldBeFailureOf<ExpositionPolitiqueError.EntreeHistoriqueIdentiqueCourante>()
                     }
                 }
             }

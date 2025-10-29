@@ -15,7 +15,6 @@ data class HistoriqueExpositionPolitique private constructor(
         expositionPolitique: ExpositionPolitique,
         traceAudit: TraceAudit,
     ): Result<HistoriqueExpositionPolitique, ExpositionPolitiqueError> {
-
         if (expositionPolitique == expositionCourante) {
             return Err(
                 ExpositionPolitiqueError.EntreeHistoriqueIdentiqueCourante(

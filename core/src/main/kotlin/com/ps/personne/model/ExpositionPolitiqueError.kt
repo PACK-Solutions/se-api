@@ -18,5 +18,4 @@ sealed interface ExpositionPolitiqueError {
         override val message: String,
         val cause: Throwable? = null,
     ) : ExpositionPolitiqueError
-
 }
