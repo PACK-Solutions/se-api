@@ -1,16 +1,17 @@
-package com.ps.personne.rest.health
+package com.ps.personne.database.health
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import org.jetbrains.exposed.sql.transactions.transaction
-import org.slf4j.LoggerFactory
 import java.sql.SQLException
+
+val logger = KotlinLogging.logger { }
 
 /**
  * Health check service to verify connectivity to external dependencies
  */
 class HealthCheckService {
-    private val logger = LoggerFactory.getLogger(HealthCheckService::class.java)
 
     /**
      * Perform health check on all dependencies
@@ -43,23 +44,23 @@ class HealthCheckService {
             }
             if (!ok) error("Unexpected result from health probe query")
 
-            logger.debug("Database health check: OK")
+            logger.debug { "Database health check: OK" }
             ComponentHealth(HealthStatus.UP, mapOf("connection" to "active"))
         } catch (e: ExposedSQLException) {
-            logger.error("Database health check failed (Exposed)", e)
+            logger.error(e) { "Database health check failed (Exposed)" }
             ComponentHealth(
                 HealthStatus.DOWN,
                 mapOf("connection" to "failed", "error" to (e.message ?: "Unknown error")),
             )
         } catch (e: SQLException) {
-            logger.error("Database health check failed (SQL)", e)
+            logger.error(e) { "Database health check failed (SQL)" }
             ComponentHealth(
                 HealthStatus.DOWN,
                 mapOf("connection" to "failed", "error" to (e.message ?: "Unknown error")),
             )
         } catch (e: IllegalStateException) {
             // Covers internal check like unexpected result from health probe query
-            logger.error("Database health check failed (IllegalState)", e)
+            logger.error(e) { "Database health check failed (IllegalState)" }
             ComponentHealth(
                 HealthStatus.DOWN,
                 mapOf("connection" to "failed", "error" to (e.message ?: "Unknown error")),

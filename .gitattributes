@@ -7,9 +7,29 @@
 # These are Windows script files and should use crlf
 *.bat           text eol=crlf
 
-# These are Unix script files and should use lf
-*.sh            text eol=lf
-
 # Binary files should be left untouched
 *.jar           binary
 
+# Normalisation des fichiers texte
+* text=auto
+
+# Forcer LF pour la plupart des langages
+*.sh text eol=lf
+*.py text eol=lf
+*.js text eol=lf
+*.ts text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+
+# Fichiers binaires
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.pdf binary
+*.zip binary
+*.gz binary

@@ -1,15 +1,15 @@
 package com.ps.personne.rest
 
+import com.ps.personne.assembly.configureConnaissanceClientService
+import com.ps.personne.database.config.DatabaseConfig
+import com.ps.personne.database.health.HealthCheckService
 import com.ps.personne.rest.config.CorsConfig.configureCors
 import com.ps.personne.rest.config.SerializationConfig.configureSerialization
 import com.ps.personne.rest.config.SwaggerConfig.configureSwagger
-import com.ps.personne.rest.exposition_politique.configureExpositionPolitiqueRoutes
-import com.ps.personne.rest.health.HealthCheckService
+import com.ps.personne.rest.connaissance.client.configureConnaissanceClientRoutes
 import com.ps.personne.rest.health.configureHealthRoutes
 import io.ktor.server.application.Application
-import io.ktor.server.response.respond
-import io.ktor.server.routing.get
-import io.ktor.server.routing.routing
+import io.ktor.server.config.property
 
 fun main(args: Array<String>) {
     io.ktor.server.netty.EngineMain.main(args)
@@ -20,16 +20,10 @@ fun main(args: Array<String>) {
  * Each configuration function is extracted to its own class
  */
 fun Application.personne() {
-    configureSwagger()
     configureCors()
-    // configureDatabases()
+    configureSwagger()
     configureSerialization()
+    property<DatabaseConfig>("database").apply { configureDatabases() }
     configureHealthRoutes(HealthCheckService())
-    configureExpositionPolitiqueRoutes()
-
-    routing {
-        get("/") {
-            call.respond("Hello World!")
-        }
-    }
+    configureConnaissanceClientRoutes(configureConnaissanceClientService())
 }

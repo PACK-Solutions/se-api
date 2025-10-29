@@ -1,3 +1,5 @@
+package com.ps.personne.fixtures
+
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.fold
 import io.kotest.assertions.AssertionErrorBuilder.Companion.fail

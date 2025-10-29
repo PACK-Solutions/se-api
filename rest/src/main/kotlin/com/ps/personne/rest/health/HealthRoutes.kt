@@ -1,5 +1,6 @@
 package com.ps.personne.rest.health
 
+import com.ps.personne.database.health.HealthCheckService
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.log

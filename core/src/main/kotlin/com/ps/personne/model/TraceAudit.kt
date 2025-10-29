@@ -12,6 +12,6 @@ data class TraceAudit(
 value class User(val login: String)
 
 enum class TypeOperation {
-    AJOUT,
     MODIFICATION,
+    CORRECTION
 }

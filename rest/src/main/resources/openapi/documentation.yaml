@@ -1,23 +1,23 @@
 openapi: 3.0.3
 info:
-  title: API Exposition Politique (KYC)
+  title: API Connaissance Client
   version: 1.0.0
   description: |
-    Spécification OpenAPI pour gérer l'exposition politique (KYC) d'une personne.
+    Spécification OpenAPI pour gérer la Connaissance Client d'une personne.
 
     Endpoints fournis:
-    - Récupérer l'exposition politique courante pour un idPersonne
-    - Récupérer l'historique des expositions politiques pour un idPersonne
-    - Sauvegarder une exposition politique pour un idPersonne
+    - Récupérer la Connaissance Client courante pour un idPersonne
+    - Récupérer l'historique des modifications de la Connaissance Client pour un idPersonne
+    - Créer ou corriger la Connaissance Client pour un idPersonne
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:8000
     description: Environnement local de développement
 paths:
-  /personnes/{idPersonne}/exposition-politique:
+  /personnes/{idPersonne}/connaissance-client:
     get:
-      summary: Exposition politique courante
-      description: Retourne l'exposition politique courante d'une personne.
-      operationId: getExpositionPolitiqueCourante
+      summary: Récupérer la Connaissance Client
+      description: Retourne la Connaissance Client courante d'une personne.
+      operationId: getConnaissanceClient
       parameters:
         - name: idPersonne
           in: path
@@ -27,21 +27,19 @@ paths:
             $ref: '#/components/schemas/IdPersonne'
       responses:
         '200':
-          description: Exposition politique courante trouvée
+          description: Connaissance Client trouvée
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExpositionPolitique'
-        '404':
-          description: Aucune exposition politique courante trouvée pour cette personne
+                $ref: '#/components/schemas/ConnaissanceClientDto'
         '400':
-          description: Requête invalide
+          description: Requête invalide (paramètre de chemin manquant ou invalide)
         '500':
-          description: Erreur serveur
+          description: Erreur interne du serveur
     post:
-      summary: Sauvegarder une exposition politique
-      description: Crée ou met à jour l'exposition politique de la personne (nouvelle entrée d'historique).
-      operationId: createOrUpdateExpositionPolitique
+      summary: Créer ou mettre à jour la Connaissance Client
+      description: Crée ou met à jour la Connaissance Client de la personne (nouvelle entrée d'historique).
+      operationId: createOrUpdateConnaissanceClient
       parameters:
         - name: idPersonne
           in: path
@@ -49,73 +47,99 @@ paths:
           description: Identifiant de la personne
           schema:
             $ref: '#/components/schemas/IdPersonne'
+        - name: login
+          in: header
+          required: true
+          description: Identifiant de l'utilisateur effectuant l'opération
+          schema:
+            type: string
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ExpositionPolitiqueWritable'
+              $ref: '#/components/schemas/ConnaissanceClientDto'
             examples:
-              standard:
-                summary: Standard
+              sansVigilance:
+                summary: Client standard (sans vigilance renforcée)
                 value:
-                  type: Standard
-                  idExpositionPolitique: 'c2b6b5b5-4a6f-4c8a-8c3a-1f7a5e2b9a12'
-                  dateDebut: '2023-01-01'
+                  statutPPE: null
+                  statutProchePPE: null
                   vigilance:
-                    type: SansVigilanceRenforcee
                     vigilanceRenforcee: false
               ppe:
-                summary: PPE
+                summary: Client PPE
                 value:
-                  type: Ppe
-                  idExpositionPolitique: 'e9fbb878-7e2d-4a86-9a7b-1a2b3c4d5e6f'
-                  dateDebut: '2022-06-15'
+                  statutPPE:
+                    mandat:
+                      fonction: MEMBRE_GOUVERNEMENT
+                      dateFin: null
+                  statutProchePPE: null
                   vigilance:
-                    type: AvecVigilanceRenforcee
                     vigilanceRenforcee: true
-                    motif: DEMANDE_ASSUREUR
-                  mandat:
-                    fonction: MEMBRE_GOUVERNEMENT
-                    dateFin: null
+                    motifs: [DEMANDE_ASSUREUR]
               prochePpe:
-                summary: Proche PPE
+                summary: Proche de PPE
                 value:
-                  type: ProchePpe
-                  idExpositionPolitique: '74c4b2ea-7b64-4e1a-9a01-4b6a3e5c9f10'
-                  dateDebut: '2021-03-10'
+                  statutPPE: null
+                  statutProchePPE:
+                    lienParente: ENFANT
+                    mandat:
+                      fonction: MEMBRE_PARLEMENT
+                      dateFin: '2024-12-31'
                   vigilance:
-                    type: SansVigilanceRenforcee
-                    vigilanceRenforcee: false
-                  lienParente: ENFANT
-                  mandat:
-                    fonction: MEMBRE_PARLEMENT
-                    dateFin: '2024-12-31'
+                    vigilanceRenforcee: true
+                    motifs: [MONTANT_ELEVE]
       responses:
         '201':
-          description: Exposition politique créée ou mise à jour
-          headers:
-            Location:
-              description: URL de la ressource créée
-              schema:
-                type: string
+          description: Connaissance Client créée ou mise à jour
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ExpositionPolitique'
+                $ref: '#/components/schemas/ConnaissanceClientDto'
         '400':
-          description: Requête invalide
-        '404':
-          description: Personne non trouvée
-        '409':
-          description: Conflit lors de l'enregistrement
+          description: Requête invalide (paramètre de chemin ou en-tête login manquant)
         '500':
-          description: Erreur serveur
-  /personnes/{idPersonne}/expositions-politiques:
+          description: Erreur interne du serveur
+    put:
+      summary: Corriger la Connaissance Client
+      description: Corrige la Connaissance Client de la personne (nouvelle entrée d'historique, type opération CORRECTION).
+      operationId: correctConnaissanceClient
+      parameters:
+        - name: idPersonne
+          in: path
+          required: true
+          description: Identifiant de la personne
+          schema:
+            $ref: '#/components/schemas/IdPersonne'
+        - name: login
+          in: header
+          required: true
+          description: Identifiant de l'utilisateur effectuant l'opération
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnaissanceClientDto'
+      responses:
+        '201':
+          description: Connaissance Client corrigée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnaissanceClientDto'
+        '400':
+          description: Requête invalide (paramètre de chemin ou en-tête login manquant)
+        '500':
+          description: Erreur interne du serveur
+  /personnes/{idPersonne}/historique-connaissance-client:
     get:
-      summary: Historique des expositions politiques
-      description: Retourne l'ensemble des expositions politiques d'une personne (historique).
-      operationId: getHistoriqueExpositionsPolitiques
+      summary: Récupérer l'historique des modifications
+      description: Retourne l'historique des modifications de la Connaissance Client d'une personne.
+      operationId: getHistoriqueConnaissanceClient
       parameters:
         - name: idPersonne
           in: path
@@ -129,31 +153,20 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/ExpositionPolitique'
-        '404':
-          description: Personne non trouvée
+                $ref: '#/components/schemas/HistoriqueModificationDto'
         '400':
-          description: Requête invalide
+          description: Requête invalide (paramètre de chemin manquant ou invalide)
         '500':
-          description: Erreur serveur
+          description: Erreur interne du serveur
 components:
   schemas:
     IdPersonne:
       type: integer
       format: int64
       example: 12345
-    IdExpositionPolitique:
-      type: string
-      format: uuid
-      example: 'c2b6b5b5-4a6f-4c8a-8c3a-1f7a5e2b9a12'
-    Date:
-      type: string
-      format: date
-      example: '2024-01-31'
     FonctionPPE:
       type: string
+      description: Fonction occupée dans le cadre d'un mandat PPE
       enum:
         - CHEF_ETAT
         - CHEF_GOUVERNEMENT
@@ -168,6 +181,7 @@ components:
         - DIRIGEANT_ENTREPRISE_PUBLIQUE
     LienParente:
       type: string
+      description: Lien de parenté avec une PPE
       enum:
         - CONJOINT
         - ENFANT
@@ -175,128 +189,124 @@ components:
         - PARENT
     MotifVigilance:
       type: string
+      description: Motif justifiant la vigilance renforcée
       enum:
         - AGE_AVANCE
         - DEMANDE_ASSUREUR
         - MONTANT_ELEVE
         - OPERATION_COMPLEXE
         - SANS_JUSTIFICATION
-    SansVigilanceRenforcee:
+    MandatDto:
       type: object
-      description: Vigilance sans renforcement
-      properties:
-        type:
-          type: string
-          enum: [SansVigilanceRenforcee]
-        vigilanceRenforcee:
-          type: boolean
-          #TODO Check this
-          #const: false
-      required: [type, vigilanceRenforcee]
-      additionalProperties: false
-    AvecVigilanceRenforcee:
-      type: object
-      description: Vigilance avec renforcement
-      properties:
-        type:
-          type: string
-          enum: [AvecVigilanceRenforcee]
-        vigilanceRenforcee:
-          type: boolean
-          #TODO Check this
-          #const: true
-        motif:
-          $ref: '#/components/schemas/MotifVigilance'
-      required: [type, vigilanceRenforcee, motif]
-      additionalProperties: false
-    Vigilance:
-      oneOf:
-        - $ref: '#/components/schemas/SansVigilanceRenforcee'
-        - $ref: '#/components/schemas/AvecVigilanceRenforcee'
-      discriminator:
-        propertyName: type
-        mapping:
-          SansVigilanceRenforcee: '#/components/schemas/SansVigilanceRenforcee'
-          AvecVigilanceRenforcee: '#/components/schemas/AvecVigilanceRenforcee'
-    Mandat:
-      type: object
+      description: Mandat politique et éventuelle date de fin
       properties:
         fonction:
           $ref: '#/components/schemas/FonctionPPE'
         dateFin:
-          allOf:
-            - $ref: '#/components/schemas/Date'
+          type: string
+          format: date
           nullable: true
       required: [fonction]
       additionalProperties: false
-    ExpositionPolitiqueStandard:
+    PpeDto:
       type: object
+      description: Statut de personne politiquement exposée (PPE)
       properties:
-        type:
-          type: string
-          enum: [Standard]
-        idExpositionPolitique:
-          $ref: '#/components/schemas/IdExpositionPolitique'
-        dateDebut:
-          $ref: '#/components/schemas/Date'
-        vigilance:
-          $ref: '#/components/schemas/Vigilance'
-      required: [type, idExpositionPolitique, dateDebut, vigilance]
-      additionalProperties: false
-    ExpositionPolitiquePpe:
-      type: object
-      properties:
-        type:
-          type: string
-          enum: [Ppe]
-        idExpositionPolitique:
-          $ref: '#/components/schemas/IdExpositionPolitique'
-        dateDebut:
-          $ref: '#/components/schemas/Date'
-        vigilance:
-          $ref: '#/components/schemas/AvecVigilanceRenforcee'
         mandat:
-          $ref: '#/components/schemas/Mandat'
-      required: [type, idExpositionPolitique, dateDebut, vigilance, mandat]
+          $ref: '#/components/schemas/MandatDto'
+      required: [mandat]
       additionalProperties: false
-    ExpositionPolitiqueProchePpe:
+    ProchePpeDto:
       type: object
+      description: Statut de proche d'une personne politiquement exposée
       properties:
-        type:
-          type: string
-          enum: [ProchePpe]
-        idExpositionPolitique:
-          $ref: '#/components/schemas/IdExpositionPolitique'
-        dateDebut:
-          $ref: '#/components/schemas/Date'
-        vigilance:
-          $ref: '#/components/schemas/Vigilance'
         lienParente:
           $ref: '#/components/schemas/LienParente'
         mandat:
-          $ref: '#/components/schemas/Mandat'
-      required: [type, idExpositionPolitique, dateDebut, vigilance, lienParente, mandat]
+          $ref: '#/components/schemas/MandatDto'
+      required: [lienParente, mandat]
       additionalProperties: false
-    ExpositionPolitique:
-      oneOf:
-        - $ref: '#/components/schemas/ExpositionPolitiqueStandard'
-        - $ref: '#/components/schemas/ExpositionPolitiquePpe'
-        - $ref: '#/components/schemas/ExpositionPolitiqueProchePpe'
-      discriminator:
-        propertyName: type
-        mapping:
-          Standard: '#/components/schemas/ExpositionPolitiqueStandard'
-          Ppe: '#/components/schemas/ExpositionPolitiquePpe'
-          ProchePpe: '#/components/schemas/ExpositionPolitiqueProchePpe'
-    # Variante d'écriture (permet de ne pas exiger idExpositionPolitique à la création si généré côté serveur)
-    ExpositionPolitiqueWritable:
-      oneOf:
-        - allOf:
-            - $ref: '#/components/schemas/ExpositionPolitiqueStandard'
-          required: [type, dateDebut, vigilance]
-        - allOf:
-            - $ref: '#/components/schemas/ExpositionPolitiquePpe'
-          required: [type, dateDebut, vigilance, mandat]
-        - allOf:
-            - $ref: '#/components/schemas/ExpositionPolitiqueProchePpe'
-          required: [type, dateDebut, vigilance, lienParente, mandat]
+    VigilanceDto:
+      type: object
+      description: Niveau de vigilance appliqué
+      properties:
+        vigilanceRenforcee:
+          type: boolean
+        motifs:
+          type: array
+          items:
+            $ref: '#/components/schemas/MotifVigilance'
+          description: Liste des motifs en cas de vigilance renforcée
+          nullable: true
+      required: [vigilanceRenforcee]
+      additionalProperties: false
+    ConnaissanceClientDto:
+      type: object
+      description: Représentation de la Connaissance Client exposée par l'API
+      properties:
+        statutPPE:
+          allOf:
+            - $ref: '#/components/schemas/PpeDto'
+          nullable: true
+        statutProchePPE:
+          allOf:
+            - $ref: '#/components/schemas/ProchePpeDto'
+          nullable: true
+        vigilance:
+          $ref: '#/components/schemas/VigilanceDto'
+      required: [vigilance]
+      additionalProperties: false
+    HistoriqueModificationDto:
+      type: object
+      description: Historique synthétique des modifications de la Connaissance Client
+      properties:
+        idPersonne:
+          $ref: '#/components/schemas/IdPersonne'
+        entreesHistorique:
+          type: array
+          items:
+            $ref: '#/components/schemas/SyntheseModificationDto'
+      required: [idPersonne, entreesHistorique]
+    SyntheseModificationDto:
+      type: object
+      description: Entrée d'historique contenant la trace et les modifications réalisées
+      properties:
+        traceAudit:
+          $ref: '#/components/schemas/TraceAuditDto'
+        modifications:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/ModificationDto'
+          description: Liste des modifications
+      required: [traceAudit, modifications]
+      additionalProperties: false
+    ModificationDto:
+      type: object
+      description: Détail d'une modification effectuée
+      properties:
+        modification:
+          type: string
+          description: Type de modification
+        motifsVigilance:
+          type: array
+          uniqueItems: true
+          items:
+            $ref: '#/components/schemas/MotifVigilance'
+          description: Motifs associés en cas d'ajout ou modification de vigilance
+      required: [modification]
+      additionalProperties: false
+    TraceAuditDto:
+      type: object
+      description: Trace audit d'une opération
+      properties:
+        date:
+          type: string
+          format: date-time
+        user:
+          type: string
+        typeOperation:
+          type: string
+          enum: [MODIFICATION, CORRECTION]
+      required: [date, user, typeOperation]
+      additionalProperties: false

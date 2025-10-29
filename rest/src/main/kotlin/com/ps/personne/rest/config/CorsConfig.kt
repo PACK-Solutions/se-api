@@ -15,14 +15,30 @@ object CorsConfig {
      */
     fun Application.configureCors() {
         install(CORS) {
-            anyHost()
+            // Methods commonly used by the frontend (preflight + CRUD)
             allowMethod(HttpMethod.Options)
             allowMethod(HttpMethod.Get)
             allowMethod(HttpMethod.Put)
             allowMethod(HttpMethod.Post)
             allowMethod(HttpMethod.Patch)
             allowMethod(HttpMethod.Delete)
+
+            // Allow commonly used request headers
             allowHeader(HttpHeaders.ContentType)
+            allowHeader(HttpHeaders.Authorization)
+            allowHeader(HttpHeaders.Accept)
+            allowHeader(HttpHeaders.AcceptLanguage)
+            allowHeader(HttpHeaders.AcceptEncoding)
+            allowHeader(HttpHeaders.Origin)
+            allowHeader("X-Requested-With")
+            // Custom app header used by routes
+            allowHeader("login")
+
+            // Permit non-simple content types like application/json
+            allowNonSimpleContentTypes = true
+
+            // Explicitly allow the frontend origin
+            allowHost("*")
         }
     }
 }

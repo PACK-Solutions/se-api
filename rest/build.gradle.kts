@@ -1,26 +1,15 @@
 import org.gradle.jvm.tasks.Jar
 
 dependencies {
+    implementation(project(":assembly"))
     implementation(project(":core"))
+    implementation(project(":database"))
 
     // Ktor
     implementation(libs.bundles.ktor)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.logback)
     detektPlugins(libs.detekt.formatting)
-
-    // HikariCP
-    implementation(libs.hikaricp)
-
-    // Flyway
-    implementation(libs.flyway.core)
-    implementation(libs.flyway.postgres)
-
-    // Exposed
-    implementation(libs.bundles.exposed)
-
-    // DB driver
-    runtimeOnly(libs.postgres)
 }
 
 plugins {
@@ -39,7 +28,7 @@ ktor {
     }
 }
 
-tasks.withType<Jar>().configureEach {
+/*tasks.withType<Jar>().configureEach {
     manifest {
         attributes(
             mapOf(
@@ -49,5 +38,5 @@ tasks.withType<Jar>().configureEach {
             )
         )
     }
-}
+}*/
 

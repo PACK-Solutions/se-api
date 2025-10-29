@@ -7,6 +7,7 @@ WORKDIR /app
 COPY gradle ./gradle
 COPY gradlew gradle.properties ./
 COPY settings.gradle.kts build.gradle.kts ./
+COPY buildSrc ./buildSrc
 COPY core/build.gradle.kts ./core/
 COPY rest/build.gradle.kts ./rest/
 COPY database/build.gradle.kts ./database/
@@ -19,7 +20,7 @@ RUN ./gradlew dependencies --no-daemon
 COPY core/src ./core/src
 COPY rest/src ./rest/src
 COPY database/src ./database/src
-#COPY assembly/src ./assembly/src
+COPY assembly/src ./assembly/src
 
 # Build the fat JAR without detekt and tests for faster Docker builds
 RUN ./gradlew rest:buildFatJar --no-daemon -x test -x detekt
@@ -65,10 +66,6 @@ USER appuser
 
 # Expose the port the app runs on
 EXPOSE 8080
-
-# Add healthcheck
-# HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=5 \
-#  CMD wget -q --spider http://localhost:8080/api/persons || exit 1
 
 # Set JVM options for containerized environment
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+ExitOnOutOfMemoryError"
