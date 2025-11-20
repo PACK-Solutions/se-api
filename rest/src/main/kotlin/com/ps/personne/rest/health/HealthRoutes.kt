@@ -1,6 +1,9 @@
 package com.ps.personne.rest.health
 
 import com.ps.personne.database.health.HealthCheckService
+import com.ps.personne.rest.problem.ErrorCodes
+import com.ps.personne.rest.problem.Problem
+import com.ps.personne.rest.problem.respondProblem
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.log
@@ -29,11 +32,12 @@ fun Application.configureHealthRoutes(healthCheckService: HealthCheckService) {
                 call.respond(statusCode, healthResult)
             } catch (e: Exception) {
                 log.error("Health check failed with exception", e)
-                call.respond(
+                call.respondProblem(
                     HttpStatusCode.InternalServerError,
-                    mapOf(
-                        "status" to "DOWN",
-                        "error" to (e.message ?: "Unknown error"),
+                    Problem.of(
+                        httpStatusCode = HttpStatusCode.InternalServerError,
+                        problemDetail = e.message ?: "Unknown error",
+                        code = ErrorCodes.INTERNAL_SERVER_ERROR,
                     ),
                 )
             }
@@ -52,6 +56,7 @@ fun Application.configureHealthRoutes(healthCheckService: HealthCheckService) {
                 call.respond(statusCode)
             } catch (e: Exception) {
                 log.error("Health check failed with exception", e)
+                // For HEAD, no body should be returned. Keep status-only response.
                 call.respond(HttpStatusCode.InternalServerError)
             }
         }

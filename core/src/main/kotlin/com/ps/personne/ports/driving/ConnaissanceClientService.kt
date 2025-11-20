@@ -8,11 +8,11 @@ import com.ps.personne.model.IdPersonne
 import com.ps.personne.model.TraceAudit
 
 interface ConnaissanceClientService {
-    fun getConnaissanceClient(idPersonne: IdPersonne): Result<ConnaissanceClient?, ConnaissanceClientError>
+    fun getConnaissanceClient(idPersonne: IdPersonne): ConnaissanceClient?
     fun sauvegarderEtHistoriserModification(
         connaissanceClient: ConnaissanceClient,
         traceAudit: TraceAudit
     ): Result<IdPersonne, ConnaissanceClientError>
 
-    fun getHistoriqueConnaissanceClient(idPersonne: IdPersonne): Result<HistoriqueModifications?, ConnaissanceClientError>
+    fun getHistorique(idPersonne: IdPersonne): Result<HistoriqueModifications?, ConnaissanceClientError>
 }

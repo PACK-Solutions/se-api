@@ -18,7 +18,7 @@ import java.time.LocalDate
 
 private fun LocalDate?.toIsoString(): String? = this?.toString()
 
-fun Mandat.toSer(): MandatSer = MandatSer(
+internal fun Mandat.toSer(): MandatSer = MandatSer(
     fonction = FonctionPpeSer.valueOf(this.fonction.name),
     dateFin = this.dateFin.toIsoString(),
 )

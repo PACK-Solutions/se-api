@@ -1,7 +1,6 @@
 package com.ps.personne.services
 
 import com.github.michaelbull.result.andThen
-import com.github.michaelbull.result.map
 import com.ps.personne.model.ConnaissanceClient
 import com.ps.personne.model.IdPersonne
 import com.ps.personne.model.TraceAudit
@@ -11,7 +10,7 @@ import com.ps.personne.ports.driving.ConnaissanceClientService
 
 class ConnaissanceClientServiceImpl(
     private val connaissanceClientRepository: ConnaissanceClientRepository,
-    private val historiqueModificationsRepository: ModificationsConnaissanceClientRepository
+    private val historiqueModificationsRepository: ModificationsConnaissanceClientRepository,
 ) : ConnaissanceClientService {
     override fun getConnaissanceClient(idPersonne: IdPersonne) =
         connaissanceClientRepository.recuperer(idPersonne)
@@ -19,11 +18,10 @@ class ConnaissanceClientServiceImpl(
     override fun sauvegarderEtHistoriserModification(
         connaissanceClient: ConnaissanceClient,
         traceAudit: TraceAudit,
-    ) = connaissanceClientRepository.recuperer(connaissanceClient.idPersonne)
-        .map { it ?: ConnaissanceClient.vierge(connaissanceClient.idPersonne) }
-        .andThen { it.appliquerModifications(connaissanceClient, traceAudit) }
+    ) = (connaissanceClientRepository.recuperer(connaissanceClient.idPersonne) ?: ConnaissanceClient.vierge(connaissanceClient.idPersonne))
+        .appliquerModifications(connaissanceClient, traceAudit)
         .andThen(connaissanceClientRepository::sauvegarder)
 
-    override fun getHistoriqueConnaissanceClient(idPersonne: IdPersonne) =
+    override fun getHistorique(idPersonne: IdPersonne) =
         historiqueModificationsRepository.recupererHistorique(idPersonne)
 }

@@ -1,18 +1,18 @@
 package com.ps.personne.database.repository
 
 import com.github.michaelbull.result.Ok
-import com.github.michaelbull.result.Result
-import com.ps.personne.database.mapper.*
+import com.ps.personne.database.mapper.toDomain
+import com.ps.personne.database.mapper.toSer
 import com.ps.personne.database.model.SyntheseModificationSer
 import com.ps.personne.database.model.TraceAuditSer
-import com.ps.personne.database.tables.*
+import com.ps.personne.database.tables.ConnaissanceClientTable
 import com.ps.personne.database.tables.ConnaissanceClientTable.personId
+import com.ps.personne.database.tables.HistoriqueModificationConnaissanceClientTable
 import com.ps.personne.database.tables.HistoriqueModificationConnaissanceClientTable.auditDate
 import com.ps.personne.database.tables.HistoriqueModificationConnaissanceClientTable.auditType
 import com.ps.personne.database.tables.HistoriqueModificationConnaissanceClientTable.auditUser
 import com.ps.personne.database.tables.HistoriqueModificationConnaissanceClientTable.modifications
 import com.ps.personne.model.ConnaissanceClient
-import com.ps.personne.model.ConnaissanceClientError
 import com.ps.personne.model.HistoriqueModifications
 import com.ps.personne.model.IdPersonne
 import com.ps.personne.model.SyntheseModifications
@@ -22,24 +22,22 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.upsert
-import java.util.UUID
+import java.util.*
 
 class ExposedConnaissanceClientRepository : ConnaissanceClientRepository, ModificationsConnaissanceClientRepository {
 
-    override fun recuperer(idPersonne: IdPersonne): Result<ConnaissanceClient?, ConnaissanceClientError> {
+    override fun recuperer(idPersonne: IdPersonne): ConnaissanceClient? {
         return transaction {
-            Ok(
-                ConnaissanceClientTable.selectAll().where { personId eq idPersonne.id }
-                    .singleOrNull()
-                    ?.let {
-                        ConnaissanceClient(
-                            idPersonne = idPersonne,
-                            statutPPE = it[ConnaissanceClientTable.statutPPE]?.toDomain(),
-                            statutProchePPE = it[ConnaissanceClientTable.statutProchePPE]?.toDomain(),
-                            vigilance = it[ConnaissanceClientTable.vigilance].toDomain(),
-                        )
-                    }
-            )
+            ConnaissanceClientTable.selectAll().where { personId eq idPersonne.id }
+                .singleOrNull()
+                ?.let {
+                    ConnaissanceClient(
+                        idPersonne = idPersonne,
+                        statutPPE = it[ConnaissanceClientTable.statutPPE]?.toDomain(),
+                        statutProchePPE = it[ConnaissanceClientTable.statutProchePPE]?.toDomain(),
+                        vigilance = it[ConnaissanceClientTable.vigilance].toDomain(),
+                    )
+                }
         }
     }
 
@@ -51,8 +49,7 @@ class ExposedConnaissanceClientRepository : ConnaissanceClientRepository, Modifi
             it[vigilance] = connaissanceClient.vigilance.toSer()
         }
 
-        connaissanceClient.modification?.toSer()?.let {
-                modificationSer ->
+        connaissanceClient.modification?.toSer()?.let { modificationSer ->
             HistoriqueModificationConnaissanceClientTable.insert {
                 it[id] = UUID.randomUUID()
                 it[personId] = connaissanceClient.idPersonne.id
@@ -76,9 +73,9 @@ class ExposedConnaissanceClientRepository : ConnaissanceClientRepository, Modifi
                     traceAudit = TraceAuditSer(
                         user = it[auditUser],
                         typeOperation = it[auditType],
-                        date = it[auditDate]
+                        date = it[auditDate],
                     ),
-                    modifications = it[modifications]
+                    modifications = it[modifications],
                 )
 
                 entreesHistorique = entreesHistorique.plus(syntheseModificationSer.toDomain())

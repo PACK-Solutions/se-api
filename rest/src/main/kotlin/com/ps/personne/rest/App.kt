@@ -4,6 +4,7 @@ import com.ps.personne.assembly.configureConnaissanceClientService
 import com.ps.personne.database.config.DatabaseConfig
 import com.ps.personne.database.health.HealthCheckService
 import com.ps.personne.rest.config.CorsConfig.configureCors
+import com.ps.personne.rest.config.ExceptionHandlingConfig.configureExceptionHandling
 import com.ps.personne.rest.config.SerializationConfig.configureSerialization
 import com.ps.personne.rest.config.SwaggerConfig.configureSwagger
 import com.ps.personne.rest.connaissance.client.configureConnaissanceClientRoutes
@@ -23,6 +24,7 @@ fun Application.personne() {
     configureCors()
     configureSwagger()
     configureSerialization()
+    configureExceptionHandling()
     property<DatabaseConfig>("database").apply { configureDatabases() }
     configureHealthRoutes(HealthCheckService())
     configureConnaissanceClientRoutes(configureConnaissanceClientService())

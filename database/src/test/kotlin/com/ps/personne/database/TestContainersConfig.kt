@@ -30,7 +30,7 @@ class TestContainersConfig : BehaviorSpec() {
 
     val database = Database.connect(datasource = ds)
 
-    val flyway =
+    val flyway: Flyway? =
         Flyway
             .configure()
             .dataSource(ds)
@@ -39,7 +39,7 @@ class TestContainersConfig : BehaviorSpec() {
 
     init {
         transaction(database) {
-            flyway.migrate()
+            flyway?.migrate()
         }
         transaction {
             addLogger(StdOutSqlLogger)
@@ -68,9 +68,7 @@ class TestContainersConfig : BehaviorSpec() {
                 `when`("on lis la connaissance client") {
                     val resultat = repository.recuperer(idPersonne)
                     then("on obtient un objet vide") {
-                        resultat shouldBeSuccess {
-                            it shouldBe null
-                        }
+                        resultat shouldBe null
                     }
                 }
             }
@@ -80,9 +78,7 @@ class TestContainersConfig : BehaviorSpec() {
                 `when`("on lis la connaissance client") {
                     val resultat = repository.recuperer(connaissanceClient.idPersonne)
                     then("on obtient la connaissance client") {
-                        resultat shouldBeSuccess {
-                            it shouldBe connaissanceClient
-                        }
+                        resultat shouldBe connaissanceClient
                     }
                 }
             }

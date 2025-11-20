@@ -6,6 +6,6 @@ import com.ps.personne.model.ConnaissanceClientError
 import com.ps.personne.model.IdPersonne
 
 interface ConnaissanceClientRepository {
-    fun recuperer(idPersonne: IdPersonne): Result<ConnaissanceClient?, ConnaissanceClientError>
+    fun recuperer(idPersonne: IdPersonne): ConnaissanceClient?
     fun sauvegarder(connaissanceClient: ConnaissanceClient): Result<IdPersonne, ConnaissanceClientError>
 }

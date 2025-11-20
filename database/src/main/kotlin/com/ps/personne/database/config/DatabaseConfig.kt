@@ -43,7 +43,7 @@ data class DatabaseConfig(
             },
         )
 
-        val database = Database.connect(datasource = hikari)
+        Database.connect(datasource = hikari)
 
         logger.info { "\uD83D\uDDC4\uFE0F Connection to database: OK" }
 
@@ -51,10 +51,10 @@ data class DatabaseConfig(
             Flyway
                 .configure()
                 .dataSource(hikari)
-                .baselineOnMigrate(true) // Used when migrating an existing database for the first time
+                .baselineOnMigrate(false)
                 .load()
 
-        transaction(database) {
+        transaction {
             flyway.migrate()
         }
 

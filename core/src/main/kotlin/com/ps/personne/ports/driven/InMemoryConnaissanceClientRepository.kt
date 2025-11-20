@@ -2,18 +2,14 @@ package com.ps.personne.ports.driven
 
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
-import com.ps.personne.model.ConnaissanceClient
-import com.ps.personne.model.ConnaissanceClientError
-import com.ps.personne.model.HistoriqueModifications
-import com.ps.personne.model.IdPersonne
-import com.ps.personne.model.SyntheseModifications
+import com.ps.personne.model.*
 
 class InMemoryConnaissanceClientRepository : ConnaissanceClientRepository, ModificationsConnaissanceClientRepository {
 
     val connaissanceClients = mutableMapOf<IdPersonne, ConnaissanceClient>()
     val historiqueModifications = mutableMapOf<IdPersonne, List<SyntheseModifications>>()
-    override fun recuperer(idPersonne: IdPersonne): Result<ConnaissanceClient?, ConnaissanceClientError> {
-        return Ok(connaissanceClients.getOrDefault(idPersonne, null))
+    override fun recuperer(idPersonne: IdPersonne): ConnaissanceClient? {
+        return connaissanceClients.getOrDefault(idPersonne, null)
     }
 
     override fun sauvegarder(connaissanceClient: ConnaissanceClient): Result<IdPersonne, ConnaissanceClientError> {
@@ -21,7 +17,7 @@ class InMemoryConnaissanceClientRepository : ConnaissanceClientRepository, Modif
             idPersonne = connaissanceClient.idPersonne,
             statutPPE = connaissanceClient.statutPPE,
             statutProchePPE = connaissanceClient.statutProchePPE,
-            vigilance = connaissanceClient.vigilance
+            vigilance = connaissanceClient.vigilance,
         )
 
         connaissanceClient.modification?.let {

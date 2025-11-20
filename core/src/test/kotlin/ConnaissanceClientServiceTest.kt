@@ -2,7 +2,10 @@ import com.ps.personne.fixtures.ConnaissanceClientFactory
 import com.ps.personne.fixtures.TraceAuditFactory
 import com.ps.personne.fixtures.shouldBeFailureOf
 import com.ps.personne.fixtures.shouldBeSuccess
-import com.ps.personne.model.*
+import com.ps.personne.model.AjoutStatutPPE
+import com.ps.personne.model.AjoutVigilance
+import com.ps.personne.model.ConnaissanceClientError
+import com.ps.personne.model.SyntheseModifications
 import com.ps.personne.ports.driven.InMemoryConnaissanceClientRepository
 import com.ps.personne.services.ConnaissanceClientServiceImpl
 import io.kotest.core.spec.style.BehaviorSpec
@@ -31,26 +34,24 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                     }
 
                     val nouvelleConnaissanceClient = connaissanceClientService.getConnaissanceClient(
-                        connaissanceClient.idPersonne
+                        connaissanceClient.idPersonne,
                     )
 
                     then(
                         "On obtient une connaissance client avec le statut PPE et une vigilance renforcée",
                     ) {
-                        nouvelleConnaissanceClient shouldBeSuccess {
-                            it shouldBe connaissanceClient
-                        }
+                        nouvelleConnaissanceClient shouldBe connaissanceClient
                     }
 
                     then(
-                        "On doit avoir les traces AjoutStatutPPE et AjoutVigilance dans l'historique de modifications"
+                        "On doit avoir les traces AjoutStatutPPE et AjoutVigilance dans l'historique de modifications",
                     ) {
-                        connaissanceClientService.getHistoriqueConnaissanceClient(connaissanceClient.idPersonne) shouldBeSuccess {
+                        connaissanceClientService.getHistorique(connaissanceClient.idPersonne) shouldBeSuccess {
                             it.entreesHistorique.shouldContain(
                                 SyntheseModifications(
                                     traceAudit = traceAudit,
                                     modifications = setOf(AjoutStatutPPE, AjoutVigilance),
-                                )
+                                ),
                             )
                         }
                     }
@@ -69,13 +70,13 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                     }
 
                     val nouvelleConnaissanceClient = connaissanceClientService.getConnaissanceClient(
-                        connaissanceClient.idPersonne
+                        connaissanceClient.idPersonne,
                     )
 
                     then(
                         "On obtient une connaissance client avec le statut proche PPE et une vigilance renforcée",
                     ) {
-                        nouvelleConnaissanceClient shouldBeSuccess { it shouldBe connaissanceClient }
+                        nouvelleConnaissanceClient shouldBe connaissanceClient
                     }
                 }
                 `when`("On lui ajoute une vigilance renforcée sans motif ni statut PPE ni proche PPE") {
@@ -94,13 +95,13 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                     }
 
                     val nouvelleConnaissanceClient = connaissanceClientService.getConnaissanceClient(
-                        connaissanceClient.idPersonne
+                        connaissanceClient.idPersonne,
                     )
 
                     then(
                         "On obtient une connaissance avc une vigilance renforcée et pas d'exposition politique",
                     ) {
-                        nouvelleConnaissanceClient shouldBeSuccess { it shouldBe connaissanceClient }
+                        nouvelleConnaissanceClient shouldBe connaissanceClient
                     }
                 }
                 `when`("On lui ajoute un statut PPE sans vigilance renforcée") {
@@ -148,5 +149,5 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                 }
             }
         }
-    }
+    },
 )

@@ -3,8 +3,6 @@ package com.ps.personne.database.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-// --------- Serializables used for JSONB persistence ---------
-
 @Serializable
 data class MandatSer(
     val fonction: FonctionPpeSer,
