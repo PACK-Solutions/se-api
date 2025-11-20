@@ -1,0 +1,38 @@
+### Create or update Connaissance Client (POST)
+POST {{baseUrl}}/personnes/{{idPersonne}}/connaissance-client
+Content-Type: application/json
+login: {{login}}
+
+{
+  "statutPPE": {
+    "mandat": {
+      "fonction": "CHEF_ETAT",
+      "dateFin": null
+    }
+  },
+  "statutProchePPE": {
+    "lienParente": "CONJOINT",
+    "mandat": {
+      "fonction": "MEMBRE_GOUVERNEMENT",
+      "dateFin": "2030-12-31"
+    }
+  },
+  "vigilance": {
+    "vigilanceRenforcee": true,
+    "motifs": ["MONTANT_ELEVE", "OPERATION_COMPLEXE"]
+  }
+}
+
+### Correct Connaissance Client (PUT)
+PUT {{baseUrl}}/personnes/{{idPersonne}}/connaissance-client
+Content-Type: application/json
+login: {{login}}
+
+{
+  "statutPPE": null,
+  "statutProchePPE": null,
+  "vigilance": {
+    "vigilanceRenforcee": false,
+    "motifs": null
+  }
+}

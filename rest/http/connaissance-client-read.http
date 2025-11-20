@@ -1,0 +1,5 @@
+### Get current Connaissance Client for a person
+GET {{baseUrl}}/personnes/{{idPersonne}}/connaissance-client
+
+### Get history of Connaissance Client modifications for a person
+GET {{baseUrl}}/personnes/{{idPersonne}}/historique-connaissance-client
