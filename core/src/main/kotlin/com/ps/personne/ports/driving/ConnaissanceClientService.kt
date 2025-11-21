@@ -10,5 +10,5 @@ interface ConnaissanceClientService {
         traceAudit: TraceAudit,
     ): Result<IdPersonne, ConnaissanceClientError>
 
-    fun getHistorique(idPersonne: IdPersonne): Result<HistoriqueModifications?, ConnaissanceClientError>
+    fun getHistorique(idPersonne: IdPersonne): HistoriqueModifications?
 }

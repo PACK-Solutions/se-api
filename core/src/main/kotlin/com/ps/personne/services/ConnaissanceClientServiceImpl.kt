@@ -1,6 +1,6 @@
 package com.ps.personne.services
 
-import com.github.michaelbull.result.andThen
+import com.github.michaelbull.result.map
 import com.ps.personne.model.ConnaissanceClient
 import com.ps.personne.model.IdPersonne
 import com.ps.personne.model.TraceAudit
@@ -20,7 +20,7 @@ class ConnaissanceClientServiceImpl(
         traceAudit: TraceAudit,
     ) = (connaissanceClientRepository.recuperer(connaissanceClient.idPersonne) ?: ConnaissanceClient.vierge(connaissanceClient.idPersonne))
         .appliquerModifications(connaissanceClient, traceAudit)
-        .andThen(connaissanceClientRepository::sauvegarder)
+        .map(connaissanceClientRepository::sauvegarder)
 
     override fun getHistorique(idPersonne: IdPersonne) =
         historiqueModificationsRepository.recupererHistorique(idPersonne)

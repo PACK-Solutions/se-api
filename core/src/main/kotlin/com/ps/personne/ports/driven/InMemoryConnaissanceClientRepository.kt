@@ -1,18 +1,17 @@
 package com.ps.personne.ports.driven
 
-import com.github.michaelbull.result.Ok
-import com.github.michaelbull.result.Result
 import com.ps.personne.model.*
 
 class InMemoryConnaissanceClientRepository : ConnaissanceClientRepository, ModificationsConnaissanceClientRepository {
 
     val connaissanceClients = mutableMapOf<IdPersonne, ConnaissanceClient>()
     val historiqueModifications = mutableMapOf<IdPersonne, List<SyntheseModifications>>()
+
     override fun recuperer(idPersonne: IdPersonne): ConnaissanceClient? {
         return connaissanceClients.getOrDefault(idPersonne, null)
     }
 
-    override fun sauvegarder(connaissanceClient: ConnaissanceClient): Result<IdPersonne, ConnaissanceClientError> {
+    override fun sauvegarder(connaissanceClient: ConnaissanceClient): IdPersonne {
         connaissanceClients[connaissanceClient.idPersonne] = ConnaissanceClient(
             idPersonne = connaissanceClient.idPersonne,
             statutPPE = connaissanceClient.statutPPE,
@@ -25,10 +24,9 @@ class InMemoryConnaissanceClientRepository : ConnaissanceClientRepository, Modif
                 listOf(it) + (historiqueModifications[connaissanceClient.idPersonne] ?: emptyList())
         }
 
-        return Ok(connaissanceClient.idPersonne)
+        return connaissanceClient.idPersonne
     }
 
-    override fun recupererHistorique(idPersonne: IdPersonne): Result<HistoriqueModifications, ConnaissanceClientError> {
-        return Ok(HistoriqueModifications(idPersonne, historiqueModifications[idPersonne] ?: emptyList()))
-    }
+    override fun recupererHistorique(idPersonne: IdPersonne): HistoriqueModifications =
+        HistoriqueModifications(idPersonne, historiqueModifications[idPersonne] ?: emptyList())
 }

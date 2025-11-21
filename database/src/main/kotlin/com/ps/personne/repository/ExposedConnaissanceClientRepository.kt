@@ -1,6 +1,5 @@
 package com.ps.personne.repository
 
-import com.github.michaelbull.result.Ok
 import com.ps.personne.mapper.toDomain
 import com.ps.personne.mapper.toSer
 import com.ps.personne.model.*
@@ -8,7 +7,6 @@ import com.ps.personne.ports.driven.ConnaissanceClientRepository
 import com.ps.personne.ports.driven.ModificationsConnaissanceClientRepository
 import com.ps.personne.tables.ConnaissanceClientTable
 import com.ps.personne.tables.ConnaissanceClientTable.personId
-import com.ps.personne.tables.HistoriqueModificationConnaissanceClientTable
 import com.ps.personne.tables.HistoriqueModificationConnaissanceClientTable.auditDate
 import com.ps.personne.tables.HistoriqueModificationConnaissanceClientTable.auditType
 import com.ps.personne.tables.HistoriqueModificationConnaissanceClientTable.auditUser
@@ -55,7 +53,7 @@ class ExposedConnaissanceClientRepository : ConnaissanceClientRepository, Modifi
             }
         }
 
-        Ok(connaissanceClient.idPersonne)
+        connaissanceClient.idPersonne
     }
 
     override fun recupererHistorique(idPersonne: IdPersonne) = transaction {
@@ -75,6 +73,6 @@ class ExposedConnaissanceClientRepository : ConnaissanceClientRepository, Modifi
 
                 entreesHistorique = entreesHistorique.plus(syntheseModificationSer.toDomain())
             }
-        Ok(HistoriqueModifications(idPersonne, entreesHistorique))
+        HistoriqueModifications(idPersonne, entreesHistorique)
     }
 }

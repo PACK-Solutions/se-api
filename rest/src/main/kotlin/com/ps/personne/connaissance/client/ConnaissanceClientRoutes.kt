@@ -41,21 +41,18 @@ private fun Routing.getHistoriqueConnaissanceClientRoute(connaissanceClientServi
             val idPersonne = IdPersonne(idPersonne.toLong())
 
             connaissanceClientService.getHistorique(idPersonne)
-                .onSuccess { historiqueModifications ->
+                .let { historiqueModifications ->
                     historiqueModifications?.toDto()?.let {
                         call.respond(HttpStatusCode.OK, it)
                     }
-                }
-                .onFailure {
-                    call.respondProblem(
-                        HttpStatusCode.InternalServerError,
-                        Problem.of(
-                            httpStatusCode = HttpStatusCode.InternalServerError,
-                            problemDetail = it.message,
-                            code = ErrorCodes.INTERNAL_SERVER_ERROR,
-                        ),
-                    )
-                }
+                } ?: call.respondProblem(
+                HttpStatusCode.NotFound,
+                Problem.of(
+                    httpStatusCode = HttpStatusCode.NotFound,
+                    problemDetail = null,
+                    code = ErrorCodes.NOT_FOUND,
+                ),
+            )
         } ?: call.respondProblem(
             HttpStatusCode.BadRequest,
             Problem.of(

@@ -46,89 +46,90 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                     then(
                         "On doit avoir les traces AjoutStatutPPE et AjoutVigilance dans l'historique de modifications",
                     ) {
-                        connaissanceClientService.getHistorique(connaissanceClient.idPersonne) shouldBeSuccess {
-                            it.entreesHistorique.shouldContain(
-                                SyntheseModifications(
-                                    traceAudit = traceAudit,
-                                    modifications = setOf(AjoutStatutPPE, AjoutVigilance),
-                                ),
-                            )
-                        }
-                    }
-                }
-                `when`("On lui ajoute un statut proche PPE avec vigilance renforcée sans motif") {
-                    val traceAudit = TraceAuditFactory.creerTraceAuditModification()
-                    val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientProchePPE()
-                    val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
-                        connaissanceClient,
-                        traceAudit,
-                    )
-                    then(
-                        "On obtient l'id personne en retour",
-                    ) {
-                        resultat shouldBeSuccess { it shouldBe connaissanceClient.idPersonne }
-                    }
-
-                    val nouvelleConnaissanceClient = connaissanceClientService.getConnaissanceClient(
-                        connaissanceClient.idPersonne,
-                    )
-
-                    then(
-                        "On obtient une connaissance client avec le statut proche PPE et une vigilance renforcée",
-                    ) {
-                        nouvelleConnaissanceClient shouldBe connaissanceClient
-                    }
-                }
-                `when`("On lui ajoute une vigilance renforcée sans motif ni statut PPE ni proche PPE") {
-                    val idPersonne = ConnaissanceClientFactory.creerIdPersonne()
-                    val traceAudit = TraceAuditFactory.creerTraceAuditModification()
-                    val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientVigilance()
-                    val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
-                        connaissanceClient,
-                        traceAudit,
-                    )
-
-                    then(
-                        "On obtient l'id personne en retour",
-                    ) {
-                        resultat shouldBeSuccess { it shouldBe connaissanceClient.idPersonne }
-                    }
-
-                    val nouvelleConnaissanceClient = connaissanceClientService.getConnaissanceClient(
-                        connaissanceClient.idPersonne,
-                    )
-
-                    then(
-                        "On obtient une connaissance avc une vigilance renforcée et pas d'exposition politique",
-                    ) {
-                        nouvelleConnaissanceClient shouldBe connaissanceClient
-                    }
-                }
-                `when`("On lui ajoute un statut PPE sans vigilance renforcée") {
-                    val idPersonne = ConnaissanceClientFactory.creerIdPersonne()
-                    val traceAudit = TraceAuditFactory.creerTraceAuditModification()
-                    val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientPPESansVigilance()
-                    val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
-                        connaissanceClient,
-                        traceAudit,
-                    )
-                    then("On obtient une erreur car la vigilance renforcée est obligatoire") {
-                        resultat.shouldBeFailureOf<ConnaissanceClientError.VigilanceRenforceeObligatoire>()
-                    }
-                }
-                `when`("On lui ajoute un statut proche PPE sans vigilance renforcée") {
-                    val idPersonne = ConnaissanceClientFactory.creerIdPersonne()
-                    val traceAudit = TraceAuditFactory.creerTraceAuditModification()
-                    val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientProchePPESansVigilance()
-                    val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
-                        connaissanceClient,
-                        traceAudit,
-                    )
-                    then("On obtient une erreur de type VigilanceRenforceeObligatoire") {
-                        resultat.shouldBeFailureOf<ConnaissanceClientError.VigilanceRenforceeObligatoire>()
+                        connaissanceClientService.getHistorique(
+                            connaissanceClient.idPersonne
+                        ).entreesHistorique.shouldContain(
+                            SyntheseModifications(
+                                traceAudit = traceAudit,
+                                modifications = setOf(AjoutStatutPPE, AjoutVigilance),
+                            ),
+                        )
                     }
                 }
             }
+            `when`("On lui ajoute un statut proche PPE avec vigilance renforcée sans motif") {
+                val traceAudit = TraceAuditFactory.creerTraceAuditModification()
+                val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientProchePPE()
+                val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
+                    connaissanceClient,
+                    traceAudit,
+                )
+                then(
+                    "On obtient l'id personne en retour",
+                ) {
+                    resultat shouldBeSuccess { it shouldBe connaissanceClient.idPersonne }
+                }
+
+                val nouvelleConnaissanceClient = connaissanceClientService.getConnaissanceClient(
+                    connaissanceClient.idPersonne,
+                )
+
+                then(
+                    "On obtient une connaissance client avec le statut proche PPE et une vigilance renforcée",
+                ) {
+                    nouvelleConnaissanceClient shouldBe connaissanceClient
+                }
+            }
+            `when`("On lui ajoute une vigilance renforcée sans motif ni statut PPE ni proche PPE") {
+                val idPersonne = ConnaissanceClientFactory.creerIdPersonne()
+                val traceAudit = TraceAuditFactory.creerTraceAuditModification()
+                val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientVigilance()
+                val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
+                    connaissanceClient,
+                    traceAudit,
+                )
+
+                then(
+                    "On obtient l'id personne en retour",
+                ) {
+                    resultat shouldBeSuccess { it shouldBe connaissanceClient.idPersonne }
+                }
+
+                val nouvelleConnaissanceClient = connaissanceClientService.getConnaissanceClient(
+                    connaissanceClient.idPersonne,
+                )
+
+                then(
+                    "On obtient une connaissance avc une vigilance renforcée et pas d'exposition politique",
+                ) {
+                    nouvelleConnaissanceClient shouldBe connaissanceClient
+                }
+            }
+            `when`("On lui ajoute un statut PPE sans vigilance renforcée") {
+                val idPersonne = ConnaissanceClientFactory.creerIdPersonne()
+                val traceAudit = TraceAuditFactory.creerTraceAuditModification()
+                val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientPPESansVigilance()
+                val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
+                    connaissanceClient,
+                    traceAudit,
+                )
+                then("On obtient une erreur car la vigilance renforcée est obligatoire") {
+                    resultat.shouldBeFailureOf<ConnaissanceClientError.VigilanceRenforceeObligatoire>()
+                }
+            }
+            `when`("On lui ajoute un statut proche PPE sans vigilance renforcée") {
+                val idPersonne = ConnaissanceClientFactory.creerIdPersonne()
+                val traceAudit = TraceAuditFactory.creerTraceAuditModification()
+                val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientProchePPESansVigilance()
+                val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
+                    connaissanceClient,
+                    traceAudit,
+                )
+                then("On obtient une erreur de type VigilanceRenforceeObligatoire") {
+                    resultat.shouldBeFailureOf<ConnaissanceClientError.VigilanceRenforceeObligatoire>()
+                }
+            }
+
             given("Une personne avec une connaissance client complète") {
                 val traceAudit = TraceAuditFactory.creerTraceAuditModification()
                 val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientComplete()
