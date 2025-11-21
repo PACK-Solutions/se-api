@@ -1,19 +1,20 @@
 [versions]
 detekt = "1.23.8"
 exposed = "0.61.0"
-flyway = "11.15.0"
+flyway = "11.17.1"
 hikariCp = "7.0.2"
-kotest = "6.0.4"
+jsonpathkt = "3.0.2"
+kotest = "6.0.5"
 kotlin-jvm = "2.2.21"
-kotlin-result = "2.1.0"
 kotlin-logging = "7.0.13"
+kotlin-result = "2.1.0"
 kotlinx-serialization = "1.9.0"
-ktor = "3.3.1"
-logback = "1.5.20"
+ktor = "3.3.2"
+logback = "1.5.21"
 postgres = "42.7.8"
+test-containers = "2.0.2"
 version-catalog-update = "1.0.1"
 versions = "0.53.0"
-test-containers = "2.0.1"
 
 [libraries]
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
@@ -25,21 +26,24 @@ exposed-json = { module = "org.jetbrains.exposed:exposed-json", version.ref = "e
 flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flyway-postgres = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
 hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikariCp" }
+json-path-kt = { module = "com.eygraber:jsonpathkt-kotlinx", version.ref = "jsonpathkt" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest" }
 kotest-engine = { module = "io.kotest:kotest-framework-engine-jvm", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
 kotest-testcontainers = { module = "io.kotest:kotest-extensions-testcontainers-jvm", version.ref = "kotest" }
-kotlin-result = { module = "com.michael-bull.kotlin-result:kotlin-result", version.ref = "kotlin-result" }
 kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
+kotlin-result = { module = "com.michael-bull.kotlin-result:kotlin-result", version.ref = "kotlin-result" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation-jvm", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json-jvm", version.ref = "ktor" }
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
 ktor-server-cors = { module = "io.ktor:ktor-server-cors-jvm", version.ref = "ktor" }
-ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages-jvm", version.ref = "ktor" }
-ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
-ktor-server-swagger = { module = "io.ktor:ktor-server-swagger-jvm", version.ref = "ktor" }
 ktor-server-di = { module = "io.ktor:ktor-server-di-jvm", version.ref = "ktor" }
+ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
+ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages-jvm", version.ref = "ktor" }
+ktor-server-swagger = { module = "io.ktor:ktor-server-swagger-jvm", version.ref = "ktor" }
+ktor-server-test-host = { module = "io.ktor:ktor-server-test-host-jvm", version.ref = "ktor" }
 logback = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 postgres = { module = "org.postgresql:postgresql", version.ref = "postgres" }
 testcontainers-postgresql = { module = "org.testcontainers:testcontainers-postgresql", version.ref = "test-containers" }
@@ -50,12 +54,11 @@ exposed = [
     "exposed-dao",
     "exposed-java-time",
     "exposed-jdbc",
-    "exposed-json"
+    "exposed-json",
 ]
 kotest = [
     "kotest-assertions",
     "kotest-engine",
-    "kotest-runner",
     "kotest-runner",
 ]
 ktor = [
@@ -63,10 +66,10 @@ ktor = [
     "ktor-server-content-negotiation",
     "ktor-server-core",
     "ktor-server-cors",
-    "ktor-server-status-pages",
+    "ktor-server-di",
     "ktor-server-netty",
+    "ktor-server-status-pages",
     "ktor-server-swagger",
-    "ktor-server-di"
 ]
 
 [plugins]
