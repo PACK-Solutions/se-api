@@ -33,16 +33,19 @@ object ConnaissanceClientTable : Table("connaissance_client") {
 
     init {
         check("vigilance_required_for_ppe_and_proche_ppe") {
-            ((statutPPE.isNull()) and (statutProchePPE.isNull())) or
-                (vigilance.isNotNull())
+            ((statutPPE.isNull()) and (statutProchePPE.isNull())) or (vigilance.isNotNull())
         }
     }
 }
 
 @Suppress("MagicNumber")
-object HistoriqueModificationConnaissanceClientTable : Table("historique_modification_connaissance_client") {
+object ConnaissanceClientHistoriqueTable : Table("connaissance_client_historique") {
     val id = uuid("id").uniqueIndex()
-    val personId = reference("id_personne", ConnaissanceClientTable.personId)
+    val personId = reference(
+        name = "id_personne",
+        refColumn = ConnaissanceClientTable.personId,
+        fkName = "fk_connaissance_client_historique_id_personne"
+    )
     val auditUser = varchar("audit_user", length = 100)
     val auditType = enumerationByName<TypeOperationSer>("audit_type", 30)
     val auditDate = varchar("audit_date", length = 100)

@@ -1,8 +1,5 @@
 package com.ps.personne.problem
 
-/**
- * Centralized list of business error codes used in Problem Details.
- */
 object ErrorCodes {
     const val INTERNAL_SERVER_ERROR = "internal_server_error"
     const val BAD_REQUEST = "bad_request"

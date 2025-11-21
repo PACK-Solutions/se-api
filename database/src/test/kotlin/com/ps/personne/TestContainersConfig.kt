@@ -8,51 +8,65 @@ import com.ps.personne.model.AjoutStatutPPE
 import com.ps.personne.model.AjoutVigilance
 import com.ps.personne.model.SyntheseModifications
 import com.ps.personne.repository.ExposedConnaissanceClientRepository
-import com.ps.personne.tables.ConnaissanceClientTable
-import com.ps.personne.tables.HistoriqueModificationConnaissanceClientTable
-import io.kotest.core.extensions.install
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.extensions.testcontainers.JdbcDatabaseContainerExtension
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.testcontainers.postgresql.PostgreSQLContainer
 
-class TestContainersConfig : BehaviorSpec() {
-    val pg = PostgreSQLContainer("postgres:18")
+class TestContainersConfig : BehaviorSpec(
+    {
+        val pg = PostgreSQLContainer("postgres:18")
 
-    val ds = install(JdbcDatabaseContainerExtension(pg))
+        lateinit var ds: HikariDataSource
 
-    val database = Database.connect(datasource = ds)
+        beforeSpec {
+            // Start container
+            pg.start()
 
-    val flyway: Flyway? =
-        Flyway
-            .configure()
-            .dataSource(ds)
-            .baselineOnMigrate(true) // Used when migrating an existing database for the first time
-            .load()
+            // Build a Hikari datasource from the running container
+            ds = HikariDataSource(
+                HikariConfig().apply {
+                    jdbcUrl = pg.jdbcUrl
+                    username = pg.username
+                    password = pg.password
+                    driverClassName = "org.postgresql.Driver"
+                },
+            )
 
-    init {
-        transaction(database) {
-            flyway?.migrate()
+            // Connect Exposed and run Flyway migrations
+            Database.connect(datasource = ds)
+            val flyway =
+                Flyway
+                    .configure()
+                    .dataSource(ds)
+                    .baselineOnMigrate(true) // Used when migrating an existing database for the first time
+                    .load()
+
+            transaction {
+                flyway.migrate()
+            }
         }
-        transaction {
-            addLogger(StdOutSqlLogger)
-            SchemaUtils.create(ConnaissanceClientTable, HistoriqueModificationConnaissanceClientTable)
+
+        afterSpec {
+            // Cleanup resources
+            try {
+                ds.close()
+            } finally {
+                pg.stop()
+            }
         }
+
         context("Enregistrer une connaissance client en DB") {
             val repository = ExposedConnaissanceClientRepository()
             given("Une connaissance client") {
                 val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClient()
-
                 `when`("on enregistre la connaissance") {
                     val resultat = repository.sauvegarder(connaissanceClient)
-
                     then("on recupère l'id de la personne") {
                         resultat shouldBeSuccess {
                             it shouldBe connaissanceClient.idPersonne
@@ -61,6 +75,7 @@ class TestContainersConfig : BehaviorSpec() {
                 }
             }
         }
+
         context("Récupérer une connaissance client en DB") {
             val repository = ExposedConnaissanceClientRepository()
             given("Une base de données vide") {
@@ -119,5 +134,5 @@ class TestContainersConfig : BehaviorSpec() {
                 }
             }
         }
-    }
-}
+    },
+)

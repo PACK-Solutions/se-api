@@ -45,7 +45,7 @@ class ExposedConnaissanceClientRepository : ConnaissanceClientRepository, Modifi
         }
 
         connaissanceClient.modification?.toSer()?.let { modificationSer ->
-            HistoriqueModificationConnaissanceClientTable.insert {
+            ConnaissanceClientHistoriqueTable.insert {
                 it[id] = UUID.randomUUID()
                 it[personId] = connaissanceClient.idPersonne.id
                 it[auditUser] = modificationSer.traceAudit.user
@@ -60,8 +60,8 @@ class ExposedConnaissanceClientRepository : ConnaissanceClientRepository, Modifi
 
     override fun recupererHistorique(idPersonne: IdPersonne) = transaction {
         var entreesHistorique = emptyList<SyntheseModifications>()
-        HistoriqueModificationConnaissanceClientTable.selectAll().where {
-            HistoriqueModificationConnaissanceClientTable.personId eq idPersonne.id
+        ConnaissanceClientHistoriqueTable.selectAll().where {
+            ConnaissanceClientHistoriqueTable.personId eq idPersonne.id
         }
             .forEach {
                 val syntheseModificationSer = SyntheseModificationSer(

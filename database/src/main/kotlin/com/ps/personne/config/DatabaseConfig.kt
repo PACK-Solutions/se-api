@@ -8,9 +8,6 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.serialization.Serializable
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 
 private val logger = KotlinLogging.logger {}
@@ -56,12 +53,6 @@ data class DatabaseConfig(
 
         transaction {
             flyway.migrate()
-        }
-
-        // Create tables if they don't exist
-        transaction {
-            addLogger(StdOutSqlLogger)
-            SchemaUtils.create(ConnaissanceClientTable, HistoriqueModificationConnaissanceClientTable)
         }
     }
 }

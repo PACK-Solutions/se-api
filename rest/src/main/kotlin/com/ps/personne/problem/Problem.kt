@@ -171,10 +171,10 @@ class Problem(
         }
 
         /**
-         * Creates a problem detail with an HTTP status code and a business code.
+         * Creates a problem detail with an HTTP status code and an error code associated with this problem.
          * The type will remain 'about:blank' according to RFC 9457.
          * @param httpStatusCode HTTP code of the problem
-         * @param code business or domain code associated with this problem
+         * @param code error code associated with this problem
          */
         fun of(
             httpStatusCode: HttpStatusCode,

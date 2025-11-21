@@ -20,8 +20,8 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import java.time.Instant
 
-internal const val MESSAGE_HEADER_MANQUANT = "%s header manquant"
-internal const val MESSAGE_PARAMETRE_MANQUANT = "%s parameter manquant"
+internal const val MESSAGE_HEADER_MANQUANT = "le header % est manquant"
+internal const val MESSAGE_PARAMETRE_MANQUANT = "le query parameter % est manquant"
 
 /**
  * Configure connaissance client check routes
