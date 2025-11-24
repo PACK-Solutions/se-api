@@ -18,3 +18,4 @@ include("assembly")
 include("rest")
 // driven actors
 include("database")
+include("integration-tests")
