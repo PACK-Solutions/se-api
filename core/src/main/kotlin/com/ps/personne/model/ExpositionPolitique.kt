@@ -1,7 +1,6 @@
 package com.ps.personne.model
 
 import java.time.LocalDate
-import java.util.*
 
 data class Mandat(val fonction: FonctionPPE, val dateFin: LocalDate?)
 
@@ -16,9 +15,6 @@ sealed interface ExpositionPolitique {
         val mandat: Mandat,
     ) : ExpositionPolitique
 }
-
-@JvmInline
-value class IdExpositionPolitique(val uuid: UUID)
 
 enum class FonctionPPE {
     CHEF_ETAT,
