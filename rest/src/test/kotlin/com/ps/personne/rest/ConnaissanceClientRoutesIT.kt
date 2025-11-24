@@ -50,6 +50,15 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
         }
 
         given("Étant donné une API Connaissance Client reliée à une base Postgres") {
+
+            val defaultPayload = ConnaissanceClientDto(
+                statutPPE = null,
+                statutProchePPE = null,
+                vigilance = VigilanceDto(
+                    vigilanceRenforcee = false,
+                ),
+            )
+
             val payload = ConnaissanceClientDto(
                 statutPPE = PpeDto(
                     mandat = MandatDto(
@@ -74,6 +83,18 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
                 application { personne() }
 
                 val client = createClient { install(ContentNegotiation) { json() } }
+
+                `when`("je crée la connaissance client pour une personne avec les valeurs par défaut") {
+                    then("alors la création réussit (201 Created)") {
+                        val id = 12345
+                        val postResponse = client.post("/personnes/$id/connaissance-client") {
+                            header("login", "john.doe")
+                            contentType(ContentType.Application.Json)
+                            setBody(defaultPayload)
+                        }
+                        postResponse.status shouldBe HttpStatusCode.Created
+                    }
+                }
 
                 `when`("je crée la connaissance client pour une personne") {
                     then("alors la création réussit (201 Created)") {

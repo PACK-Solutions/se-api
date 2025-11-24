@@ -1,9 +1,12 @@
 package com.ps.personne.model
 
 import com.github.michaelbull.result.*
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 @JvmInline
 value class IdPersonne(val id: Long)
+
+val logger = KotlinLogging.logger { }
 
 @ConsistentCopyVisibility
 data class ConnaissanceClient private constructor(
@@ -39,28 +42,35 @@ data class ConnaissanceClient private constructor(
     }
 
     fun appliquerModifications(connaissanceClient: ConnaissanceClient, traceAudit: TraceAudit): Result<ConnaissanceClient, ConnaissanceClientError> {
-        return connaissanceClient.isValide()
-            .andThen(::calculerModifications)
-            .map { modifications ->
-                stockerModifications(
-                    connaissanceClient,
-                    modifications,
-                    traceAudit,
-                )
+        return connaissanceClient.isValide().andThen(::calculerModifications).map { modifications ->
+            stockerModifications(
+                connaissanceClient,
+                modifications,
+                traceAudit,
+            )
+        }
+            .recoverIf(
+                {
+                    it is ConnaissanceClientError.AucuneModification
+                },
+            ) {
+                connaissanceClient.also {
+                    logger.warn {
+                        "Aucune modification sur la connaissance client, aucun enregistrement n'est fait. Id personne : ${connaissanceClient.idPersonne.id}"
+                    }
+                }
             }
     }
 
-    private fun isValide() =
-        when {
-            (statutPPE != null || statutProchePPE != null) && vigilance is SansVigilanceRenforcee
-            -> Err(
-                ConnaissanceClientError.VigilanceRenforceeObligatoire(
-                    "La vigilance renforcée est obligatoire pour un PPE ou un proche PPE",
-                ),
-            )
+    private fun isValide() = when {
+        (statutPPE != null || statutProchePPE != null) && vigilance is SansVigilanceRenforcee -> Err(
+            ConnaissanceClientError.VigilanceRenforceeObligatoire(
+                "La vigilance renforcée est obligatoire pour un PPE ou un proche PPE",
+            ),
+        )
 
-            else -> Ok(this)
-        }
+        else -> Ok(this)
+    }
 
     private fun comparerStatutPPE(old: ExpositionPolitique.Ppe?, new: ExpositionPolitique.Ppe?): List<ModificationConnaissanceClient> {
         val modificationsStatutPPE = mutableListOf<ModificationConnaissanceClient>()
@@ -127,14 +137,12 @@ data class ConnaissanceClient private constructor(
         return modificationsVigilance
     }
 
-    private fun calculerModifications(new: ConnaissanceClient):
-        Result<Set<ModificationConnaissanceClient>, ConnaissanceClientError> {
-        val modifications = setOf<ModificationConnaissanceClient>()
-            .plus(comparerStatutPPE(statutPPE, new.statutPPE))
-            .plus(
-                comparerStatutProchePPE(statutProchePPE, new.statutProchePPE),
-            )
-            .plus(comparerVigilance(vigilance, new.vigilance))
+    private fun calculerModifications(new: ConnaissanceClient): Result<Set<ModificationConnaissanceClient>, ConnaissanceClientError> {
+        val modifications = setOf<ModificationConnaissanceClient>().plus(
+            comparerStatutPPE(statutPPE, new.statutPPE),
+        ).plus(
+            comparerStatutProchePPE(statutProchePPE, new.statutProchePPE),
+        ).plus(comparerVigilance(vigilance, new.vigilance))
 
         return if (modifications.isEmpty()) {
             Err(

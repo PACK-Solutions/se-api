@@ -23,6 +23,10 @@ S'assurer que dans le front, si on sauve la première fois, on ne peut pas coche
 
 9 - Faire des tests d'intégration des routes
 
+10 - Pattern command pour log et passage de contexte (user, etc.)
+
+11 - Log structurée (MDC ?) ou https://ktor.io/docs/server-call-id.html#put-call-id-mdc
+
 
 
 
