@@ -1,9 +1,8 @@
-package com.ps.personne
+package com.ps.personne.database
 
 import com.github.michaelbull.result.onSuccess
 import com.ps.personne.fixtures.ConnaissanceClientFactory
 import com.ps.personne.fixtures.TraceAuditFactory
-import com.ps.personne.fixtures.shouldBeSuccess
 import com.ps.personne.model.AjoutStatutPPE
 import com.ps.personne.model.AjoutVigilance
 import com.ps.personne.model.SyntheseModifications
@@ -11,6 +10,7 @@ import com.ps.personne.repository.ExposedConnaissanceClientRepository
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import org.flywaydb.core.Flyway
@@ -18,7 +18,7 @@ import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.testcontainers.postgresql.PostgreSQLContainer
 
-class TestContainersConfig : BehaviorSpec(
+class ConnaissanceClientRepositoryIT : BehaviorSpec(
     {
         val pg = PostgreSQLContainer("postgres:18")
 
@@ -39,7 +39,7 @@ class TestContainersConfig : BehaviorSpec(
             )
 
             // Connect Exposed and run Flyway migrations
-            Database.connect(datasource = ds)
+            Database.Companion.connect(datasource = ds)
             val flyway =
                 Flyway
                     .configure()
@@ -68,9 +68,7 @@ class TestContainersConfig : BehaviorSpec(
                 `when`("on enregistre la connaissance") {
                     val resultat = repository.sauvegarder(connaissanceClient)
                     then("on recupère l'id de la personne") {
-                        resultat shouldBeSuccess {
-                            it shouldBe connaissanceClient.idPersonne
-                        }
+                        resultat shouldBe connaissanceClient.idPersonne
                     }
                 }
             }
@@ -106,9 +104,7 @@ class TestContainersConfig : BehaviorSpec(
                 `when`("on récupère un historique") {
                     val resultat = repository.recupererHistorique(idPersonne)
                     then("on obtient un historique vide") {
-                        resultat shouldBeSuccess {
-                            it.entreesHistorique shouldBe emptyList()
-                        }
+                        resultat.entreesHistorique.shouldBeEmpty()
                     }
                 }
             }
@@ -124,15 +120,13 @@ class TestContainersConfig : BehaviorSpec(
                     // TODO : Modifier factory pour passer l'id personne
                     val resultat = repository.recupererHistorique(connaissanceClientModifiee.idPersonne)
                     then("on obtient un historique contenant la liste de ses modifications") {
-                        resultat shouldBeSuccess {
-                            it.entreesHistorique shouldContain SyntheseModifications(
-                                traceAudit = traceAudit,
-                                modifications = setOf(AjoutStatutPPE, AjoutVigilance),
-                            )
-                        }
+                        resultat.entreesHistorique shouldContain SyntheseModifications(
+                            traceAudit = traceAudit,
+                            modifications = setOf(AjoutStatutPPE, AjoutVigilance),
+                        )
                     }
                 }
             }
         }
-    },
+    }
 )

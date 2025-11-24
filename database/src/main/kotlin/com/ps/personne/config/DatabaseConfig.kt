@@ -1,7 +1,5 @@
 package com.ps.personne.config
 
-import com.ps.personne.tables.ConnaissanceClientTable
-import com.ps.personne.tables.HistoriqueModificationConnaissanceClientTable
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.github.oshai.kotlinlogging.KotlinLogging

@@ -53,7 +53,7 @@ data class ConnaissanceClient private constructor(
     private fun isValide() =
         when {
             (statutPPE != null || statutProchePPE != null) && vigilance is SansVigilanceRenforcee
-                -> Err(
+            -> Err(
                 ConnaissanceClientError.VigilanceRenforceeObligatoire(
                     "La vigilance renforcée est obligatoire pour un PPE ou un proche PPE",
                 ),

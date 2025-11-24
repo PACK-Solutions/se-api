@@ -11,6 +11,8 @@ dependencies {
     testImplementation(libs.json.path.kt)
     testImplementation(libs.bundles.kotest)
     testImplementation(libs.testcontainers.postgresql)
+    // TODO even in test, we should not import assembly
+    testImplementation(project(":assembly"))
     detektPlugins(libs.detekt.formatting)
 }
 

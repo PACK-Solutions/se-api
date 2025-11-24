@@ -5,12 +5,13 @@ import com.ps.personne.mapper.toSer
 import com.ps.personne.model.*
 import com.ps.personne.ports.driven.ConnaissanceClientRepository
 import com.ps.personne.ports.driven.ModificationsConnaissanceClientRepository
+import com.ps.personne.tables.ConnaissanceClientHistoriqueTable
+import com.ps.personne.tables.ConnaissanceClientHistoriqueTable.auditDate
+import com.ps.personne.tables.ConnaissanceClientHistoriqueTable.auditType
+import com.ps.personne.tables.ConnaissanceClientHistoriqueTable.auditUser
+import com.ps.personne.tables.ConnaissanceClientHistoriqueTable.modifications
 import com.ps.personne.tables.ConnaissanceClientTable
 import com.ps.personne.tables.ConnaissanceClientTable.personId
-import com.ps.personne.tables.HistoriqueModificationConnaissanceClientTable.auditDate
-import com.ps.personne.tables.HistoriqueModificationConnaissanceClientTable.auditType
-import com.ps.personne.tables.HistoriqueModificationConnaissanceClientTable.auditUser
-import com.ps.personne.tables.HistoriqueModificationConnaissanceClientTable.modifications
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction

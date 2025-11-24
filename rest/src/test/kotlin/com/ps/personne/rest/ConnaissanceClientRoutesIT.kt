@@ -2,7 +2,8 @@ package com.ps.personne.rest
 
 import com.nfeld.jsonpathkt.kotlinx.resolvePathAsStringOrNull
 import com.nfeld.jsonpathkt.kotlinx.resolvePathOrNull
-import com.ps.personne.rest.kyc.dto.request.*
+import com.ps.personne.kyc.dto.request.*
+import com.ps.personne.personne
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
