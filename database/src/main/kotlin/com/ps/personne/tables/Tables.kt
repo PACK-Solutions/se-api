@@ -44,7 +44,7 @@ object ConnaissanceClientHistoriqueTable : Table("connaissance_client_historique
     val personId = reference(
         name = "id_personne",
         refColumn = ConnaissanceClientTable.personId,
-        fkName = "fk_connaissance_client_historique_id_personne"
+        fkName = "fk_connaissance_client_historique_id_personne",
     )
     val auditUser = varchar("audit_user", length = 100)
     val auditType = enumerationByName<TypeOperationSer>("audit_type", 30)

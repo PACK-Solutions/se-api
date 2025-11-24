@@ -128,5 +128,5 @@ class ConnaissanceClientRepositoryIT : BehaviorSpec(
                 }
             }
         }
-    }
+    },
 )

@@ -1,6 +1,9 @@
 package com.ps.personne.ports.driven
 
-import com.ps.personne.model.*
+import com.ps.personne.model.ConnaissanceClient
+import com.ps.personne.model.HistoriqueModifications
+import com.ps.personne.model.IdPersonne
+import com.ps.personne.model.SyntheseModifications
 
 class InMemoryConnaissanceClientRepository : ConnaissanceClientRepository, ModificationsConnaissanceClientRepository {
 

@@ -4,7 +4,8 @@
 (ProblemDetails), avec un code pour que le front puisse l'internationaliser.
 
 2 - Mapping de la création d'une connaissance client sur le verbe http POST, mapping de la correction d'une connaissance client sur le verbe http PUT
-On va plutot mapper toutes les créations sur un PUT sur la resource personne, avec un body contenant le type de modification. (boolean CORRECTION facultatif, pas présent en création
+On va plutot mapper toutes les créations sur un PUT sur la resource personne, avec un body contenant le type de modification. (boolean CORRECTION facultatif,
+pas présent en création
 initiale ou en modification)
 Dans le cas de la création initiale, on va retourner un code 201.
 Dans le cas de l'ajout d'une entrée ou de correction, on va retourner un code 200.

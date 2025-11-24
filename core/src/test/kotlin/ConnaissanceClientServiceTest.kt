@@ -47,7 +47,7 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                         "On doit avoir les traces AjoutStatutPPE et AjoutVigilance dans l'historique de modifications",
                     ) {
                         connaissanceClientService.getHistorique(
-                            connaissanceClient.idPersonne
+                            connaissanceClient.idPersonne,
                         ).entreesHistorique.shouldContain(
                             SyntheseModifications(
                                 traceAudit = traceAudit,
