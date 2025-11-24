@@ -3,13 +3,10 @@ plugins {
 }
 
 dependencies {
-    detektPlugins(libs.detekt.formatting)
-
     implementation(project(":core"))
+
     implementation(libs.kotlinx.serialization.json)
-
     implementation(libs.kotlin.logging)
-
     implementation(libs.hikaricp)
     implementation(libs.flyway.core)
     implementation(libs.flyway.postgres)
@@ -23,4 +20,6 @@ dependencies {
     testImplementation(libs.bundles.kotest)
     testImplementation(libs.bundles.exposed)
     testImplementation(testFixtures(project(":core")))
+
+    detektPlugins(libs.detekt.formatting)
 }

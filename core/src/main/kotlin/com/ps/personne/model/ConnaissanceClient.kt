@@ -11,7 +11,7 @@ data class ConnaissanceClient private constructor(
     val statutPPE: ExpositionPolitique.Ppe?,
     val statutProchePPE: ExpositionPolitique.ProchePpe?,
     val vigilance: Vigilance,
-    val modification: SyntheseModifications? = null
+    val modification: SyntheseModifications? = null,
 ) {
     companion object {
         fun vierge(idPersonne: IdPersonne): ConnaissanceClient {
@@ -19,7 +19,7 @@ data class ConnaissanceClient private constructor(
                 idPersonne = idPersonne,
                 statutPPE = null,
                 statutProchePPE = null,
-                vigilance = SansVigilanceRenforcee
+                vigilance = SansVigilanceRenforcee,
             )
         }
 
@@ -53,7 +53,7 @@ data class ConnaissanceClient private constructor(
     private fun isValide() =
         when {
             (statutPPE != null || statutProchePPE != null) && vigilance is SansVigilanceRenforcee
-            -> Err(
+                -> Err(
                 ConnaissanceClientError.VigilanceRenforceeObligatoire(
                     "La vigilance renforcée est obligatoire pour un PPE ou un proche PPE",
                 ),
@@ -156,7 +156,7 @@ data class ConnaissanceClient private constructor(
             modification = SyntheseModifications(
                 traceAudit = traceAudit,
                 modifications = modifications,
-            )
+            ),
         )
     }
 }

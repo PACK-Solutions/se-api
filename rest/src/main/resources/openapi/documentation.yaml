@@ -1,312 +1,312 @@
 openapi: 3.0.3
 info:
-  title: API Connaissance Client
-  version: 1.0.0
-  description: |
-    Spécification OpenAPI pour gérer la Connaissance Client d'une personne.
+    title: API Connaissance Client
+    version: 1.0.0
+    description: |
+        Spécification OpenAPI pour gérer la Connaissance Client d'une personne.
 
-    Endpoints fournis:
-    - Récupérer la Connaissance Client courante pour un idPersonne
-    - Récupérer l'historique des modifications de la Connaissance Client pour un idPersonne
-    - Créer ou corriger la Connaissance Client pour un idPersonne
+        Endpoints fournis:
+        - Récupérer la Connaissance Client courante pour un idPersonne
+        - Récupérer l'historique des modifications de la Connaissance Client pour un idPersonne
+        - Créer ou corriger la Connaissance Client pour un idPersonne
 servers:
-  - url: http://localhost:8000
-    description: Environnement local de développement
+    -   url: http://localhost:8000
+        description: Environnement local de développement
 paths:
-  /personnes/{idPersonne}/connaissance-client:
-    get:
-      summary: Récupérer la Connaissance Client
-      description: Retourne la Connaissance Client courante d'une personne.
-      operationId: getConnaissanceClient
-      parameters:
-        - name: idPersonne
-          in: path
-          required: true
-          description: Identifiant de la personne
-          schema:
-            $ref: '#/components/schemas/IdPersonne'
-      responses:
-        '200':
-          description: Connaissance Client trouvée
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConnaissanceClientDto'
-        '400':
-          description: Requête invalide (paramètre de chemin manquant ou invalide)
-        '500':
-          description: Erreur interne du serveur
-    post:
-      summary: Créer ou mettre à jour la Connaissance Client
-      description: Crée ou met à jour la Connaissance Client de la personne (nouvelle entrée d'historique).
-      operationId: createOrUpdateConnaissanceClient
-      parameters:
-        - name: idPersonne
-          in: path
-          required: true
-          description: Identifiant de la personne
-          schema:
-            $ref: '#/components/schemas/IdPersonne'
-        - name: login
-          in: header
-          required: true
-          description: Identifiant de l'utilisateur effectuant l'opération
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ConnaissanceClientDto'
-            examples:
-              sansVigilance:
-                summary: Client standard (sans vigilance renforcée)
-                value:
-                  statutPPE: null
-                  statutProchePPE: null
-                  vigilance:
-                    vigilanceRenforcee: false
-              ppe:
-                summary: Client PPE
-                value:
-                  statutPPE:
-                    mandat:
-                      fonction: MEMBRE_GOUVERNEMENT
-                      dateFin: null
-                  statutProchePPE: null
-                  vigilance:
-                    vigilanceRenforcee: true
-                    motifs: [DEMANDE_ASSUREUR]
-              prochePpe:
-                summary: Proche de PPE
-                value:
-                  statutPPE: null
-                  statutProchePPE:
-                    lienParente: ENFANT
-                    mandat:
-                      fonction: MEMBRE_PARLEMENT
-                      dateFin: '2024-12-31'
-                  vigilance:
-                    vigilanceRenforcee: true
-                    motifs: [MONTANT_ELEVE]
-      responses:
-        '201':
-          description: Connaissance Client créée ou mise à jour
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConnaissanceClientDto'
-        '400':
-          description: Requête invalide (paramètre de chemin ou en-tête login manquant)
-        '500':
-          description: Erreur interne du serveur
-    put:
-      summary: Corriger la Connaissance Client
-      description: Corrige la Connaissance Client de la personne (nouvelle entrée d'historique, type opération CORRECTION).
-      operationId: correctConnaissanceClient
-      parameters:
-        - name: idPersonne
-          in: path
-          required: true
-          description: Identifiant de la personne
-          schema:
-            $ref: '#/components/schemas/IdPersonne'
-        - name: login
-          in: header
-          required: true
-          description: Identifiant de l'utilisateur effectuant l'opération
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/ConnaissanceClientDto'
-      responses:
-        '201':
-          description: Connaissance Client corrigée
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConnaissanceClientDto'
-        '400':
-          description: Requête invalide (paramètre de chemin ou en-tête login manquant)
-        '500':
-          description: Erreur interne du serveur
-  /personnes/{idPersonne}/historique-connaissance-client:
-    get:
-      summary: Récupérer l'historique des modifications
-      description: Retourne l'historique des modifications de la Connaissance Client d'une personne.
-      operationId: getHistoriqueConnaissanceClient
-      parameters:
-        - name: idPersonne
-          in: path
-          required: true
-          description: Identifiant de la personne
-          schema:
-            $ref: '#/components/schemas/IdPersonne'
-      responses:
-        '200':
-          description: Historique récupéré
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HistoriqueModificationDto'
-        '400':
-          description: Requête invalide (paramètre de chemin manquant ou invalide)
-        '500':
-          description: Erreur interne du serveur
+    /personnes/{idPersonne}/connaissance-client:
+        get:
+            summary: Récupérer la Connaissance Client
+            description: Retourne la Connaissance Client courante d'une personne.
+            operationId: getConnaissanceClient
+            parameters:
+                -   name: idPersonne
+                    in: path
+                    required: true
+                    description: Identifiant de la personne
+                    schema:
+                        $ref: '#/components/schemas/IdPersonne'
+            responses:
+                '200':
+                    description: Connaissance Client trouvée
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ConnaissanceClientDto'
+                '400':
+                    description: Requête invalide (paramètre de chemin manquant ou invalide)
+                '500':
+                    description: Erreur interne du serveur
+        post:
+            summary: Créer ou mettre à jour la Connaissance Client
+            description: Crée ou met à jour la Connaissance Client de la personne (nouvelle entrée d'historique).
+            operationId: createOrUpdateConnaissanceClient
+            parameters:
+                -   name: idPersonne
+                    in: path
+                    required: true
+                    description: Identifiant de la personne
+                    schema:
+                        $ref: '#/components/schemas/IdPersonne'
+                -   name: login
+                    in: header
+                    required: true
+                    description: Identifiant de l'utilisateur effectuant l'opération
+                    schema:
+                        type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ConnaissanceClientDto'
+                        examples:
+                            sansVigilance:
+                                summary: Client standard (sans vigilance renforcée)
+                                value:
+                                    statutPPE: null
+                                    statutProchePPE: null
+                                    vigilance:
+                                        vigilanceRenforcee: false
+                            ppe:
+                                summary: Client PPE
+                                value:
+                                    statutPPE:
+                                        mandat:
+                                            fonction: MEMBRE_GOUVERNEMENT
+                                            dateFin: null
+                                    statutProchePPE: null
+                                    vigilance:
+                                        vigilanceRenforcee: true
+                                        motifs: [ DEMANDE_ASSUREUR ]
+                            prochePpe:
+                                summary: Proche de PPE
+                                value:
+                                    statutPPE: null
+                                    statutProchePPE:
+                                        lienParente: ENFANT
+                                        mandat:
+                                            fonction: MEMBRE_PARLEMENT
+                                            dateFin: '2024-12-31'
+                                    vigilance:
+                                        vigilanceRenforcee: true
+                                        motifs: [ MONTANT_ELEVE ]
+            responses:
+                '201':
+                    description: Connaissance Client créée ou mise à jour
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ConnaissanceClientDto'
+                '400':
+                    description: Requête invalide (paramètre de chemin ou en-tête login manquant)
+                '500':
+                    description: Erreur interne du serveur
+        put:
+            summary: Corriger la Connaissance Client
+            description: Corrige la Connaissance Client de la personne (nouvelle entrée d'historique, type opération CORRECTION).
+            operationId: correctConnaissanceClient
+            parameters:
+                -   name: idPersonne
+                    in: path
+                    required: true
+                    description: Identifiant de la personne
+                    schema:
+                        $ref: '#/components/schemas/IdPersonne'
+                -   name: login
+                    in: header
+                    required: true
+                    description: Identifiant de l'utilisateur effectuant l'opération
+                    schema:
+                        type: string
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/ConnaissanceClientDto'
+            responses:
+                '201':
+                    description: Connaissance Client corrigée
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/ConnaissanceClientDto'
+                '400':
+                    description: Requête invalide (paramètre de chemin ou en-tête login manquant)
+                '500':
+                    description: Erreur interne du serveur
+    /personnes/{idPersonne}/historique-connaissance-client:
+        get:
+            summary: Récupérer l'historique des modifications
+            description: Retourne l'historique des modifications de la Connaissance Client d'une personne.
+            operationId: getHistoriqueConnaissanceClient
+            parameters:
+                -   name: idPersonne
+                    in: path
+                    required: true
+                    description: Identifiant de la personne
+                    schema:
+                        $ref: '#/components/schemas/IdPersonne'
+            responses:
+                '200':
+                    description: Historique récupéré
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/HistoriqueModificationDto'
+                '400':
+                    description: Requête invalide (paramètre de chemin manquant ou invalide)
+                '500':
+                    description: Erreur interne du serveur
 components:
-  schemas:
-    IdPersonne:
-      type: integer
-      format: int64
-      example: 12345
-    FonctionPPE:
-      type: string
-      description: Fonction occupée dans le cadre d'un mandat PPE
-      enum:
-        - CHEF_ETAT
-        - CHEF_GOUVERNEMENT
-        - MEMBRE_GOUVERNEMENT
-        - MEMBRE_PARLEMENT
-        - DIRIGEANT_PARTI
-        - MEMBRE_COUR_SUPREME
-        - MEMBRE_COUR_COMPTES
-        - DIRIGEANT_BANQUE_CENTRALE
-        - AMBASSADEUR
-        - OFFICIER_GENERAL
-        - DIRIGEANT_ENTREPRISE_PUBLIQUE
-    LienParente:
-      type: string
-      description: Lien de parenté avec une PPE
-      enum:
-        - CONJOINT
-        - ENFANT
-        - CONJOINT_ENFANT
-        - PARENT
-    MotifVigilance:
-      type: string
-      description: Motif justifiant la vigilance renforcée
-      enum:
-        - AGE_AVANCE
-        - DEMANDE_ASSUREUR
-        - MONTANT_ELEVE
-        - OPERATION_COMPLEXE
-        - SANS_JUSTIFICATION
-    MandatDto:
-      type: object
-      description: Mandat politique et éventuelle date de fin
-      properties:
-        fonction:
-          $ref: '#/components/schemas/FonctionPPE'
-        dateFin:
-          type: string
-          format: date
-          nullable: true
-      required: [fonction]
-      additionalProperties: false
-    PpeDto:
-      type: object
-      description: Statut de personne politiquement exposée (PPE)
-      properties:
-        mandat:
-          $ref: '#/components/schemas/MandatDto'
-      required: [mandat]
-      additionalProperties: false
-    ProchePpeDto:
-      type: object
-      description: Statut de proche d'une personne politiquement exposée
-      properties:
-        lienParente:
-          $ref: '#/components/schemas/LienParente'
-        mandat:
-          $ref: '#/components/schemas/MandatDto'
-      required: [lienParente, mandat]
-      additionalProperties: false
-    VigilanceDto:
-      type: object
-      description: Niveau de vigilance appliqué
-      properties:
-        vigilanceRenforcee:
-          type: boolean
-        motifs:
-          type: array
-          items:
-            $ref: '#/components/schemas/MotifVigilance'
-          description: Liste des motifs en cas de vigilance renforcée
-          nullable: true
-      required: [vigilanceRenforcee]
-      additionalProperties: false
-    ConnaissanceClientDto:
-      type: object
-      description: Représentation de la Connaissance Client exposée par l'API
-      properties:
-        statutPPE:
-          allOf:
-            - $ref: '#/components/schemas/PpeDto'
-          nullable: true
-        statutProchePPE:
-          allOf:
-            - $ref: '#/components/schemas/ProchePpeDto'
-          nullable: true
-        vigilance:
-          $ref: '#/components/schemas/VigilanceDto'
-      required: [vigilance]
-      additionalProperties: false
-    HistoriqueModificationDto:
-      type: object
-      description: Historique synthétique des modifications de la Connaissance Client
-      properties:
-        idPersonne:
-          $ref: '#/components/schemas/IdPersonne'
-        entreesHistorique:
-          type: array
-          items:
-            $ref: '#/components/schemas/SyntheseModificationDto'
-      required: [idPersonne, entreesHistorique]
-    SyntheseModificationDto:
-      type: object
-      description: Entrée d'historique contenant la trace et les modifications réalisées
-      properties:
-        traceAudit:
-          $ref: '#/components/schemas/TraceAuditDto'
-        modifications:
-          type: array
-          uniqueItems: true
-          items:
-            $ref: '#/components/schemas/ModificationDto'
-          description: Liste des modifications
-      required: [traceAudit, modifications]
-      additionalProperties: false
-    ModificationDto:
-      type: object
-      description: Détail d'une modification effectuée
-      properties:
-        modification:
-          type: string
-          description: Type de modification
-        motifsVigilance:
-          type: array
-          uniqueItems: true
-          items:
-            $ref: '#/components/schemas/MotifVigilance'
-          description: Motifs associés en cas d'ajout ou modification de vigilance
-      required: [modification]
-      additionalProperties: false
-    TraceAuditDto:
-      type: object
-      description: Trace audit d'une opération
-      properties:
-        date:
-          type: string
-          format: date-time
-        user:
-          type: string
-        typeOperation:
-          type: string
-          enum: [MODIFICATION, CORRECTION]
-      required: [date, user, typeOperation]
-      additionalProperties: false
+    schemas:
+        IdPersonne:
+            type: integer
+            format: int64
+            example: 12345
+        FonctionPPE:
+            type: string
+            description: Fonction occupée dans le cadre d'un mandat PPE
+            enum:
+                - CHEF_ETAT
+                - CHEF_GOUVERNEMENT
+                - MEMBRE_GOUVERNEMENT
+                - MEMBRE_PARLEMENT
+                - DIRIGEANT_PARTI
+                - MEMBRE_COUR_SUPREME
+                - MEMBRE_COUR_COMPTES
+                - DIRIGEANT_BANQUE_CENTRALE
+                - AMBASSADEUR
+                - OFFICIER_GENERAL
+                - DIRIGEANT_ENTREPRISE_PUBLIQUE
+        LienParente:
+            type: string
+            description: Lien de parenté avec une PPE
+            enum:
+                - CONJOINT
+                - ENFANT
+                - CONJOINT_ENFANT
+                - PARENT
+        MotifVigilance:
+            type: string
+            description: Motif justifiant la vigilance renforcée
+            enum:
+                - AGE_AVANCE
+                - DEMANDE_ASSUREUR
+                - MONTANT_ELEVE
+                - OPERATION_COMPLEXE
+                - SANS_JUSTIFICATION
+        MandatDto:
+            type: object
+            description: Mandat politique et éventuelle date de fin
+            properties:
+                fonction:
+                    $ref: '#/components/schemas/FonctionPPE'
+                dateFin:
+                    type: string
+                    format: date
+                    nullable: true
+            required: [ fonction ]
+            additionalProperties: false
+        PpeDto:
+            type: object
+            description: Statut de personne politiquement exposée (PPE)
+            properties:
+                mandat:
+                    $ref: '#/components/schemas/MandatDto'
+            required: [ mandat ]
+            additionalProperties: false
+        ProchePpeDto:
+            type: object
+            description: Statut de proche d'une personne politiquement exposée
+            properties:
+                lienParente:
+                    $ref: '#/components/schemas/LienParente'
+                mandat:
+                    $ref: '#/components/schemas/MandatDto'
+            required: [ lienParente, mandat ]
+            additionalProperties: false
+        VigilanceDto:
+            type: object
+            description: Niveau de vigilance appliqué
+            properties:
+                vigilanceRenforcee:
+                    type: boolean
+                motifs:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/MotifVigilance'
+                    description: Liste des motifs en cas de vigilance renforcée
+                    nullable: true
+            required: [ vigilanceRenforcee ]
+            additionalProperties: false
+        ConnaissanceClientDto:
+            type: object
+            description: Représentation de la Connaissance Client exposée par l'API
+            properties:
+                statutPPE:
+                    allOf:
+                        -   $ref: '#/components/schemas/PpeDto'
+                    nullable: true
+                statutProchePPE:
+                    allOf:
+                        -   $ref: '#/components/schemas/ProchePpeDto'
+                    nullable: true
+                vigilance:
+                    $ref: '#/components/schemas/VigilanceDto'
+            required: [ vigilance ]
+            additionalProperties: false
+        HistoriqueModificationDto:
+            type: object
+            description: Historique synthétique des modifications de la Connaissance Client
+            properties:
+                idPersonne:
+                    $ref: '#/components/schemas/IdPersonne'
+                entreesHistorique:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/SyntheseModificationDto'
+            required: [ idPersonne, entreesHistorique ]
+        SyntheseModificationDto:
+            type: object
+            description: Entrée d'historique contenant la trace et les modifications réalisées
+            properties:
+                traceAudit:
+                    $ref: '#/components/schemas/TraceAuditDto'
+                modifications:
+                    type: array
+                    uniqueItems: true
+                    items:
+                        $ref: '#/components/schemas/ModificationDto'
+                    description: Liste des modifications
+            required: [ traceAudit, modifications ]
+            additionalProperties: false
+        ModificationDto:
+            type: object
+            description: Détail d'une modification effectuée
+            properties:
+                modification:
+                    type: string
+                    description: Type de modification
+                motifsVigilance:
+                    type: array
+                    uniqueItems: true
+                    items:
+                        $ref: '#/components/schemas/MotifVigilance'
+                    description: Motifs associés en cas d'ajout ou modification de vigilance
+            required: [ modification ]
+            additionalProperties: false
+        TraceAuditDto:
+            type: object
+            description: Trace audit d'une opération
+            properties:
+                date:
+                    type: string
+                    format: date-time
+                user:
+                    type: string
+                typeOperation:
+                    type: string
+                    enum: [ MODIFICATION, CORRECTION ]
+            required: [ date, user, typeOperation ]
+            additionalProperties: false

@@ -1,6 +1,9 @@
 package com.ps.personne.fixtures
 
-import com.ps.personne.model.*
+import com.ps.personne.model.ExpositionPolitique
+import com.ps.personne.model.FonctionPPE
+import com.ps.personne.model.LienParente
+import com.ps.personne.model.Mandat
 
 object ExpositionPolitiqueFactory {
 

@@ -19,7 +19,7 @@ data class ModificationMotifVigilance(val motifs: List<MotifVigilance>) : Modifi
 
 data class SyntheseModifications(
     val traceAudit: TraceAudit,
-    val modifications: Set<ModificationConnaissanceClient>
+    val modifications: Set<ModificationConnaissanceClient>,
 )
 
 data class HistoriqueModifications(
