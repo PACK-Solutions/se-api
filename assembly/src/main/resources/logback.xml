@@ -9,4 +9,5 @@
     </root>
     <logger name="io.netty" level="ERROR"/>
     <logger name="Exposed" level="INFO"/>
+    <logger name="io.ktor.server.plugins.calllogging" level="INFO"/>
 </configuration>
