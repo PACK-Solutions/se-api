@@ -1,12 +1,9 @@
 package com.ps.personne.model
 
 import com.github.michaelbull.result.*
-import io.github.oshai.kotlinlogging.KotlinLogging
 
 @JvmInline
 value class IdPersonne(val id: Long)
-
-val logger = KotlinLogging.logger { }
 
 @ConsistentCopyVisibility
 data class ConnaissanceClient private constructor(
@@ -49,17 +46,6 @@ data class ConnaissanceClient private constructor(
                 traceAudit,
             )
         }
-            .recoverIf(
-                {
-                    it is ConnaissanceClientError.AucuneModification
-                },
-            ) {
-                connaissanceClient.also {
-                    logger.warn {
-                        "Aucune modification sur la connaissance client, aucun enregistrement n'est fait. Id personne : ${connaissanceClient.idPersonne.id}"
-                    }
-                }
-            }
     }
 
     private fun isValide() = when {

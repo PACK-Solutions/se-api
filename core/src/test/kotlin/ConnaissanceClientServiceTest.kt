@@ -140,12 +140,12 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
 
                 `when`("On enregistre la même connaissance client") {
                     val traceAudit = TraceAuditFactory.creerTraceAuditModification()
-                    val connaissanceClient = connaissanceClientService.sauvegarderEtHistoriserModification(
+                    val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
                         connaissanceClient,
                         traceAudit,
                     )
-                    then("On obtient une erreur de type AucuneModification") {
-                        connaissanceClient.shouldBeFailureOf<ConnaissanceClientError.AucuneModification>()
+                    then("On obtient l'id personne en retour") {
+                        resultat.shouldBeSuccess { it shouldBe connaissanceClient.idPersonne }
                     }
                 }
             }

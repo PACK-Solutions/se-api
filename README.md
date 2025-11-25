@@ -44,6 +44,27 @@ Notes:
 - Kotest engine and assertions are already configured in the core module.
 - Gradle will compile with Java toolchain 21 as configured.
 
+## Running integration tests
+
+Integration tests live in the integration-tests module and are configured using Gradle’s JVM Test Suite as a separate suite named integrationTest.
+
+- Run all integration tests:
+
+```sh
+./gradlew integrationTest
+```
+
+- Run a single integration test class:
+
+```sh
+./gradlew :integration-tests:integrationTest --tests "com.ps.personne.database.ConnaissanceClientRepositoryIT"
+```
+
+Notes:
+
+- Testcontainers is used for external dependencies (e.g., PostgreSQL).
+- You only need Docker running; containers and images are managed automatically by the tests.
+
 ## Static analysis (Detekt)
 
 This project uses Detekt with a shared configuration file at detekt.yml and the formatting plugin to enforce and auto-correct many style rules.
