@@ -155,8 +155,8 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                         connaissanceClient,
                         traceAudit,
                     )
-                    then("On obtient l'id personne en retour") {
-                        resultat.shouldBeSuccess { it shouldBe connaissanceClient.idPersonne }
+                    then("On obtient une erreur AucuneModification") {
+                        resultat.shouldBeFailureOf<ConnaissanceClientError.AucuneModification>()
                     }
                 }
             }

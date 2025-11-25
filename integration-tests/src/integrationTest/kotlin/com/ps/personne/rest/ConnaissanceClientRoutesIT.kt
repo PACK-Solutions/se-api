@@ -86,7 +86,7 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
                 val client = createClient { install(ContentNegotiation) { json() } }
 
                 `when`("je crée la connaissance client pour une personne avec les valeurs par défaut") {
-                    then("alors la création réussit (201 Created)") {
+                    then("alors la création réussit avec 304 Not Modified") {
                         val id = 12345
                         val postResponse = client.post("/personnes/$id/connaissance-client") {
                             header("login", "john.doe")
@@ -94,7 +94,7 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
                             contentType(ContentType.Application.Json)
                             setBody(defaultPayload)
                         }
-                        postResponse.status shouldBe HttpStatusCode.Created
+                        postResponse.status shouldBe HttpStatusCode.NotModified
                     }
                 }
 

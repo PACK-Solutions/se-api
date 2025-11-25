@@ -7,14 +7,12 @@ import com.ps.personne.http.tenantId
 import com.ps.personne.kyc.dto.request.ConnaissanceClientDto
 import com.ps.personne.kyc.dto.request.toDto
 import com.ps.personne.kyc.dto.response.toDto
-import com.ps.personne.model.IdPersonne
-import com.ps.personne.model.TraceAudit
-import com.ps.personne.model.TypeOperation
-import com.ps.personne.model.User
+import com.ps.personne.model.*
 import com.ps.personne.ports.driving.ConnaissanceClientService
 import com.ps.personne.problem.ErrorCodes
 import com.ps.personne.problem.Problem
 import com.ps.personne.problem.respondProblem
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.request.receive
@@ -23,6 +21,8 @@ import io.ktor.server.routing.*
 import java.time.Instant
 
 internal const val MESSAGE_PARAMETRE_MANQUANT = "le query parameter %s est manquant"
+
+val logger = KotlinLogging.logger {}
 
 /**
  * Configure connaissance client check routes
@@ -84,14 +84,22 @@ private fun Routing.createConnaissanceClientRoute(connaissanceClientService: Con
             )
                 .onSuccess { call.respond(HttpStatusCode.Created, connaissanceClientDto) }
                 .onFailure {
-                    call.respondProblem(
-                        HttpStatusCode.InternalServerError,
-                        Problem.of(
-                            httpStatusCode = HttpStatusCode.InternalServerError,
-                            problemDetail = it.message,
-                            code = ErrorCodes.BAD_REQUEST,
-                        ),
-                    )
+                    when (it) {
+                        is ConnaissanceClientError.AucuneModification -> {
+                            logger.warn { "Aucune modification de la connaissance client pour l'utilisateur $login sur la personne $idPersonne" }
+                            call.respond(HttpStatusCode.NotModified)
+                        }
+
+                        is ConnaissanceClientError.VigilanceRenforceeObligatoire ->
+                            call.respondProblem(
+                                HttpStatusCode.InternalServerError,
+                                Problem.of(
+                                    httpStatusCode = HttpStatusCode.InternalServerError,
+                                    problemDetail = it.message,
+                                    code = ErrorCodes.BAD_REQUEST,
+                                ),
+                            )
+                    }
                 }
         } ?: call.respondProblem(
             HttpStatusCode.BadRequest,
