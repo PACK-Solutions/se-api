@@ -37,6 +37,10 @@ S'assurer que dans le front, si on sauve la première fois, on ne peut pas coche
 
 16 - gérer la modification initiale de l'historique
 
+17 - Sur le saveModification, si pas de modifs, retourné un 304 et le gérer côté front
+
+18 - Corriger les tests sur le front
+
 
 
 
