@@ -24,9 +24,9 @@ object CorsConfig {
             allowHeader(HttpHeaders.AcceptLanguage)
             allowHeader(HttpHeaders.AcceptEncoding)
             allowHeader(HttpHeaders.Origin)
-            allowHeader("X-Requested-With")
             // Custom app header used by routes
             allowHeader("login")
+            allowHeader("tenantId")
 
             // Permit non-simple content types like application/json
             allowNonSimpleContentTypes = true
