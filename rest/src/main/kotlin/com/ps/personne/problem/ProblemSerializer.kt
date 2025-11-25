@@ -14,7 +14,7 @@ import kotlin.reflect.full.starProjectedType
  * Serializer for the problem object
  */
 class ProblemSerializer : KSerializer<Problem> {
-    override val descriptor: SerialDescriptor = buildClassSerialDescriptor(Problem::class.simpleName ?: "Problem")
+    override val descriptor: SerialDescriptor = buildClassSerialDescriptor(Problem::class.simpleName!!)
 
     /**
      * No real deserializer implemented since it is only necessary to serialize the problem object
@@ -61,7 +61,7 @@ class ProblemSerializer : KSerializer<Problem> {
 
     private fun mapAnyToJsonElement(value: Any): JsonElement =
         if (value is Iterable<*>) {
-            JsonArray(value.map { elem -> elem?.let { mapAnyToJsonElement(it) } ?: JsonNull })
+            JsonArray(value.map { mapAnyToJsonElement(it!!) })
         } else {
             Json.encodeToJsonElement(serializer(value::class.starProjectedType), value)
         }

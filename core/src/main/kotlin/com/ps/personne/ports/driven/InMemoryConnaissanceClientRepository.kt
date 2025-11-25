@@ -30,8 +30,6 @@ class InMemoryConnaissanceClientRepository : ConnaissanceClientRepository, Modif
         return connaissanceClient.idPersonne
     }
 
-    override fun recupererHistorique(tenantId: String, idPersonne: IdPersonne): HistoriqueModifications? {
-        val entrees = historiqueModifications[idPersonne] ?: emptyList()
-        return if (entrees.isEmpty()) null else HistoriqueModifications(idPersonne, entrees)
-    }
+    override fun recupererHistorique(tenantId: String, idPersonne: IdPersonne): HistoriqueModifications =
+        HistoriqueModifications(idPersonne, historiqueModifications[idPersonne] ?: emptyList())
 }

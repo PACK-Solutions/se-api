@@ -10,7 +10,6 @@ import com.ps.personne.ports.driven.InMemoryConnaissanceClientRepository
 import com.ps.personne.services.ConnaissanceClientServiceImpl
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.collections.shouldContain
-import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
 
 class ConnaissanceClientServiceTest : BehaviorSpec(
@@ -49,12 +48,10 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                     then(
                         "On doit avoir les traces AjoutStatutPPE et AjoutVigilance dans l'historique de modifications",
                     ) {
-                        val historique = connaissanceClientService.getHistorique(
+                        connaissanceClientService.getHistorique(
                             "test",
                             connaissanceClient.idPersonne,
-                        )
-                        historique.shouldNotBeNull()
-                        historique.entreesHistorique.shouldContain(
+                        ).entreesHistorique.shouldContain(
                             SyntheseModifications(
                                 traceAudit = traceAudit,
                                 modifications = setOf(AjoutStatutPPE, AjoutVigilance),

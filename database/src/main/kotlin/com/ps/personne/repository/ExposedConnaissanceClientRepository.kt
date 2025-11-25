@@ -82,6 +82,6 @@ class ExposedConnaissanceClientRepository : ConnaissanceClientRepository, Modifi
 
                 entreesHistorique = entreesHistorique.plus(syntheseModificationSer.toDomain())
             }
-        if (entreesHistorique.isEmpty()) null else HistoriqueModifications(idPersonne, entreesHistorique)
+        HistoriqueModifications(idPersonne, entreesHistorique)
     }
 }
