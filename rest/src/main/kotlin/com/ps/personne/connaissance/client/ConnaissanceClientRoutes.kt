@@ -22,7 +22,6 @@ import io.ktor.server.response.respond
 import io.ktor.server.routing.*
 import java.time.Instant
 
-internal const val MESSAGE_HEADER_MANQUANT = "le header %s est manquant"
 internal const val MESSAGE_PARAMETRE_MANQUANT = "le query parameter %s est manquant"
 
 /**

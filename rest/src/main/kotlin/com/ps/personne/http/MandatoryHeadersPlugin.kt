@@ -18,7 +18,7 @@ val MandatoryHeadersPlugin = createApplicationPlugin(name = "MandatoryHeadersPlu
                 HttpStatusCode.BadRequest,
                 Problem.of(
                     httpStatusCode = HttpStatusCode.BadRequest,
-                    problemDetail = "le header ${HeaderNames.LOGIN} est manquant",
+                    problemDetail = String.format(MESSAGE_HEADER_MANQUANT, HeaderNames.LOGIN),
                     code = ErrorCodes.BAD_REQUEST,
                 ),
             )
@@ -30,7 +30,7 @@ val MandatoryHeadersPlugin = createApplicationPlugin(name = "MandatoryHeadersPlu
                 HttpStatusCode.BadRequest,
                 Problem.of(
                     httpStatusCode = HttpStatusCode.BadRequest,
-                    problemDetail = "le header ${HeaderNames.TENANT_ID} est manquant",
+                    problemDetail = String.format(MESSAGE_HEADER_MANQUANT, HeaderNames.TENANT_ID),
                     code = ErrorCodes.BAD_REQUEST,
                 ),
             )
@@ -52,3 +52,5 @@ object HeaderNames {
 
 val LoginAttributeKey = AttributeKey<String>(HeaderNames.LOGIN)
 val TenantIdAttributeKey = AttributeKey<String>(HeaderNames.TENANT_ID)
+
+internal const val MESSAGE_HEADER_MANQUANT = "le header %s est manquant"
