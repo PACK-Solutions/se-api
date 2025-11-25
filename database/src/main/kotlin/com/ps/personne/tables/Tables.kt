@@ -1,9 +1,9 @@
 package com.ps.personne.tables
 
-import com.ps.personne.model.AvecVigilanceRenforceeSer
-import com.ps.personne.model.ExpositionPolitiqueSer
-import com.ps.personne.model.ModificationConnaissanceClientSer
-import com.ps.personne.model.TypeOperationSer
+import com.ps.personne.model.AvecVigilanceRenforceeDto
+import com.ps.personne.model.ExpositionPolitiqueDto
+import com.ps.personne.model.ModificationConnaissanceClientDto
+import com.ps.personne.model.TypeOperationDto
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.and
@@ -15,17 +15,17 @@ val format = Json { prettyPrint = true }
 // Note: Besoin de rajouter un tenant ID (si jamais une seule DB pour l'ensemble des clients)
 object ConnaissanceClientTable : Table("connaissance_client") {
     val personId = long("id_personne").uniqueIndex()
-    val statutPPE = jsonb<ExpositionPolitiqueSer.Ppe>(
+    val statutPPE = jsonb<ExpositionPolitiqueDto.Ppe>(
         "statut_ppe",
         { value -> format.encodeToString(value) },
         { str -> format.decodeFromString(str) },
     ).nullable()
-    val statutProchePPE = jsonb<ExpositionPolitiqueSer.ProchePpe>(
+    val statutProchePPE = jsonb<ExpositionPolitiqueDto.ProchePpe>(
         "statut_proche_ppe",
         { value -> format.encodeToString(value) },
         { str -> format.decodeFromString(str) },
     ).nullable()
-    val vigilance = jsonb<AvecVigilanceRenforceeSer>(
+    val vigilance = jsonb<AvecVigilanceRenforceeDto>(
         "avec_vigilance_renforcee",
         { value -> format.encodeToString(value) },
         { str -> format.decodeFromString(str) },
@@ -47,9 +47,9 @@ object ConnaissanceClientHistoriqueTable : Table("connaissance_client_historique
         fkName = "fk_connaissance_client_historique_id_personne",
     )
     val auditUser = varchar("audit_user", length = 100)
-    val auditType = enumerationByName<TypeOperationSer>("audit_type", 30)
+    val auditType = enumerationByName<TypeOperationDto>("audit_type", 30)
     val auditDate = varchar("audit_date", length = 100)
-    val modifications = jsonb<Set<ModificationConnaissanceClientSer>>(
+    val modifications = jsonb<Set<ModificationConnaissanceClientDto>>(
         "modifications",
         { value -> format.encodeToString(value) },
         { str -> format.decodeFromString(str) },

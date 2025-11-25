@@ -1,7 +1,5 @@
 package com.ps.personne.repository
 
-import com.ps.personne.mapper.toDomain
-import com.ps.personne.mapper.toSer
 import com.ps.personne.model.*
 import com.ps.personne.ports.driven.ConnaissanceClientRepository
 import com.ps.personne.ports.driven.ModificationsConnaissanceClientRepository
@@ -38,12 +36,12 @@ class ExposedConnaissanceClientRepository : ConnaissanceClientRepository, Modifi
     override fun sauvegarder(connaissanceClient: ConnaissanceClient) = transaction {
         ConnaissanceClientTable.upsert(personId) {
             it[personId] = connaissanceClient.idPersonne.id
-            it[statutPPE] = connaissanceClient.statutPPE?.toSer()
-            it[statutProchePPE] = connaissanceClient.statutProchePPE?.toSer()
-            it[vigilance] = connaissanceClient.vigilance.toSer()
+            it[statutPPE] = connaissanceClient.statutPPE?.toDto()
+            it[statutProchePPE] = connaissanceClient.statutProchePPE?.toDto()
+            it[vigilance] = connaissanceClient.vigilance.toDto()
         }
 
-        connaissanceClient.modification?.toSer()?.let { modificationSer ->
+        connaissanceClient.modification?.toDto()?.let { modificationSer ->
             ConnaissanceClientHistoriqueTable.insert {
                 it[id] = UUID.randomUUID()
                 it[personId] = connaissanceClient.idPersonne.id
@@ -63,8 +61,8 @@ class ExposedConnaissanceClientRepository : ConnaissanceClientRepository, Modifi
             ConnaissanceClientHistoriqueTable.personId eq idPersonne.id
         }
             .forEach {
-                val syntheseModificationSer = SyntheseModificationSer(
-                    traceAudit = TraceAuditSer(
+                val syntheseModificationSer = SyntheseModificationDto(
+                    traceAudit = TraceAuditDto(
                         user = it[auditUser],
                         typeOperation = it[auditType],
                         date = it[auditDate],
