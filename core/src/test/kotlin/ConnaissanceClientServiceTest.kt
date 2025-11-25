@@ -24,6 +24,7 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                     val traceAudit = TraceAuditFactory.creerTraceAuditModification()
                     val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientPPE()
                     val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
+                        "test",
                         connaissanceClient,
                         traceAudit,
                     )
@@ -34,6 +35,7 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                     }
 
                     val nouvelleConnaissanceClient = connaissanceClientService.getConnaissanceClient(
+                        "test",
                         connaissanceClient.idPersonne,
                     )
 
@@ -47,6 +49,7 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                         "On doit avoir les traces AjoutStatutPPE et AjoutVigilance dans l'historique de modifications",
                     ) {
                         connaissanceClientService.getHistorique(
+                            "test",
                             connaissanceClient.idPersonne,
                         ).entreesHistorique.shouldContain(
                             SyntheseModifications(
@@ -61,6 +64,7 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                 val traceAudit = TraceAuditFactory.creerTraceAuditModification()
                 val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientProchePPE()
                 val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
+                    "test",
                     connaissanceClient,
                     traceAudit,
                 )
@@ -71,6 +75,7 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                 }
 
                 val nouvelleConnaissanceClient = connaissanceClientService.getConnaissanceClient(
+                    "test",
                     connaissanceClient.idPersonne,
                 )
 
@@ -85,6 +90,7 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                 val traceAudit = TraceAuditFactory.creerTraceAuditModification()
                 val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientVigilance()
                 val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
+                    "test",
                     connaissanceClient,
                     traceAudit,
                 )
@@ -96,6 +102,7 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                 }
 
                 val nouvelleConnaissanceClient = connaissanceClientService.getConnaissanceClient(
+                    "test",
                     connaissanceClient.idPersonne,
                 )
 
@@ -110,6 +117,7 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                 val traceAudit = TraceAuditFactory.creerTraceAuditModification()
                 val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientPPESansVigilance()
                 val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
+                    "test",
                     connaissanceClient,
                     traceAudit,
                 )
@@ -122,6 +130,7 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                 val traceAudit = TraceAuditFactory.creerTraceAuditModification()
                 val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientProchePPESansVigilance()
                 val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
+                    "test",
                     connaissanceClient,
                     traceAudit,
                 )
@@ -134,6 +143,7 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                 val traceAudit = TraceAuditFactory.creerTraceAuditModification()
                 val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClientComplete()
                 connaissanceClientService.sauvegarderEtHistoriserModification(
+                    "test",
                     connaissanceClient,
                     traceAudit,
                 )
@@ -141,6 +151,7 @@ class ConnaissanceClientServiceTest : BehaviorSpec(
                 `when`("On enregistre la même connaissance client") {
                     val traceAudit = TraceAuditFactory.creerTraceAuditModification()
                     val resultat = connaissanceClientService.sauvegarderEtHistoriserModification(
+                        "test",
                         connaissanceClient,
                         traceAudit,
                     )

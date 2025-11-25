@@ -22,6 +22,8 @@ class ConnaissanceClientRepositoryIT : BehaviorSpec(
     {
         val pg = PostgreSQLContainer("postgres:18")
 
+        val tenandId = "pack"
+
         lateinit var ds: HikariDataSource
 
         beforeSpec {
@@ -66,7 +68,7 @@ class ConnaissanceClientRepositoryIT : BehaviorSpec(
             given("Une connaissance client") {
                 val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClient()
                 `when`("on enregistre la connaissance") {
-                    val resultat = repository.sauvegarder(connaissanceClient)
+                    val resultat = repository.sauvegarder(tenandId, connaissanceClient)
                     then("on recupère l'id de la personne") {
                         resultat shouldBe connaissanceClient.idPersonne
                     }
@@ -79,7 +81,7 @@ class ConnaissanceClientRepositoryIT : BehaviorSpec(
             given("Une base de données vide") {
                 val idPersonne = ConnaissanceClientFactory.creerIdPersonne()
                 `when`("on lis la connaissance client") {
-                    val resultat = repository.recuperer(idPersonne)
+                    val resultat = repository.recuperer(tenandId, idPersonne)
                     then("on obtient un objet vide") {
                         resultat shouldBe null
                     }
@@ -87,9 +89,9 @@ class ConnaissanceClientRepositoryIT : BehaviorSpec(
             }
             given("Une connaissance client en DB") {
                 val connaissanceClient = ConnaissanceClientFactory.creerConnaissanceClient()
-                repository.sauvegarder(connaissanceClient)
+                repository.sauvegarder(tenandId, connaissanceClient)
                 `when`("on lis la connaissance client") {
-                    val resultat = repository.recuperer(connaissanceClient.idPersonne)
+                    val resultat = repository.recuperer(tenandId, connaissanceClient.idPersonne)
                     then("on obtient la connaissance client") {
                         resultat shouldBe connaissanceClient
                     }
@@ -102,7 +104,7 @@ class ConnaissanceClientRepositoryIT : BehaviorSpec(
             given("Une base de donnée vide") {
                 val idPersonne = ConnaissanceClientFactory.creerIdPersonne()
                 `when`("on récupère un historique") {
-                    val resultat = repository.recupererHistorique(idPersonne)
+                    val resultat = repository.recupererHistorique(tenandId, idPersonne)
                     then("on obtient un historique vide") {
                         resultat.entreesHistorique.shouldBeEmpty()
                     }
@@ -115,10 +117,10 @@ class ConnaissanceClientRepositoryIT : BehaviorSpec(
                 connaissanceClient.appliquerModifications(
                     connaissanceClientModifiee,
                     traceAudit,
-                ).onSuccess(repository::sauvegarder)
+                ).onSuccess { repository.sauvegarder(tenandId, it) }
                 `when`("on récupère son historique de modification") {
                     // TODO : Modifier factory pour passer l'id personne
-                    val resultat = repository.recupererHistorique(connaissanceClientModifiee.idPersonne)
+                    val resultat = repository.recupererHistorique(tenandId, connaissanceClientModifiee.idPersonne)
                     then("on obtient un historique contenant la liste de ses modifications") {
                         resultat.entreesHistorique shouldContain SyntheseModifications(
                             traceAudit = traceAudit,

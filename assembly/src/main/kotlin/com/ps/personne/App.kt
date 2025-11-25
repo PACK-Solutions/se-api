@@ -10,7 +10,9 @@ import com.ps.personne.config.configureConnaissanceClientService
 import com.ps.personne.connaissance.client.configureConnaissanceClientRoutes
 import com.ps.personne.health.HealthCheckService
 import com.ps.personne.health.configureHealthRoutes
+import com.ps.personne.http.MandatoryHeadersPlugin
 import io.ktor.server.application.Application
+import io.ktor.server.application.install
 import io.ktor.server.config.property
 import io.ktor.server.netty.EngineMain
 
@@ -23,6 +25,7 @@ fun Application.personne() {
     configureSwagger()
     configureSerialization()
     configureExceptionHandling()
+    install(MandatoryHeadersPlugin)
     property<DatabaseConfig>("database").apply { configureDatabases() }
     configureHealthRoutes(HealthCheckService())
     configureLogging()

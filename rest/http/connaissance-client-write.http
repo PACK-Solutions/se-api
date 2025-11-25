@@ -2,6 +2,7 @@
 POST {{baseUrl}}/personnes/{{idPersonne}}/connaissance-client
 Content-Type: application/json
 login: {{login}}
+tenantId: {{tenantId}}
 
 {
     "statutPPE": {
@@ -29,6 +30,7 @@ login: {{login}}
 PUT {{baseUrl}}/personnes/{{idPersonne}}/connaissance-client
 Content-Type: application/json
 login: {{login}}
+tenantId: {{tenantId}}
 
 {
     "statutPPE": {

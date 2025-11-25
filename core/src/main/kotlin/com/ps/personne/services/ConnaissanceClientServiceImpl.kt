@@ -18,13 +18,17 @@ class ConnaissanceClientServiceImpl(
     private val connaissanceClientRepository: ConnaissanceClientRepository,
     private val historiqueModificationsRepository: ModificationsConnaissanceClientRepository,
 ) : ConnaissanceClientService {
-    override fun getConnaissanceClient(idPersonne: IdPersonne) =
-        connaissanceClientRepository.recuperer(idPersonne)
+    override fun getConnaissanceClient(tenantId: String, idPersonne: IdPersonne) =
+        connaissanceClientRepository.recuperer(tenantId, idPersonne)
 
     override fun sauvegarderEtHistoriserModification(
+        tenantId: String,
         connaissanceClient: ConnaissanceClient,
         traceAudit: TraceAudit,
-    ) = (connaissanceClientRepository.recuperer(connaissanceClient.idPersonne) ?: ConnaissanceClient.vierge(connaissanceClient.idPersonne))
+    ) = (
+        connaissanceClientRepository.recuperer(tenantId, connaissanceClient.idPersonne)
+            ?: ConnaissanceClient.vierge(connaissanceClient.idPersonne)
+        )
         .appliquerModifications(connaissanceClient, traceAudit)
         .recoverIf(
             {
@@ -37,8 +41,8 @@ class ConnaissanceClientServiceImpl(
                 }
             }
         }
-        .map(connaissanceClientRepository::sauvegarder)
+        .map { connaissanceClientRepository.sauvegarder(tenantId, it) }
 
-    override fun getHistorique(idPersonne: IdPersonne) =
-        historiqueModificationsRepository.recupererHistorique(idPersonne)
+    override fun getHistorique(tenantId: String, idPersonne: IdPersonne) =
+        historiqueModificationsRepository.recupererHistorique(tenantId, idPersonne)
 }

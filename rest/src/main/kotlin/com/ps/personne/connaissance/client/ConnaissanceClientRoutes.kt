@@ -2,6 +2,8 @@ package com.ps.personne.connaissance.client
 
 import com.github.michaelbull.result.onFailure
 import com.github.michaelbull.result.onSuccess
+import com.ps.personne.http.login
+import com.ps.personne.http.tenantId
 import com.ps.personne.kyc.dto.request.ConnaissanceClientDto
 import com.ps.personne.kyc.dto.request.toDto
 import com.ps.personne.kyc.dto.response.toDto
@@ -40,7 +42,7 @@ private fun Routing.getHistoriqueConnaissanceClientRoute(connaissanceClientServi
         call.parameters["idPersonne"]?.let { idPersonne ->
             val idPersonne = IdPersonne(idPersonne.toLong())
 
-            connaissanceClientService.getHistorique(idPersonne)
+            connaissanceClientService.getHistorique(call.tenantId(), idPersonne)
                 .let { historiqueModifications ->
                     historiqueModifications?.toDto()?.let {
                         call.respond(HttpStatusCode.OK, it)
@@ -68,39 +70,32 @@ private fun Routing.createConnaissanceClientRoute(connaissanceClientService: Con
     post("/personnes/{idPersonne}/connaissance-client") {
         val connaissanceClientDto = call.receive<ConnaissanceClientDto>()
 
-        call.request.headers["login"]?.let { login ->
-            call.parameters["idPersonne"]?.let { idPersonne ->
-                val idPersonne = IdPersonne(idPersonne.toLong())
-                val connaissanceClient = connaissanceClientDto.toDomain(idPersonne)
+        call.parameters["idPersonne"]?.let { idPersonne ->
+            val idPersonne = IdPersonne(idPersonne.toLong())
+            val connaissanceClient = connaissanceClientDto.toDomain(idPersonne)
+            val login = call.login()
 
-                connaissanceClientService.sauvegarderEtHistoriserModification(
-                    connaissanceClient,
-                    TraceAudit(user = User(login), date = Instant.now(), TypeOperation.MODIFICATION),
-                )
-                    .onSuccess { call.respond(HttpStatusCode.Created, connaissanceClientDto) }
-                    .onFailure {
-                        call.respondProblem(
-                            HttpStatusCode.InternalServerError,
-                            Problem.of(
-                                httpStatusCode = HttpStatusCode.InternalServerError,
-                                problemDetail = it.message,
-                                code = ErrorCodes.BAD_REQUEST,
-                            ),
-                        )
-                    }
-            } ?: call.respondProblem(
-                HttpStatusCode.BadRequest,
-                Problem.of(
-                    httpStatusCode = HttpStatusCode.BadRequest,
-                    problemDetail = String.format(MESSAGE_PARAMETRE_MANQUANT, "idPersonne"),
-                    code = ErrorCodes.BAD_REQUEST,
-                ),
+            connaissanceClientService.sauvegarderEtHistoriserModification(
+                call.tenantId(),
+                connaissanceClient,
+                TraceAudit(user = User(login), date = Instant.now(), TypeOperation.MODIFICATION),
             )
+                .onSuccess { call.respond(HttpStatusCode.Created, connaissanceClientDto) }
+                .onFailure {
+                    call.respondProblem(
+                        HttpStatusCode.InternalServerError,
+                        Problem.of(
+                            httpStatusCode = HttpStatusCode.InternalServerError,
+                            problemDetail = it.message,
+                            code = ErrorCodes.BAD_REQUEST,
+                        ),
+                    )
+                }
         } ?: call.respondProblem(
             HttpStatusCode.BadRequest,
             Problem.of(
                 httpStatusCode = HttpStatusCode.BadRequest,
-                problemDetail = String.format(MESSAGE_HEADER_MANQUANT, "login"),
+                problemDetail = String.format(MESSAGE_PARAMETRE_MANQUANT, "idPersonne"),
                 code = ErrorCodes.BAD_REQUEST,
             ),
         )
@@ -111,39 +106,32 @@ private fun Routing.updateConnaissanceClientRoute(connaissanceClientService: Con
     put("/personnes/{idPersonne}/connaissance-client") {
         val connaissanceClientDto = call.receive<ConnaissanceClientDto>()
 
-        call.request.headers["login"]?.let { login ->
-            call.parameters["idPersonne"]?.let { idPersonne ->
-                val idPersonne = IdPersonne(idPersonne.toLong())
-                val connaissanceClient = connaissanceClientDto.toDomain(idPersonne)
+        call.parameters["idPersonne"]?.let { idPersonne ->
+            val idPersonne = IdPersonne(idPersonne.toLong())
+            val connaissanceClient = connaissanceClientDto.toDomain(idPersonne)
+            val login = call.login()
 
-                connaissanceClientService.sauvegarderEtHistoriserModification(
-                    connaissanceClient,
-                    TraceAudit(user = User(login), date = Instant.now(), TypeOperation.CORRECTION),
-                )
-                    .onSuccess { call.respond(HttpStatusCode.Created, connaissanceClientDto) }
-                    .onFailure {
-                        call.respondProblem(
-                            HttpStatusCode.InternalServerError,
-                            Problem.of(
-                                httpStatusCode = HttpStatusCode.InternalServerError,
-                                problemDetail = it.message,
-                                code = ErrorCodes.BAD_REQUEST,
-                            ),
-                        )
-                    }
-            } ?: call.respondProblem(
-                HttpStatusCode.BadRequest,
-                Problem.of(
-                    httpStatusCode = HttpStatusCode.BadRequest,
-                    problemDetail = String.format(MESSAGE_PARAMETRE_MANQUANT, "idPersonne"),
-                    code = ErrorCodes.BAD_REQUEST,
-                ),
+            connaissanceClientService.sauvegarderEtHistoriserModification(
+                call.tenantId(),
+                connaissanceClient,
+                TraceAudit(user = User(login), date = Instant.now(), TypeOperation.CORRECTION),
             )
+                .onSuccess { call.respond(HttpStatusCode.Created, connaissanceClientDto) }
+                .onFailure {
+                    call.respondProblem(
+                        HttpStatusCode.InternalServerError,
+                        Problem.of(
+                            httpStatusCode = HttpStatusCode.InternalServerError,
+                            problemDetail = it.message,
+                            code = ErrorCodes.BAD_REQUEST,
+                        ),
+                    )
+                }
         } ?: call.respondProblem(
             HttpStatusCode.BadRequest,
             Problem.of(
                 httpStatusCode = HttpStatusCode.BadRequest,
-                problemDetail = String.format(MESSAGE_HEADER_MANQUANT, "login"),
+                problemDetail = String.format(MESSAGE_PARAMETRE_MANQUANT, "idPersonne"),
                 code = ErrorCodes.BAD_REQUEST,
             ),
         )
@@ -155,7 +143,7 @@ private fun Routing.getConnaissanceClientRoute(connaissanceClientService: Connai
         call.parameters["idPersonne"]?.let { idPersonne ->
             val idPersonne = IdPersonne(idPersonne.toLong())
 
-            connaissanceClientService.getConnaissanceClient(idPersonne)
+            connaissanceClientService.getConnaissanceClient(call.tenantId(), idPersonne)
                 .let { connaissanceClient ->
                     connaissanceClient?.toDto()?.let {
                         call.respond(HttpStatusCode.OK, it)

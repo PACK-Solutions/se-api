@@ -10,11 +10,11 @@ class InMemoryConnaissanceClientRepository : ConnaissanceClientRepository, Modif
     val connaissanceClients = mutableMapOf<IdPersonne, ConnaissanceClient>()
     val historiqueModifications = mutableMapOf<IdPersonne, List<SyntheseModifications>>()
 
-    override fun recuperer(idPersonne: IdPersonne): ConnaissanceClient? {
+    override fun recuperer(tenantId: String, idPersonne: IdPersonne): ConnaissanceClient? {
         return connaissanceClients.getOrDefault(idPersonne, null)
     }
 
-    override fun sauvegarder(connaissanceClient: ConnaissanceClient): IdPersonne {
+    override fun sauvegarder(tenantId: String, connaissanceClient: ConnaissanceClient): IdPersonne {
         connaissanceClients[connaissanceClient.idPersonne] = ConnaissanceClient(
             idPersonne = connaissanceClient.idPersonne,
             statutPPE = connaissanceClient.statutPPE,
@@ -30,6 +30,6 @@ class InMemoryConnaissanceClientRepository : ConnaissanceClientRepository, Modif
         return connaissanceClient.idPersonne
     }
 
-    override fun recupererHistorique(idPersonne: IdPersonne): HistoriqueModifications =
+    override fun recupererHistorique(tenantId: String, idPersonne: IdPersonne): HistoriqueModifications =
         HistoriqueModifications(idPersonne, historiqueModifications[idPersonne] ?: emptyList())
 }

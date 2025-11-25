@@ -89,6 +89,7 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
                         val id = 12345
                         val postResponse = client.post("/personnes/$id/connaissance-client") {
                             header("login", "john.doe")
+                            header("tenantId", "pack")
                             contentType(ContentType.Application.Json)
                             setBody(defaultPayload)
                         }
@@ -101,6 +102,7 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
                         val id = 12345
                         val postResponse = client.post("/personnes/$id/connaissance-client") {
                             header("login", "john.doe")
+                            header("tenantId", "pack")
                             contentType(ContentType.Application.Json)
                             setBody(payload)
                         }
@@ -111,7 +113,10 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
                 `when`("je consulte la connaissance client précédemment créée") {
                     then("alors je reçois 200 OK et la vigilance renforcée est vraie") {
                         val id = 12345
-                        val getResponse = client.get("/personnes/$id/connaissance-client")
+                        val getResponse = client.get("/personnes/$id/connaissance-client") {
+                            header("tenantId", "pack")
+                            header("login", "john.doe")
+                        }
                         getResponse.status shouldBe HttpStatusCode.OK
                         val body = getResponse.bodyAsText()
                         val json = Json.parseToJsonElement(body)
@@ -127,12 +132,16 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
                         val id = 54321L
                         val postResponse = client.post("/personnes/$id/connaissance-client") {
                             header("login", "jane.doe")
+                            header("tenantId", "pack")
                             contentType(ContentType.Application.Json)
                             setBody(payload)
                         }
                         postResponse.status shouldBe HttpStatusCode.Created
 
-                        val histoResponse = client.get("/personnes/$id/historique-connaissance-client")
+                        val histoResponse = client.get("/personnes/$id/historique-connaissance-client") {
+                            header("tenantId", "pack")
+                            header("login", "jane.doe")
+                        }
                         histoResponse.status shouldBe HttpStatusCode.OK
                         val histoBody = histoResponse.bodyAsText()
                         val histoJson = Json.parseToJsonElement(histoBody)
@@ -157,7 +166,10 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
                 `when`("je consulte l'historique d'une personne inconnue") {
                     then("alors je reçois 200 OK avec une liste vide") {
                         val idInconnu = 999_888
-                        val histoResponse = client.get("/personnes/$idInconnu/historique-connaissance-client")
+                        val histoResponse = client.get("/personnes/$idInconnu/historique-connaissance-client") {
+                            header("tenantId", "pack")
+                            header("login", "anonymous")
+                        }
                         histoResponse.status shouldBe HttpStatusCode.OK
                         val histoBody = histoResponse.bodyAsText()
                         val histoJson = Json.parseToJsonElement(histoBody)
@@ -168,7 +180,10 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
 
                 `when`("je consulte la connaissance client d'une personne inconnue") {
                     then("alors je reçois 404 Not Found") {
-                        val getResponse = client.get("/personnes/999999/connaissance-client")
+                        val getResponse = client.get("/personnes/999999/connaissance-client") {
+                            header("tenantId", "pack")
+                            header("login", "anonymous")
+                        }
                         getResponse.status shouldBe HttpStatusCode.NotFound
                     }
                 }

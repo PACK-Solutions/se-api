@@ -9,6 +9,10 @@ info:
         - Récupérer la Connaissance Client courante pour un idPersonne
         - Récupérer l'historique des modifications de la Connaissance Client pour un idPersonne
         - Créer ou corriger la Connaissance Client pour un idPersonne
+
+        En-têtes HTTP obligatoires pour toutes les routes:
+        - login: identifiant de l'utilisateur effectuant l'opération. Il est utilisé pour alimenter la `TraceAudit` (journal des opérations) et tracer l'auteur de chaque modification.
+        - tenantId: identifiant du client/tenant. Il est utilisé pour le multi‑tenancy afin de restreindre toutes les lectures/écritures aux données du tenant correspondant dans les dépôts (repositories) et les tables.
 servers:
     -   url: http://localhost:8000
         description: Environnement local de développement
@@ -25,6 +29,8 @@ paths:
                     description: Identifiant de la personne
                     schema:
                         $ref: '#/components/schemas/IdPersonne'
+                -   $ref: '#/components/parameters/LoginHeader'
+                -   $ref: '#/components/parameters/TenantIdHeader'
             responses:
                 '200':
                     description: Connaissance Client trouvée
@@ -33,7 +39,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ConnaissanceClientDto'
                 '400':
-                    description: Requête invalide (paramètre de chemin manquant ou invalide)
+                    description: Requête invalide (paramètre de chemin manquant ou invalide, ou en‑tête manquant)
                 '500':
                     description: Erreur interne du serveur
         post:
@@ -47,12 +53,8 @@ paths:
                     description: Identifiant de la personne
                     schema:
                         $ref: '#/components/schemas/IdPersonne'
-                -   name: login
-                    in: header
-                    required: true
-                    description: Identifiant de l'utilisateur effectuant l'opération
-                    schema:
-                        type: string
+                -   $ref: '#/components/parameters/LoginHeader'
+                -   $ref: '#/components/parameters/TenantIdHeader'
             requestBody:
                 required: true
                 content:
@@ -98,7 +100,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ConnaissanceClientDto'
                 '400':
-                    description: Requête invalide (paramètre de chemin ou en-tête login manquant)
+                    description: Requête invalide (paramètre de chemin ou en‑tête requis manquant)
                 '500':
                     description: Erreur interne du serveur
         put:
@@ -112,12 +114,8 @@ paths:
                     description: Identifiant de la personne
                     schema:
                         $ref: '#/components/schemas/IdPersonne'
-                -   name: login
-                    in: header
-                    required: true
-                    description: Identifiant de l'utilisateur effectuant l'opération
-                    schema:
-                        type: string
+                -   $ref: '#/components/parameters/LoginHeader'
+                -   $ref: '#/components/parameters/TenantIdHeader'
             requestBody:
                 required: true
                 content:
@@ -132,7 +130,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/ConnaissanceClientDto'
                 '400':
-                    description: Requête invalide (paramètre de chemin ou en-tête login manquant)
+                    description: Requête invalide (paramètre de chemin ou en‑tête requis manquant)
                 '500':
                     description: Erreur interne du serveur
     /personnes/{idPersonne}/historique-connaissance-client:
@@ -147,6 +145,8 @@ paths:
                     description: Identifiant de la personne
                     schema:
                         $ref: '#/components/schemas/IdPersonne'
+                -   $ref: '#/components/parameters/LoginHeader'
+                -   $ref: '#/components/parameters/TenantIdHeader'
             responses:
                 '200':
                     description: Historique récupéré
@@ -155,7 +155,7 @@ paths:
                             schema:
                                 $ref: '#/components/schemas/HistoriqueModificationDto'
                 '400':
-                    description: Requête invalide (paramètre de chemin manquant ou invalide)
+                    description: Requête invalide (paramètre de chemin manquant ou invalide, ou en‑tête manquant)
                 '500':
                     description: Erreur interne du serveur
 components:
@@ -310,3 +310,24 @@ components:
                     enum: [ MODIFICATION, CORRECTION ]
             required: [ date, user, typeOperation ]
             additionalProperties: false
+    parameters:
+        LoginHeader:
+            name: login
+            in: header
+            required: true
+            description: |
+                Identifiant de l'utilisateur effectuant l'opération.
+                Utilisé pour alimenter la `TraceAudit` et tracer l'auteur des modifications.
+            schema:
+                type: string
+            example: john.doe
+        TenantIdHeader:
+            name: tenantId
+            in: header
+            required: true
+            description: |
+                Identifiant du tenant (client) pour le multi‑tenancy.
+                Toutes les lectures/écritures sont effectuées dans le périmètre de ce tenant via les repositories.
+            schema:
+                type: string
+            example: acme
