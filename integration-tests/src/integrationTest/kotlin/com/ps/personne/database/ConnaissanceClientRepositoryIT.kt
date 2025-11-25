@@ -5,6 +5,7 @@ import com.ps.personne.fixtures.ConnaissanceClientFactory
 import com.ps.personne.fixtures.TraceAuditFactory
 import com.ps.personne.model.AjoutStatutPPE
 import com.ps.personne.model.AjoutVigilance
+import com.ps.personne.model.ConnaissanceClient
 import com.ps.personne.model.SyntheseModifications
 import com.ps.personne.repository.ExposedConnaissanceClientRepository
 import com.zaxxer.hikari.HikariConfig
@@ -82,8 +83,8 @@ class ConnaissanceClientRepositoryIT : BehaviorSpec(
                 val idPersonne = ConnaissanceClientFactory.creerIdPersonne()
                 `when`("on lis la connaissance client") {
                     val resultat = repository.recuperer(tenandId, idPersonne)
-                    then("on obtient un objet vide") {
-                        resultat shouldBe null
+                    then("on obtient une connaissance client vierge") {
+                        resultat shouldBe ConnaissanceClient.vierge(idPersonne)
                     }
                 }
             }

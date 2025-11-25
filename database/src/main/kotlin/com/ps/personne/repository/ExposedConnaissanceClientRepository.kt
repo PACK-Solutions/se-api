@@ -19,7 +19,7 @@ import java.util.*
 
 class ExposedConnaissanceClientRepository : ConnaissanceClientRepository, ModificationsConnaissanceClientRepository {
 
-    override fun recuperer(tenantId: String, idPersonne: IdPersonne): ConnaissanceClient? {
+    override fun recuperer(tenantId: String, idPersonne: IdPersonne): ConnaissanceClient {
         return transaction {
             ConnaissanceClientTable
                 .selectAll()
@@ -32,7 +32,7 @@ class ExposedConnaissanceClientRepository : ConnaissanceClientRepository, Modifi
                         statutProchePPE = it[ConnaissanceClientTable.statutProchePPE]?.toDomain(),
                         vigilance = it[ConnaissanceClientTable.vigilance].toDomain(),
                     )
-                }
+                } ?: ConnaissanceClient.vierge(idPersonne)
         }
     }
 

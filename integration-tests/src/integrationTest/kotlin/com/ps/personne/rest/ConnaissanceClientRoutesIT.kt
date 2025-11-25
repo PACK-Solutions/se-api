@@ -5,6 +5,7 @@ import com.nfeld.jsonpathkt.kotlinx.resolvePathOrNull
 import com.ps.personne.kyc.dto.request.*
 import com.ps.personne.personne
 import io.kotest.core.spec.style.BehaviorSpec
+import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldNotBeEmpty
 import io.kotest.matchers.shouldBe
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -163,7 +164,7 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
                     }
                 }
 
-                `when`("je consulte l'historique d'une personne inconnue") {
+                `when`("je consulte l'historique d'une personne sans historique connaissance client") {
                     then("alors je reçois 200 OK avec une liste vide") {
                         val idInconnu = 999_888
                         val histoResponse = client.get("/personnes/$idInconnu/historique-connaissance-client") {
@@ -174,17 +175,26 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
                         val histoBody = histoResponse.bodyAsText()
                         val histoJson = Json.parseToJsonElement(histoBody)
                         val entrees = histoJson.resolvePathOrNull("$.entreesHistorique")?.jsonArray
-                        (entrees?.size ?: 0) shouldBe 0
+                        entrees.shouldBeEmpty()
                     }
                 }
 
-                `when`("je consulte la connaissance client d'une personne inconnue") {
-                    then("alors je reçois 404 Not Found") {
-                        val getResponse = client.get("/personnes/999999/connaissance-client") {
+                `when`("je consulte la connaissance client d'une personne sans connaissance client") {
+                    then("alors je reçois une connaissance client vierge") {
+                        val idPersonne = 999999L
+                        val getResponse = client.get("/personnes/$idPersonne/connaissance-client") {
                             header("tenantId", "pack")
                             header("login", "anonymous")
                         }
-                        getResponse.status shouldBe HttpStatusCode.NotFound
+                        getResponse.status shouldBe HttpStatusCode.OK
+                        val connaissanceClientBody = getResponse.bodyAsText()
+                        val connaissanceClientJson = Json.parseToJsonElement(connaissanceClientBody)
+                        val isPpe = connaissanceClientJson.resolvePathAsBooleanOrNull("$.statutPPE")
+                        val isProchePpe = connaissanceClientJson.resolvePathAsBooleanOrNull("$.statutProchePPE")
+                        val vigilance = connaissanceClientJson.resolvePathAsBooleanOrNull("$.vigilance.vigilanceRenforcee")
+                        isPpe shouldBe null
+                        isProchePpe shouldBe null
+                        vigilance shouldBe false
                     }
                 }
 

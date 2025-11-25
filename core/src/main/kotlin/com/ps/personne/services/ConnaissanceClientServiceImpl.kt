@@ -25,10 +25,7 @@ class ConnaissanceClientServiceImpl(
         tenantId: String,
         connaissanceClient: ConnaissanceClient,
         traceAudit: TraceAudit,
-    ) = (
-        connaissanceClientRepository.recuperer(tenantId, connaissanceClient.idPersonne)
-            ?: ConnaissanceClient.vierge(connaissanceClient.idPersonne)
-        )
+    ) = connaissanceClientRepository.recuperer(tenantId, connaissanceClient.idPersonne)
         .appliquerModifications(connaissanceClient, traceAudit)
         .recoverIf(
             {

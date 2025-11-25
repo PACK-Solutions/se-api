@@ -6,10 +6,13 @@ import com.ps.personne.problem.respondProblem
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.application.createApplicationPlugin
+import io.ktor.server.request.uri
 import io.ktor.util.AttributeKey
 
 val MandatoryHeadersPlugin = createApplicationPlugin(name = "MandatoryHeadersPlugin") {
     onCall { call ->
+        if (call.request.uri.startsWith("/health")) return@onCall
+        if (call.request.uri.startsWith("/swagger")) return@onCall
         val login = call.request.headers[HeaderNames.LOGIN]
         val tenantId = call.request.headers[HeaderNames.TENANT_ID]
 

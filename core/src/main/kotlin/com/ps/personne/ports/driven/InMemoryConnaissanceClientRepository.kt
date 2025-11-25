@@ -10,8 +10,8 @@ class InMemoryConnaissanceClientRepository : ConnaissanceClientRepository, Modif
     val connaissanceClients = mutableMapOf<IdPersonne, ConnaissanceClient>()
     val historiqueModifications = mutableMapOf<IdPersonne, List<SyntheseModifications>>()
 
-    override fun recuperer(tenantId: String, idPersonne: IdPersonne): ConnaissanceClient? {
-        return connaissanceClients.getOrDefault(idPersonne, null)
+    override fun recuperer(tenantId: String, idPersonne: IdPersonne): ConnaissanceClient {
+        return connaissanceClients.getOrDefault(idPersonne, ConnaissanceClient.vierge(idPersonne))
     }
 
     override fun sauvegarder(tenantId: String, connaissanceClient: ConnaissanceClient): IdPersonne {

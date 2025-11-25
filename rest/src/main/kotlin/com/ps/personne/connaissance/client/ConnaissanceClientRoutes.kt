@@ -36,24 +36,27 @@ fun Application.configureConnaissanceClientRoutes(connaissanceClientService: Con
     }
 }
 
+private fun Routing.getConnaissanceClientRoute(connaissanceClientService: ConnaissanceClientService) {
+    get("/personnes/{idPersonne}/connaissance-client") {
+        call.parameters["idPersonne"]?.let { idPersonne ->
+            val idPersonne = IdPersonne(idPersonne.toLong())
+            call.respond(connaissanceClientService.getConnaissanceClient(call.tenantId(), idPersonne).toDto())
+        } ?: call.respondProblem(
+            HttpStatusCode.BadRequest,
+            Problem.of(
+                httpStatusCode = HttpStatusCode.BadRequest,
+                problemDetail = String.format(MESSAGE_PARAMETRE_MANQUANT, "idPersonne"),
+                code = ErrorCodes.BAD_REQUEST,
+            ),
+        )
+    }
+}
+
 private fun Routing.getHistoriqueConnaissanceClientRoute(connaissanceClientService: ConnaissanceClientService) {
     get("/personnes/{idPersonne}/historique-connaissance-client") {
         call.parameters["idPersonne"]?.let { idPersonne ->
             val idPersonne = IdPersonne(idPersonne.toLong())
-
-            connaissanceClientService.getHistorique(call.tenantId(), idPersonne)
-                .let { historiqueModifications ->
-                    historiqueModifications?.toDto()?.let {
-                        call.respond(HttpStatusCode.OK, it)
-                    }
-                } ?: call.respondProblem(
-                HttpStatusCode.NotFound,
-                Problem.of(
-                    httpStatusCode = HttpStatusCode.NotFound,
-                    problemDetail = null,
-                    code = ErrorCodes.NOT_FOUND,
-                ),
-            )
+            call.respond(HttpStatusCode.OK, connaissanceClientService.getHistorique(call.tenantId(), idPersonne).toDto())
         } ?: call.respondProblem(
             HttpStatusCode.BadRequest,
             Problem.of(
@@ -126,35 +129,6 @@ private fun Routing.updateConnaissanceClientRoute(connaissanceClientService: Con
                         ),
                     )
                 }
-        } ?: call.respondProblem(
-            HttpStatusCode.BadRequest,
-            Problem.of(
-                httpStatusCode = HttpStatusCode.BadRequest,
-                problemDetail = String.format(MESSAGE_PARAMETRE_MANQUANT, "idPersonne"),
-                code = ErrorCodes.BAD_REQUEST,
-            ),
-        )
-    }
-}
-
-private fun Routing.getConnaissanceClientRoute(connaissanceClientService: ConnaissanceClientService) {
-    get("/personnes/{idPersonne}/connaissance-client") {
-        call.parameters["idPersonne"]?.let { idPersonne ->
-            val idPersonne = IdPersonne(idPersonne.toLong())
-
-            connaissanceClientService.getConnaissanceClient(call.tenantId(), idPersonne)
-                .let { connaissanceClient ->
-                    connaissanceClient?.toDto()?.let {
-                        call.respond(HttpStatusCode.OK, it)
-                    }
-                } ?: call.respondProblem(
-                HttpStatusCode.NotFound,
-                Problem.of(
-                    httpStatusCode = HttpStatusCode.NotFound,
-                    problemDetail = null,
-                    code = ErrorCodes.NOT_FOUND,
-                ),
-            )
         } ?: call.respondProblem(
             HttpStatusCode.BadRequest,
             Problem.of(

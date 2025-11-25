@@ -33,7 +33,7 @@ S'assurer que dans le front, si on sauve la première fois, on ne peut pas coche
 
 14 - Rajouter un cas dans les TI pour un login ou tenantID qui n'existe pas
 
-15 - La route get connaissance client retourne un 404, mais la route get historique retourne un 200 avec un tableau vide.
+15 (OK) - La route get connaissance client retourne un 404, mais la route get historique retourne un 200 avec un tableau vide.
 
 16 - gérer la modification initiale de l'historique
 

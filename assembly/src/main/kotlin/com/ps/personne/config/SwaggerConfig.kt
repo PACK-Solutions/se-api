@@ -14,7 +14,7 @@ object SwaggerConfig {
         }
 
         environment.config.propertyOrNull("ktor.deployment.port")?.let {
-            log.info("📚 Swagger UI available at: http://localhost:$it/$swaggerPath")
+            log.info("📚 Swagger UI available at: http://localhost:${it.getString()}/$swaggerPath")
         } ?: {
             val message = "No application port configured, check the property 'ktor.deployment.port'"
             log.error(message)
