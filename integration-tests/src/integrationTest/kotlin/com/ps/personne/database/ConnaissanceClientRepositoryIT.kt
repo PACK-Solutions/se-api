@@ -10,9 +10,9 @@ import com.ps.personne.repository.ExposedConnaissanceClientRepository
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.matchers.collections.shouldBeEmpty
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.nulls.shouldNotBeNull
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -105,8 +105,8 @@ class ConnaissanceClientRepositoryIT : BehaviorSpec(
                 val idPersonne = ConnaissanceClientFactory.creerIdPersonne()
                 `when`("on récupère un historique") {
                     val resultat = repository.recupererHistorique(tenandId, idPersonne)
-                    then("on obtient un historique vide") {
-                        resultat.entreesHistorique.shouldBeEmpty()
+                    then("on obtient null car aucun historique n'existe") {
+                        resultat shouldBe null
                     }
                 }
             }
@@ -122,6 +122,7 @@ class ConnaissanceClientRepositoryIT : BehaviorSpec(
                     // TODO : Modifier factory pour passer l'id personne
                     val resultat = repository.recupererHistorique(tenandId, connaissanceClientModifiee.idPersonne)
                     then("on obtient un historique contenant la liste de ses modifications") {
+                        resultat.shouldNotBeNull()
                         resultat.entreesHistorique shouldContain SyntheseModifications(
                             traceAudit = traceAudit,
                             modifications = setOf(AjoutStatutPPE, AjoutVigilance),

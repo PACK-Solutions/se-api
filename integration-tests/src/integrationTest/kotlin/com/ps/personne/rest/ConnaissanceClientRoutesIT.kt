@@ -11,6 +11,7 @@ import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsText
 import io.ktor.http.ContentType
@@ -164,17 +165,13 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
                 }
 
                 `when`("je consulte l'historique d'une personne inconnue") {
-                    then("alors je reçois 200 OK avec une liste vide") {
+                    then("alors je reçois 404 Not Found") {
                         val idInconnu = 999_888
                         val histoResponse = client.get("/personnes/$idInconnu/historique-connaissance-client") {
                             header("tenantId", "pack")
                             header("login", "anonymous")
                         }
-                        histoResponse.status shouldBe HttpStatusCode.OK
-                        val histoBody = histoResponse.bodyAsText()
-                        val histoJson = Json.parseToJsonElement(histoBody)
-                        val entrees = histoJson.resolvePathOrNull("$.entreesHistorique")?.jsonArray
-                        (entrees?.size ?: 0) shouldBe 0
+                        histoResponse.status shouldBe HttpStatusCode.NotFound
                     }
                 }
 
@@ -191,6 +188,64 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
                 `when`("je tente de créer sans header login") {
                     then("alors la requête est rejetée (400 Bad Request)") {
                         val response = client.post("/personnes/42/connaissance-client") {
+                            contentType(ContentType.Application.Json)
+                            setBody(payload)
+                        }
+                        response.status shouldBe HttpStatusCode.BadRequest
+                    }
+                }
+
+                `when`("je consulte la connaissance client sans header login") {
+                    then("alors la requête est rejetée (400 Bad Request)") {
+                        val response = client.get("/personnes/123/connaissance-client") {
+                            header("tenantId", "pack")
+                        }
+                        response.status shouldBe HttpStatusCode.BadRequest
+                    }
+                }
+
+                `when`("je consulte l'historique sans header login") {
+                    then("alors la requête est rejetée (400 Bad Request)") {
+                        val response = client.get("/personnes/123/historique-connaissance-client") {
+                            header("tenantId", "pack")
+                        }
+                        response.status shouldBe HttpStatusCode.BadRequest
+                    }
+                }
+
+                `when`("je consulte la connaissance client sans header tenantId") {
+                    then("alors la requête est rejetée (400 Bad Request)") {
+                        val response = client.get("/personnes/123/connaissance-client") {
+                            header("login", "john.doe")
+                        }
+                        response.status shouldBe HttpStatusCode.BadRequest
+                    }
+                }
+
+                `when`("je consulte l'historique sans header tenantId") {
+                    then("alors la requête est rejetée (400 Bad Request)") {
+                        val response = client.get("/personnes/123/historique-connaissance-client") {
+                            header("login", "john.doe")
+                        }
+                        response.status shouldBe HttpStatusCode.BadRequest
+                    }
+                }
+
+                `when`("je tente de créer sans header tenantId") {
+                    then("alors la requête est rejetée (400 Bad Request)") {
+                        val response = client.post("/personnes/42/connaissance-client") {
+                            header("login", "john.doe")
+                            contentType(ContentType.Application.Json)
+                            setBody(payload)
+                        }
+                        response.status shouldBe HttpStatusCode.BadRequest
+                    }
+                }
+
+                `when`("je tente de mettre à jour sans header tenantId") {
+                    then("alors la requête est rejetée (400 Bad Request)") {
+                        val response = client.put("/personnes/42/connaissance-client") {
+                            header("login", "john.doe")
                             contentType(ContentType.Application.Json)
                             setBody(payload)
                         }
