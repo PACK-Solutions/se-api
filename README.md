@@ -131,6 +131,52 @@ You can combine steps, for example:
 ./gradlew clean detekt build
 ```
 
+## Running in sandbox mode
+
+Sandbox mode lets you run the application without a database. In this mode:
+
+- Database configuration and Flyway migrations are skipped.
+- The ConnaissanceClient feature uses an in-memory repository instead of the database.
+- Note: the health endpoint still checks the database and may report DOWN in sandbox mode.
+
+### How to enable
+
+The flag is controlled by the `environment.sandbox` setting in `assembly/src/main/resources/application.conf` and can be overridden with the `SANDBOX` environment variable.
+
+- Default: `environment.sandbox = false`
+- Enable via environment variable:
+
+```sh
+export SANDBOX=true
+```
+
+### Run with Docker
+
+```sh
+docker build -t se-api:latest .
+docker run -p 8080:8080 -e SANDBOX=true se-api:latest
+```
+
+### Run with Docker Compose
+
+You can set `SANDBOX=true` via your shell or a `.env` file used by Compose:
+
+```sh
+echo "SANDBOX=true" >> .env
+docker compose up --build app
+```
+
+Notes for Compose:
+
+- The current `docker-compose.yml` defines `app.depends_on.postgres` with a health condition. Even in sandbox mode, Compose will still wait for Postgres to be healthy unless you modify the compose file or start the `app` service explicitly without that dependency. If you want to run pure sandbox without Postgres, either:
+  - temporarily remove/override the `depends_on` for `app`, or
+  - start the `app` container directly with `docker run` as shown above.
+
+### Verifying sandbox behavior
+
+- At startup, the logs include: `Sandbox mode enabled: skipping database configuration and migrations`.
+- Hitting the health endpoint may return `503 Service Unavailable` in sandbox mode because DB checks are still performed.
+
 ## Modules
 
 - core: domain and tests currently wired with Kotest and Detekt.

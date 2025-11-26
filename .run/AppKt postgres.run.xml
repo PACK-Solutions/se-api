@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="AppKt postgres" type="KtorApplicationConfigurationType" factoryName="Ktor">
+    <envs>
+      <env name="SANDBOX" value="false" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.ps.personne.AppKt" />
+    <module name="se-api.assembly.main" />
+    <extension name="com.github.l34130.mise.core.run.MiseRunConfigurationSettingsEditor" myConfigEnvironmentStrategy="use_project_settings" myMiseDirEnvCb="false" myMiseConfigEnvironmentTf="" />
+    <option name="alternativeJrePath" />
+    <option name="alternativeJrePathEnabled" value="false" />
+    <option name="includeProvidedScope" value="false" />
+    <option name="mainClass" value="com.ps.personne.AppKt" />
+    <option name="passParentEnvs" value="true" />
+    <option name="programParameters" value="" />
+    <option name="shortenCommandLine" />
+    <option name="vmParameters" />
+    <option name="workingDirectory" value="$PROJECT_DIR$" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

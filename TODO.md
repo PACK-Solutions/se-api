@@ -27,20 +27,17 @@ S'assurer que dans le front, si on sauve la première fois, on ne peut pas coche
 
 11 - Log structurée (MDC ?) ou https://ktor.io/docs/server-call-id.html#put-call-id-mdc
 
-12 - Déplacer le projet dans un repo gitlab ou github
+12 (OK) - Déplacer le projet dans un repo gitlab ou github
 
 13 - Vérifier les logins et tenantID (possibilité d'avoir une table d'association entre le tenantId et un UUID que l'on stockera)
 
-14 - Rajouter un cas dans les TI pour un login ou tenantID qui n'existe pas
+14 (OK) - Rajouter un cas dans les TI pour un login ou tenantID qui n'existe pas
 
 15 (OK) - La route get connaissance client retourne un 404, mais la route get historique retourne un 200 avec un tableau vide.
 
 16 - gérer la modification initiale de l'historique
 
-17 - Sur le saveModification, si pas de modifs, retourné un 304 et le gérer côté front
+17 (OK) - Sur le saveModification, si pas de modifs, retourné un 304 et le gérer côté front
 
-18 - Corriger les tests sur le front
-
-
-
+18 - Mode sandbox
 

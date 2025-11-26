@@ -42,7 +42,7 @@ class ConnaissanceClientRepositoryIT : BehaviorSpec(
             )
 
             // Connect Exposed and run Flyway migrations
-            Database.Companion.connect(datasource = ds)
+            Database.connect(datasource = ds)
             val flyway =
                 Flyway
                     .configure()

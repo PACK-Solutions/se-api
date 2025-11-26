@@ -13,6 +13,7 @@ import com.ps.personne.health.configureHealthRoutes
 import com.ps.personne.http.MandatoryHeadersPlugin
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
+import io.ktor.server.application.log
 import io.ktor.server.config.property
 import io.ktor.server.netty.EngineMain
 
@@ -26,8 +27,16 @@ fun Application.personne() {
     configureSerialization()
     configureExceptionHandling()
     install(MandatoryHeadersPlugin)
-    property<DatabaseConfig>("database").apply { configureDatabases() }
+    val sandbox = isSandbox()
+    if (sandbox) {
+        log.info("Sandbox mode enabled: skipping database configuration and migrations")
+    } else {
+        property<DatabaseConfig>("database").apply { configureDatabases() }
+    }
     configureHealthRoutes(HealthCheckService())
     configureLogging()
-    configureConnaissanceClientRoutes(configureConnaissanceClientService())
+    configureConnaissanceClientRoutes(configureConnaissanceClientService(sandbox))
 }
+
+private fun Application.isSandbox(): Boolean =
+    environment.config.propertyOrNull("environment.sandbox")?.getString()?.toBoolean() ?: false
