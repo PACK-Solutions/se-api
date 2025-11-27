@@ -18,4 +18,7 @@ include("assembly")
 include("rest")
 // driven actors
 include("database")
-include("integration-tests")
+// Include integration-tests only when the directory exists (e.g., not in Docker image build context)
+if (file("integration-tests").isDirectory) {
+    include("integration-tests")
+}

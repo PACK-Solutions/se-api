@@ -22,8 +22,8 @@ COPY rest/src ./rest/src
 COPY database/src ./database/src
 COPY assembly/src ./assembly/src
 
-# Build the fat JAR without detekt and tests for faster Docker builds
-RUN ./gradlew rest:buildFatJar --no-daemon -x test -x detekt
+# Skip tests and detekt for faster Docker builds
+RUN ./gradlew assembly:buildFatJar --no-daemon -x test -x detekt
 
 # Runtime stage
 FROM eclipse-temurin:21-jre-alpine AS runtime
@@ -49,7 +49,7 @@ LABEL maintainer="PACK Solutions" \
     version="$APP_VERSION"
 
 # Copy the fat JAR from the build stage
-COPY --from=build /app/rest/build/libs/app.jar /app/app.jar
+COPY --from=build /app/assembly/build/libs/app.jar /app/app.jar
 
 # Copy entrypoint script
 COPY entrypoint.sh /app/entrypoint.sh

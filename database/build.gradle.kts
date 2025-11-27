@@ -11,10 +11,6 @@ dependencies {
     implementation(libs.flyway.core)
     implementation(libs.flyway.postgres)
     implementation(libs.bundles.exposed)
-
-    // DB driver
-    runtimeOnly(libs.postgres)
-
     testImplementation(libs.kotest.testcontainers)
     testImplementation(libs.testcontainers.postgresql)
     testImplementation(libs.bundles.kotest)

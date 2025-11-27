@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 group = "com.ps"
 version = rootProject.version as String
 
@@ -5,10 +7,13 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":database"))
     implementation(project(":rest"))
-
     implementation(libs.bundles.ktor)
 
     detektPlugins(libs.detekt.formatting)
+
+    // DB drivers
+    runtimeOnly(libs.postgres)
+    runtimeOnly(libs.flyway.postgres)
 }
 
 plugins {
@@ -22,6 +27,14 @@ application {
 ktor {
     fatJar {
         archiveFileName.set("app.jar")
+    }
+}
+
+// Mandatory to include Flyway migrations scripts
+tasks.withType<ShadowJar>().configureEach {
+    mergeServiceFiles()
+    filesMatching("META-INF/services/**") {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 }
 
