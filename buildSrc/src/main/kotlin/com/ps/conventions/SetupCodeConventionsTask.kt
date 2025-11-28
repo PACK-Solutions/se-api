@@ -1,3 +1,5 @@
+package com.ps.conventions
+
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.file.DirectoryProperty
@@ -44,7 +46,10 @@ abstract class SetupCodeConventionsTask : DefaultTask() {
         fun shouldOverwrite(file: File): Boolean {
             if (!file.exists()) return true
             if (overwriteProp != null) return overwriteProp
-            logger.lifecycle("{} already exists. Run with -Poverwrite=true to overwrite, -Poverwrite=false to skip. Skipping by default.", file.name)
+            logger.lifecycle(
+                "{} already exists. Run with -Poverwrite=true to overwrite, -Poverwrite=false to skip. Skipping by default.",
+                file.name
+            )
             return false
         }
 
