@@ -11,13 +11,20 @@ val logger = KotlinLogging.logger { }
 /**
  * Health check service to verify connectivity to external dependencies
  */
-class HealthCheckService {
+class HealthCheckService(
+    private val sandbox: Boolean = false,
+) {
 
     /**
      * Perform health check on all dependencies
      */
     fun performHealthCheck(): HealthCheckResult {
-        val databaseHealth = checkDatabaseHealth()
+        val databaseHealth = if (sandbox) {
+            logger.debug { "Sandbox mode: skipping database health check" }
+            ComponentHealth(HealthStatus.UP, mapOf("connection" to "skipped", "mode" to "sandbox"))
+        } else {
+            checkDatabaseHealth()
+        }
 
         val overallStatus = if (databaseHealth.status == HealthStatus.UP) {
             HealthStatus.UP

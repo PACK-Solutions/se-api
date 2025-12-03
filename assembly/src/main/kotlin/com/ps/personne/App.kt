@@ -33,7 +33,7 @@ fun Application.personne() {
     } else {
         property<DatabaseConfig>("database").apply { configureDatabases() }
     }
-    configureHealthRoutes(HealthCheckService())
+    configureHealthRoutes(HealthCheckService(sandbox))
     configureLogging()
     configureConnaissanceClientRoutes(configureConnaissanceClientService(sandbox))
 }
