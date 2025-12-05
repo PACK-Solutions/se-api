@@ -42,11 +42,15 @@ data class DatabaseConfig(
 
         logger.info { "\uD83D\uDDC4\uFE0F Connection to database: OK" }
 
+        val baselineOnMigrate = System.getenv("FLYWAY_BASELINE_ON_MIGRATE")?.toBoolean() ?: false
+
         val flyway =
             Flyway
                 .configure()
                 .dataSource(hikari)
-                .baselineOnMigrate(false)
+                .baselineOnMigrate(baselineOnMigrate)
+                .locations("classpath:db/migration")
+                .skipDefaultCallbacks(true)
                 .load()
 
         transaction {
