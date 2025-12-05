@@ -1,20 +1,34 @@
-# Build stage
-FROM gradle:9.0.0-jdk21 AS build
+# ==============================================================================
+# SE API - Optimized Multi-Stage Dockerfile
+# ==============================================================================
+# Production-hardened build with security best practices
+# - Minimal attack surface with distroless final stage
+# - Non-root user execution
+# - Build cache optimization
+# - Security scanning friendly
+# ==============================================================================
+
+# ------------------------------------------------------------------------------
+# Stage 1: Build Stage
+# ------------------------------------------------------------------------------
+FROM gradle:9.0.0-jdk21-alpine AS build
 
 WORKDIR /app
 
-# Copy gradle wrapper and properties first for better caching
+# Copy Gradle configuration files first (better caching)
 COPY gradle ./gradle
-COPY gradlew gradle.properties ./
-COPY settings.gradle.kts build.gradle.kts ./
+COPY gradlew gradle.properties settings.gradle.kts build.gradle.kts ./
 COPY buildSrc ./buildSrc
+
+# Copy module build files
 COPY core/build.gradle.kts ./core/
 COPY rest/build.gradle.kts ./rest/
 COPY database/build.gradle.kts ./database/
 COPY assembly/build.gradle.kts ./assembly/
+COPY integration-tests/build.gradle.kts ./integration-tests/
 
-# Download dependencies (this layer will be cached)
-RUN ./gradlew dependencies --no-daemon
+# Download dependencies (cached layer)
+RUN ./gradlew dependencies --no-daemon --no-configuration-cache
 
 # Copy source code
 COPY core/src ./core/src
@@ -22,53 +36,53 @@ COPY rest/src ./rest/src
 COPY database/src ./database/src
 COPY assembly/src ./assembly/src
 
-# Skip tests and detekt for faster Docker builds
-RUN ./gradlew assembly:buildFatJar --no-daemon -x test -x detekt
+# Build fat JAR (skip tests and detekt for faster Docker builds)
+# Tests and quality gates run in CI/CD pipeline
+RUN ./gradlew assembly:buildFatJar --no-daemon --no-configuration-cache -x test -x detekt
 
-# Runtime stage
-FROM eclipse-temurin:21-jre-alpine AS runtime
+# ------------------------------------------------------------------------------
+# Stage 2: Runtime Stage (Distroless)
+# ------------------------------------------------------------------------------
+# Using distroless java21-debian12 for minimal attack surface
+FROM gcr.io/distroless/java21-debian12:nonroot AS runtime
 
-# Build-time flag to include Datadog Java agent in the image (default: false)
-ARG DD_AGENT_ENABLED=false
-# Persist the build-time flag into the image so runtime sees it by default
-ENV DD_AGENT_ENABLED=$DD_AGENT_ENABLED
+# Metadata labels
+ARG APP_VERSION="unknown"
+ARG BUILD_DATE
+ARG VCS_REF
 
-# Install wget for healthcheck and create non-root user
-RUN apk add --no-cache wget && \
-    addgroup -g 1001 appgroup && \
-    adduser -u 1001 -G appgroup -s /bin/sh -D appuser
+LABEL org.opencontainers.image.title="SE API" \
+      org.opencontainers.image.description="Suite Epargne API - Connaissance Client" \
+      org.opencontainers.image.version="${APP_VERSION}" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.revision="${VCS_REF}" \
+      org.opencontainers.image.vendor="PACK Solutions" \
+      maintainer="PACK Solutions"
 
 # Set working directory
 WORKDIR /app
 
+# Copy the fat JAR from build stage
+COPY --from=build --chown=nonroot:nonroot /app/assembly/build/libs/app.jar /app/app.jar
 
-# Add metadata labels (version is provided at build time via APP_VERSION arg)
-ARG APP_VERSION="unknown"
-LABEL maintainer="PACK Solutions" \
-    description="Suite Epargne API" \
-    version="$APP_VERSION"
-
-# Copy the fat JAR from the build stage
-COPY --from=build /app/assembly/build/libs/app.jar /app/app.jar
-
-# Copy entrypoint script
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
-
-# Optionally include Datadog agent at build time
-RUN if [ "$DD_AGENT_ENABLED" = "true" ]; then wget -q -O /app/dd-java-agent.jar https://dtdg.co/latest-java-tracer; fi
-
-# Change ownership to non-root user
-RUN chown -R appuser:appgroup /app
-
-# Switch to non-root user
-USER appuser
-
-# Expose the port the app runs on
+# Expose application port
 EXPOSE 8080
 
 # Set JVM options for containerized environment
-ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+ExitOnOutOfMemoryError"
+ENV JAVA_TOOL_OPTIONS="-XX:+UseContainerSupport \
+    -XX:MaxRAMPercentage=75.0 \
+    -XX:InitialRAMPercentage=50.0 \
+    -XX:+UseG1GC \
+    -XX:MaxGCPauseMillis=100 \
+    -XX:+UseStringDeduplication \
+    -XX:+ExitOnOutOfMemoryError \
+    -Djava.security.egd=file:/dev/./urandom"
 
-# Set the entrypoint
-ENTRYPOINT ["/app/entrypoint.sh"]
+# Health check (distroless doesn't have curl/wget, using Java)
+# Kubernetes will use HTTP probes instead
+
+# Run as non-root user (distroless nonroot user: 65532)
+USER nonroot:nonroot
+
+# Entrypoint
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]
