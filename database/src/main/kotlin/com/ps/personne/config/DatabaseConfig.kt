@@ -15,6 +15,7 @@ data class DatabaseConfig(
     val url: String,
     val user: String,
     val password: String,
+    val schema: String,
     val driverClassName: String,
     val maximumPoolSize: Int,
     val minimumIdle: Int,
@@ -29,6 +30,7 @@ data class DatabaseConfig(
                 jdbcUrl = this@DatabaseConfig.url
                 username = this@DatabaseConfig.user
                 password = this@DatabaseConfig.password
+                schema = this@DatabaseConfig.schema
                 driverClassName = this@DatabaseConfig.driverClassName
                 maximumPoolSize = this@DatabaseConfig.maximumPoolSize
                 minimumIdle = this@DatabaseConfig.minimumIdle
@@ -46,6 +48,8 @@ data class DatabaseConfig(
             Flyway
                 .configure()
                 .dataSource(hikari)
+                .defaultSchema(this.schema)
+                .createSchemas(true)
                 .baselineOnMigrate(false)
                 .load()
 

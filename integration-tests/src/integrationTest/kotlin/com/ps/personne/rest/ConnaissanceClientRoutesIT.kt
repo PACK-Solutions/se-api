@@ -33,6 +33,7 @@ class ConnaissanceClientRoutesIT : BehaviorSpec(
                 "database.url" to pg.jdbcUrl,
                 "database.user" to pg.username,
                 "database.password" to pg.password,
+                "database.schema" to "personne",
                 "database.driverClassName" to "org.postgresql.Driver",
                 "database.maximumPoolSize" to "5",
                 "database.minimumIdle" to "1",

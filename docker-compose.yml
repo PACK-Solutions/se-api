@@ -4,38 +4,17 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-            args:
-                # Build-time toggle to include Datadog Java agent in the image
-                DD_AGENT_ENABLED: ${DD_AGENT_ENABLED:-false}
         container_name: se-api
         environment:
-            DD_AGENT_ENABLED: ${DD_AGENT_ENABLED:-false}
             PORT: 8080
             DATABASE_URL: ${DATABASE_URL}
             DATABASE_USER: ${DATABASE_USER}
             DATABASE_PASSWORD: ${DATABASE_PASSWORD}
-            DD_SERVICE: se-api
-            DD_ENV: ${DD_ENV}
-            DD_VERSION: ${APP_VERSION}
-            DD_AGENT_HOST: datadog-agent
-            DD_TRACE_SAMPLING_RULES: '[{"service":"se-api","resource":"GET health","sample_rate":0.0},{"service":"se-api","resource":"HEAD health","sample_rate":0.0}]'
-        labels:
-            com.datadoghq.ad.logs: >-
-                [{
-                    "source": "java",
-                    "service": "se-api"
-                }]
         ports:
             - "8080:8080"
         depends_on:
             postgres:
                 condition: service_healthy
-        healthcheck:
-            test: [ "CMD", "wget", "--no-verbose", "--spider", "http://0.0.0.0:8080/health" ]
-            interval: 30s
-            timeout: 5s
-            retries: 5
-            start_period: 10s
 
     postgres:
         image: postgres:18
@@ -52,44 +31,6 @@ services:
             - ./postgres-init.sql:/docker-entrypoint-initdb.d/postgres-init.sql
         healthcheck:
             test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-            interval: 30s
-            timeout: 5s
-            retries: 5
-            start_period: 10s
-
-    datadog-agent:
-        profiles:
-            - dd-agent
-        image: gcr.io/datadoghq/agent:latest-jmx
-        container_name: dd-agent
-        environment:
-            - DD_API_KEY=${DD_API_KEY}
-            - DD_SITE=datadoghq.eu
-            - DD_ENV=${DD_ENV}
-            - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
-            - DD_LOGS_ENABLED=true
-            - DD_APM_ENABLED=true
-            - DD_LOGS_CONFIG_CONTAINER_COLLECT_ALL=true
-            - DD_CONTAINER_EXCLUDE_LOGS=name:datadog-agent
-            - DD_CONTAINER_EXCLUDE=name:datadog-agent
-            - DD_APM_FILTER_TAGS_REJECT=service:datadog-agent
-            - DD_DATABASE_MONITORING_ENABLED=true
-        volumes:
-            - /var/run/docker.sock:/var/run/docker.sock:ro
-            - /proc/:/host/proc/:ro
-            - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
-            - /var/lib/docker/containers:/var/lib/docker/containers:ro
-            - ./datadog-postgres.yaml:/etc/datadog-agent/conf.d/postgres.d/conf.yaml:ro
-        deploy:
-            resources:
-                limits:
-                    cpus: '0.5'
-                    memory: 512M
-                reservations:
-                    cpus: '0.1'
-                    memory: 128M
-        healthcheck:
-            test: [ "CMD", "agent", "health" ]
             interval: 30s
             timeout: 5s
             retries: 5

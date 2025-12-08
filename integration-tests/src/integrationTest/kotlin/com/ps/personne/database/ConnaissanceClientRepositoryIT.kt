@@ -34,7 +34,7 @@ class ConnaissanceClientRepositoryIT : BehaviorSpec(
             // Build a Hikari datasource from the running container
             ds = HikariDataSource(
                 HikariConfig().apply {
-                    jdbcUrl = pg.jdbcUrl
+                    jdbcUrl = "${pg.jdbcUrl}"
                     username = pg.username
                     password = pg.password
                     driverClassName = "org.postgresql.Driver"

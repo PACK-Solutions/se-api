@@ -13,6 +13,7 @@ val MandatoryHeadersPlugin = createApplicationPlugin(name = "MandatoryHeadersPlu
     onCall { call ->
         if (call.request.uri.startsWith("/health")) return@onCall
         if (call.request.uri.startsWith("/swagger")) return@onCall
+        if (call.request.uri.startsWith("/metrics")) return@onCall
         val login = call.request.headers[HeaderNames.LOGIN]
         val tenantId = call.request.headers[HeaderNames.TENANT_ID]
 
