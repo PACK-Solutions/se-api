@@ -81,13 +81,6 @@ jobs:
           files: '**/build/test-results/test/TEST-*.xml'
           check_name: 'Unit Test Results'
 
-      - name: Upload Test Reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: unit-test-reports
-          path: '**/build/reports/tests/'
-          retention-days: 7
 
   # ==============================================================================
   # Job 3: Integration Tests
@@ -122,16 +115,141 @@ jobs:
           files: '**/build/test-results/integrationTest/TEST-*.xml'
           check_name: 'Integration Test Results'
 
-      - name: Upload Integration Test Reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: integration-test-reports
-          path: '**/build/reports/tests/integrationTest/'
-          retention-days: 7
 
   # ==============================================================================
-  # Job 4: Build and Push Docker Image (only on main)
+  # Job 4: Security Scan (PRs only - build locally and scan)
+  # ==============================================================================
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: [detekt, unit-tests, integration-tests]
+    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
+      security-events: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: 'gradle'
+
+      - name: Build application JAR
+        run: ./gradlew assembly:buildFatJar --no-daemon --parallel -x test -x detekt
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker image (local)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64
+          push: false
+          load: true
+          tags: se-api:pr-scan
+
+      - name: Scan image with Trivy
+        id: trivy-scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'se-api:pr-scan'
+          format: 'table'
+          output: 'trivy-table.txt'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+          exit-code: '1'
+
+      - name: Scan image with Trivy (SARIF)
+        if: always()
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'se-api:pr-scan'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          ignore-unfixed: true
+          exit-code: '0'
+
+      - name: Post Trivy scan results as PR comment
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+
+            let trivyOutput = '';
+            try {
+              trivyOutput = fs.readFileSync('trivy-table.txt', 'utf8');
+            } catch (e) {
+              trivyOutput = 'No vulnerabilities found or scan did not produce output.';
+            }
+
+            const scanPassed = '${{ steps.trivy-scan.outcome }}' === 'success';
+            const statusEmoji = scanPassed ? '✅' : '❌';
+            const statusText = scanPassed ? 'PASSED' : 'FAILED';
+
+            const body = `## ${statusEmoji} Security Scan ${statusText}
+
+            **Scan Configuration:**
+            - Severity: \`CRITICAL, HIGH\`
+            - Ignore unfixed: \`true\`
+
+            <details>
+            <summary>📋 Trivy Scan Results (click to expand)</summary>
+
+            \`\`\`
+            ${trivyOutput}
+            \`\`\`
+
+            </details>
+
+            ${!scanPassed ? '⚠️ **This PR cannot be merged until the vulnerabilities above are fixed.**' : ''}
+            `;
+
+            // Find existing comment to update
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.find(comment =>
+              comment.user.type === 'Bot' &&
+              comment.body.includes('Security Scan')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: body
+              });
+            }
+
+      - name: Upload Trivy results to GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # ==============================================================================
+  # Job 5: Build and Push Docker Image (only on main)
   # ==============================================================================
   build:
     name: Build & Push Image
@@ -213,11 +331,12 @@ jobs:
           format: 'sarif'
           output: 'trivy-results.sarif'
           severity: 'CRITICAL,HIGH'
-          exit-code: '0'
+          ignore-unfixed: true
+          exit-code: '1'
 
       - name: Upload Trivy results to GitHub Security
         if: always()
-        uses: github/codeql-action/upload-sarif@v3
+        uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: 'trivy-results.sarif'
 
