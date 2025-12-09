@@ -49,6 +49,7 @@ data class DatabaseConfig(
                 .configure()
                 .dataSource(hikari)
                 .defaultSchema(this.schema)
+                .schemas(this.schema)
                 .createSchemas(true)
                 .baselineOnMigrate(false)
                 .load()
