@@ -1,7 +1,5 @@
--- Create connaissance_client table in personne schema
--- Note: Flyway defaultSchema=personne only affects flyway_schema_history location,
--- not the search_path for migration scripts. We must explicitly specify schema.
-CREATE TABLE IF NOT EXISTS personne.connaissance_client
+-- Create connaissance_client table
+CREATE TABLE IF NOT EXISTS connaissance_client
 (
     id_personne              BIGINT       NOT NULL,
     tenant_id                VARCHAR(50)  NOT NULL,
@@ -12,8 +10,8 @@ CREATE TABLE IF NOT EXISTS personne.connaissance_client
     CONSTRAINT connaissance_client_unique_person_tenant UNIQUE (id_personne, tenant_id)
 );
 
--- Create historique table in personne schema
-CREATE TABLE IF NOT EXISTS personne.connaissance_client_historique
+-- Create historique table
+CREATE TABLE IF NOT EXISTS connaissance_client_historique
 (
     id            uuid         NOT NULL,
     id_personne   BIGINT       NOT NULL,
@@ -25,12 +23,12 @@ CREATE TABLE IF NOT EXISTS personne.connaissance_client_historique
 );
 
 -- Ensure uniqueness on historique id
-ALTER TABLE personne.connaissance_client_historique
+ALTER TABLE connaissance_client_historique
     ADD CONSTRAINT connaissance_client_historique_id_unique UNIQUE (id);
 
 -- Add composite foreign key from historique to connaissance_client (id_personne, tenant_id)
-ALTER TABLE personne.connaissance_client_historique
+ALTER TABLE connaissance_client_historique
     ADD CONSTRAINT fk_historique_connaissance_client
         FOREIGN KEY (id_personne, tenant_id)
-            REFERENCES personne.connaissance_client (id_personne, tenant_id)
+            REFERENCES connaissance_client (id_personne, tenant_id)
             ON DELETE RESTRICT ON UPDATE RESTRICT;
