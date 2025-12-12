@@ -1,17 +1,21 @@
 package com.ps.personne.model
 
 import com.github.michaelbull.result.*
+import com.ps.kommand.DomainEvent
 
 @JvmInline
 value class IdPersonne(val id: Long)
 
-@ConsistentCopyVisibility
-data class ConnaissanceClient private constructor(
+sealed interface ConnaissanceClientEvent : DomainEvent {
+    data class ConnaissanceClientCreee(val idPersonne: IdPersonne) : ConnaissanceClientEvent
+    data class ConnaissanceClientModifiee(val idPersonne: IdPersonne) : ConnaissanceClientEvent
+}
+
+data class ConnaissanceClient(
     val idPersonne: IdPersonne,
     val statutPPE: ExpositionPolitique.Ppe?,
     val statutProchePPE: ExpositionPolitique.ProchePpe?,
     val vigilance: Vigilance,
-    val modification: SyntheseModifications? = null,
 ) {
     companion object {
         fun vierge(idPersonne: IdPersonne): ConnaissanceClient {
@@ -23,20 +27,37 @@ data class ConnaissanceClient private constructor(
             )
         }
 
-        operator fun invoke(
+        fun creer(
             idPersonne: IdPersonne,
             statutPPE: ExpositionPolitique.Ppe?,
             statutProchePPE: ExpositionPolitique.ProchePpe?,
             vigilance: Vigilance,
-        ): ConnaissanceClient {
-            return ConnaissanceClient(
-                idPersonne = idPersonne,
-                statutPPE = statutPPE,
-                statutProchePPE = statutProchePPE,
-                vigilance = vigilance,
+        ): Result<Pair<ConnaissanceClient, ConnaissanceClientEvent>, ConnaissanceClientError> =
+            parse(idPersonne, statutPPE, statutProchePPE, vigilance)
+                .map { it to ConnaissanceClientEvent.ConnaissanceClientModifiee(idPersonne) }
+
+        // parse, don't validate (https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/)
+        private fun parse(
+            idPersonne: IdPersonne,
+            statutPPE: ExpositionPolitique.Ppe?,
+            statutProchePPE: ExpositionPolitique.ProchePpe?,
+            vigilance: Vigilance,
+        ) = when {
+            (statutPPE != null || statutProchePPE != null) && vigilance is SansVigilanceRenforcee -> Err(
+                ConnaissanceClientError.VigilanceRenforceeObligatoire,
             )
+
+            else -> Ok(ConnaissanceClient(idPersonne, statutPPE, statutProchePPE, vigilance))
         }
     }
+
+    fun mettreAJour(
+        statutPPE: ExpositionPolitique.Ppe?,
+        statutProchePPE: ExpositionPolitique.ProchePpe?,
+        vigilance: Vigilance,
+    ): Result<Pair<ConnaissanceClient, ConnaissanceClientEvent>, ConnaissanceClientError> =
+        parse(idPersonne, statutPPE, statutProchePPE, vigilance)
+            .map { it to ConnaissanceClientEvent.ConnaissanceClientModifiee(idPersonne) }
 
     fun appliquerModifications(connaissanceClient: ConnaissanceClient, traceAudit: TraceAudit): Result<ConnaissanceClient, ConnaissanceClientError> {
         return connaissanceClient.isValide().andThen(::calculerModifications).map { modifications ->
@@ -50,9 +71,7 @@ data class ConnaissanceClient private constructor(
 
     private fun isValide() = when {
         (statutPPE != null || statutProchePPE != null) && vigilance is SansVigilanceRenforcee -> Err(
-            ConnaissanceClientError.VigilanceRenforceeObligatoire(
-                "La vigilance renforcée est obligatoire pour un PPE ou un proche PPE",
-            ),
+            ConnaissanceClientError.VigilanceRenforceeObligatoire,
         )
 
         else -> Ok(this)
@@ -146,11 +165,13 @@ data class ConnaissanceClient private constructor(
         modifications: Set<ModificationConnaissanceClient>,
         traceAudit: TraceAudit,
     ): ConnaissanceClient {
-        return connaissanceClient.copy(
-            modification = SyntheseModifications(
-                traceAudit = traceAudit,
-                modifications = modifications,
-            ),
-        )
+        return connaissanceClient
+        // TODO refactor
+//        return connaissanceClient.copy(
+//            modification = SyntheseModifications(
+//                traceAudit = traceAudit,
+//                modifications = modifications,
+//            ),
+//        )
     }
 }

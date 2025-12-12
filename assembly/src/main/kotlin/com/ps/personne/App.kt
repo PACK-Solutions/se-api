@@ -1,12 +1,13 @@
 package com.ps.personne
 
+import com.ps.personne.config.*
+import com.ps.personne.config.ContextProviderConfig.configureContextProvider
 import com.ps.personne.config.CorsConfig.configureCors
-import com.ps.personne.config.DatabaseConfig
 import com.ps.personne.config.ExceptionHandlingConfig.configureExceptionHandling
+import com.ps.personne.config.InstancesConfig.configureInstances
 import com.ps.personne.config.LoggingConfig.configureLogging
 import com.ps.personne.config.SerializationConfig.configureSerialization
 import com.ps.personne.config.SwaggerConfig.configureSwagger
-import com.ps.personne.config.configureConnaissanceClientService
 import com.ps.personne.connaissance.client.configureConnaissanceClientRoutes
 import com.ps.personne.health.HealthCheckService
 import com.ps.personne.health.configureHealthRoutes
@@ -26,6 +27,7 @@ fun Application.personne() {
     configureSwagger()
     configureSerialization()
     configureExceptionHandling()
+    configureContextProvider()
     install(MandatoryHeadersPlugin)
     val sandbox = isSandbox()
     if (sandbox) {
@@ -35,8 +37,11 @@ fun Application.personne() {
     }
     configureHealthRoutes(HealthCheckService(sandbox))
     configureLogging()
-    configureConnaissanceClientRoutes(configureConnaissanceClientService(sandbox))
+    configureInstances(sandbox)
+    val commandBus = configureCommandBus(attributes[InstancesConfig.commandHandlersKey])
+    val queryBus = configureQueryBus(attributes[InstancesConfig.queryHandlersKey])
+    configureConnaissanceClientRoutes(configureConnaissanceClientService(sandbox), queryBus, commandBus)
 }
 
-private fun Application.isSandbox(): Boolean =
+private fun Application.isSandbox(): Boolean = // todo utiliser Application.developmentMode ?
     environment.config.propertyOrNull("environment.sandbox")?.getString()?.toBoolean() ?: false

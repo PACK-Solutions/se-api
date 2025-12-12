@@ -21,14 +21,20 @@ public fun problem(block: ProblemBuilder.() -> Unit): Problem = ProblemBuilder()
  */
 suspend fun ApplicationCall.respondProblem(
     status: HttpStatusCode,
-    problem: Problem,
+    problemDetail: String?,
+    code: String,
 ) {
     respondText(
-        problem.toJson(),
+        Problem.of(
+            status,
+            problemDetail,
+            code,
+        ).toJson(),
         ContentType.Application.ProblemJson,
         status,
     )
 }
+
 
 /**
  * Builder for a problem detail including all mutable components

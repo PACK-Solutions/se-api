@@ -22,3 +22,4 @@ include("database")
 if (file("integration-tests").isDirectory) {
     include("integration-tests")
 }
+includeBuild("../kommand")

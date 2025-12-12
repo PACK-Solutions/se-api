@@ -11,6 +11,7 @@ dependencies {
     implementation(libs.flyway.core)
     implementation(libs.flyway.postgres)
     implementation(libs.bundles.exposed)
+    implementation(libs.kommand)
     testImplementation(libs.kotest.testcontainers)
     testImplementation(libs.testcontainers.postgresql)
     testImplementation(libs.bundles.kotest)

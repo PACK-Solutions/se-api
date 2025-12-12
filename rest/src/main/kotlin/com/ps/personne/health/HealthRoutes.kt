@@ -1,7 +1,6 @@
 package com.ps.personne.health
 
 import com.ps.personne.problem.ErrorCodes
-import com.ps.personne.problem.Problem
 import com.ps.personne.problem.respondProblem
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -28,14 +27,7 @@ fun Application.configureHealthRoutes(healthCheckService: HealthCheckService) {
                 call.respond(statusCode, healthResult)
             } catch (e: Exception) {
                 log.error("Health check failed with exception", e)
-                call.respondProblem(
-                    HttpStatusCode.InternalServerError,
-                    Problem.of(
-                        httpStatusCode = HttpStatusCode.InternalServerError,
-                        problemDetail = e.message ?: "Unknown error",
-                        code = ErrorCodes.INTERNAL_SERVER_ERROR,
-                    ),
-                )
+                call.respondProblem(HttpStatusCode.InternalServerError, e.message ?: "Unknown error", ErrorCodes.INTERNAL_SERVER_ERROR)
             }
         }
 

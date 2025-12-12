@@ -6,6 +6,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlin.logging)
     implementation(libs.logback)
+    implementation(libs.kommand)
 
     testImplementation(libs.ktor.server.test.host)
     testImplementation(libs.ktor.client.content.negotiation)

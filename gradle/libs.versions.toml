@@ -15,8 +15,12 @@ postgres = "42.7.8"
 test-containers = "2.0.2"
 version-catalog-update = "1.0.1"
 versions = "0.53.0"
+kommand = "1.0-SNAPSHOT"
+coroutines = "1.10.2"
 
 [libraries]
+coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kommand = { module = "com.ps:kommand", version.ref = "kommand" }
 detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
 exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }

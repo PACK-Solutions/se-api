@@ -1,7 +1,6 @@
 package com.ps.personne.http
 
 import com.ps.personne.problem.ErrorCodes
-import com.ps.personne.problem.Problem
 import com.ps.personne.problem.respondProblem
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
@@ -19,24 +18,18 @@ val MandatoryHeadersPlugin = createApplicationPlugin(name = "MandatoryHeadersPlu
 
         if (login.isNullOrBlank()) {
             call.respondProblem(
-                HttpStatusCode.BadRequest,
-                Problem.of(
-                    httpStatusCode = HttpStatusCode.BadRequest,
-                    problemDetail = String.format(MESSAGE_HEADER_MANQUANT, HeaderNames.LOGIN),
-                    code = ErrorCodes.BAD_REQUEST,
-                ),
+                status = HttpStatusCode.BadRequest,
+                problemDetail = String.format(MESSAGE_HEADER_MANQUANT, HeaderNames.LOGIN),
+                code = ErrorCodes.BAD_REQUEST,
             )
             return@onCall
         }
 
         if (tenantId.isNullOrBlank()) {
             call.respondProblem(
-                HttpStatusCode.BadRequest,
-                Problem.of(
-                    httpStatusCode = HttpStatusCode.BadRequest,
-                    problemDetail = String.format(MESSAGE_HEADER_MANQUANT, HeaderNames.TENANT_ID),
-                    code = ErrorCodes.BAD_REQUEST,
-                ),
+                status = HttpStatusCode.BadRequest,
+                problemDetail = String.format(MESSAGE_HEADER_MANQUANT, HeaderNames.TENANT_ID),
+                code = ErrorCodes.BAD_REQUEST,
             )
             return@onCall
         }
