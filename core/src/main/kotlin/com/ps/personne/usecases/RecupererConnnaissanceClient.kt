@@ -6,7 +6,6 @@ import com.ps.kommand.Query
 import com.ps.kommand.QueryHandler
 import com.ps.kommand.QueryResult
 import com.ps.personne.model.ConnaissanceClient
-import com.ps.personne.model.ConnaissanceClientError
 import com.ps.personne.model.IdPersonne
 import com.ps.personne.ports.driven.ConnaissanceClientRepository
 import com.ps.personne.ports.driven.ConnaissanceClientRepositoryError
@@ -15,7 +14,7 @@ class RecupererConnnaissanceClientHandler(val repository: ConnaissanceClientRepo
     override fun handle(
         context: Context,
         query: RecupererConnaissanceClientQuery,
-    ): QueryResult<ConnaissanceClient, ConnaissanceClientError> {
+    ): QueryResult<ConnaissanceClient, Nothing> {
         return repository.recuperer(query.idPersonne)
             .fold(
                 { QueryResult.Success(it) },
@@ -31,4 +30,4 @@ class RecupererConnnaissanceClientHandler(val repository: ConnaissanceClientRepo
 
 data class RecupererConnaissanceClientQuery(
     val idPersonne: IdPersonne,
-) : Query<ConnaissanceClient, ConnaissanceClientError>
+) : Query<ConnaissanceClient, Nothing>

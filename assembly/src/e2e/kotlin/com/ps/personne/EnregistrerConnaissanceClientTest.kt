@@ -80,11 +80,11 @@ class EnregistrerConnaissanceClientTest : ShouldSpec(
             }.status shouldBe HttpStatusCode.NotFound
         }
 
-        should("renvoyer une erreur 404 si l'id n'est pas au format attendu") {
+        should("renvoyer une erreur 400 si l'id n'est pas au format attendu") {
             KtorTestApp.defaultHttpClient.post("/personnes/pwet/connaissance-client") {
                 contentType(ContentType.Application.Json)
                 setBody(aConnaissanceClient().defaultValue().toDto())
-            }.status shouldBe HttpStatusCode.NotFound
+            }.status shouldBe HttpStatusCode.BadRequest
         }
     },
 )

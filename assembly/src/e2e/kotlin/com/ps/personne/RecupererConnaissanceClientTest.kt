@@ -65,8 +65,8 @@ class RecupererConnaissanceClientTest : ShouldSpec(
             KtorTestApp.defaultHttpClient.get("/personnes//connaissance-client").status shouldBe HttpStatusCode.NotFound
         }
 
-        should("renvoyer une erreur 404 si l'id n'est pas au format attendu") {
-            KtorTestApp.defaultHttpClient.get("/personnes/pwet/connaissance-client").status shouldBe HttpStatusCode.NotFound
+        should("renvoyer une erreur 400 si l'id n'est pas au format attendu") {
+            KtorTestApp.defaultHttpClient.get("/personnes/pwet/connaissance-client").status shouldBe HttpStatusCode.BadRequest
         }
 
     },
