@@ -8,6 +8,11 @@ This repository is a multi-module Kotlin/JVM project built with Gradle. It uses:
 
 Below are the most common developer commands and usage notes.
 
+## API Documentation
+
+- User-facing API homepage (Markdown), including endpoints, headers (`login`, `tenantId`, `X-Gravitee-Api-Key`), curl examples, and error format: see `doc/API.md`.
+- Swagger UI (OpenAPI) available at runtime: `GET /swagger`.
+
 ## Prerequisites
 
 - JDK 21
