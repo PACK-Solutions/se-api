@@ -22,23 +22,21 @@ import org.jetbrains.exposed.sql.upsert
 class ExposedConnaissanceClientRepository(val tenantIdProvider: TenantIdProvider) : ConnaissanceClientRepository, ModificationsConnaissanceClientRepository {
 
     override fun recuperer(idPersonne: IdPersonne): Result<ConnaissanceClient, ConnaissanceClientRepositoryError> {
-        return transaction {
-            println("tenantID! = ${tenantIdProvider.tenantId()}")
-            ConnaissanceClientTable
-                .selectAll()
-                .where { (personId eq idPersonne.id) and (ConnaissanceClientTable.tenantId eq tenantIdProvider.tenantId()) }
-                .singleOrNull()
-                ?.let {
-                    Ok(
-                        ConnaissanceClient(
-                            idPersonne = idPersonne,
-                            statutPPE = it[ConnaissanceClientTable.statutPPE]?.toDomain(),
-                            statutProchePPE = it[ConnaissanceClientTable.statutProchePPE]?.toDomain(),
-                            vigilance = it[ConnaissanceClientTable.vigilance].toDomain(),
-                        ),
-                    )
-                } ?: Err(ConnaissanceClientRepositoryError.PersonneNonTrouvee)
-        }
+        return ConnaissanceClientTable
+            .selectAll()
+            .where { (personId eq idPersonne.id) and (ConnaissanceClientTable.tenantId eq tenantIdProvider.tenantId()) }
+            .singleOrNull()
+            ?.let {
+                Ok(
+                    ConnaissanceClient(
+                        idPersonne = idPersonne,
+                        statutPPE = it[ConnaissanceClientTable.statutPPE]?.toDomain(),
+                        statutProchePPE = it[ConnaissanceClientTable.statutProchePPE]?.toDomain(),
+                        vigilance = it[ConnaissanceClientTable.vigilance].toDomain(),
+                    ),
+                )
+            } ?: Err(ConnaissanceClientRepositoryError.PersonneNonTrouvee)
+
     }
 
     override fun sauvegarder(connaissanceClient: ConnaissanceClient) = transaction {

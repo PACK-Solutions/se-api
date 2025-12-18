@@ -8,6 +8,7 @@ import com.ps.kommand.middleware.QueryDispatcherMiddleware
 fun configureQueryBus(queryHandlers: List<QueryHandler<*>>): QueryBus {
     return BasicQueryBus(
         linkedSetOf(
+            QueryTransactionMiddleware.builder(),
             QueryDispatcherMiddleware.builder(queryHandlers),
         ),
     )

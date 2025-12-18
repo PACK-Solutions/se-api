@@ -8,6 +8,7 @@ import com.ps.kommand.middleware.CommandDispatcherMiddleware
 fun configureCommandBus(commandHandlers: List<CommandHandler<*>>): CommandBus {
     return BasicCommandBus(
         linkedSetOf(
+            CommandTransactionMiddleware.builder(),
             CommandDispatcherMiddleware.builder(commandHandlers),
         ),
     )
