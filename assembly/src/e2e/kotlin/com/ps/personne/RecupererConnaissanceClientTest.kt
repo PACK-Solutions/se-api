@@ -39,6 +39,10 @@ class RecupererConnaissanceClientTest : ShouldSpec(
             }
         }
 
+        should("renvoyer un status 200 lors de la recuperation d'une connaissance client") {
+            KtorTestApp.defaultHttpClient.get("/personnes/12345/connaissance-client").status shouldBe HttpStatusCode.OK
+        }
+
         should("recuperer une connaissance client pour un client donné") {
             val id = 12345L
             val connaissanceClientDto = aConnaissanceClient().withStatutPPE(FonctionPPE.DIRIGEANT_PARTI).withVigilanceRenforcee().build().toDto()
