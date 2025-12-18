@@ -1,7 +1,9 @@
 package com.ps.personne.usecases
 
+import com.github.michaelbull.result.andThen
 import com.github.michaelbull.result.fold
 import com.github.michaelbull.result.onSuccess
+import com.github.michaelbull.result.recover
 import com.ps.kommand.Command
 import com.ps.kommand.CommandHandler
 import com.ps.kommand.CommandResult
@@ -14,17 +16,8 @@ class EnregistrerConnnaissanceClientHandler(
 ) : CommandHandler<EnregistrerConnnaissanceClientCommand> {
     override fun handle(context: Context, command: EnregistrerConnnaissanceClientCommand): CommandResult<IdPersonne, ConnaissanceClientError> {
         return connaissanceClientRepository.recuperer(command.idPersonne)
-            .fold(
-                { it.mettreAJour(command.statutPPE, command.statutProchePPE, command.vigilance) },
-                {
-                    ConnaissanceClient.creer(
-                        command.idPersonne,
-                        command.statutPPE,
-                        command.statutProchePPE,
-                        command.vigilance,
-                    )
-                },
-            )
+            .recover { ConnaissanceClient.vierge(command.idPersonne) }
+            .andThen { it.mettreAJour(command.statutPPE, command.statutProchePPE, command.vigilance) }
             .onSuccess { connaissanceClientRepository.sauvegarder(it.first) }
             .fold(
                 { CommandResult.Success(command.idPersonne, listOf(it.second)) },

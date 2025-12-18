@@ -7,6 +7,7 @@ import com.ps.kommand.DomainEvent
 value class IdPersonne(val id: Long)
 
 sealed interface ConnaissanceClientEvent : DomainEvent {
+    data class ConnaissanceClientCreee(val idPersonne: IdPersonne) : ConnaissanceClientEvent
     data class ConnaissanceClientModifiee(val idPersonne: IdPersonne) : ConnaissanceClientEvent
 }
 
@@ -26,6 +27,14 @@ data class ConnaissanceClient(
             )
         }
 
+        fun creer(
+            idPersonne: IdPersonne,
+            statutPPE: ExpositionPolitique.Ppe?,
+            statutProchePPE: ExpositionPolitique.ProchePpe?,
+            vigilance: Vigilance,
+        ): Result<Pair<ConnaissanceClient, ConnaissanceClientEvent>, ConnaissanceClientError> =
+            parse(idPersonne, statutPPE, statutProchePPE, vigilance)
+                .map { it to ConnaissanceClientEvent.ConnaissanceClientModifiee(idPersonne) }
 
         // parse, don't validate (https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/)
         private fun parse(
