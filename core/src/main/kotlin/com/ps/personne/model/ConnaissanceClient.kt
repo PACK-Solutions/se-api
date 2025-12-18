@@ -149,11 +149,7 @@ data class ConnaissanceClient(
             comparerStatutProchePPE(statutProchePPE, new.statutProchePPE),
         ).plus(comparerVigilance(vigilance, new.vigilance))
 
-        return if (modifications.isEmpty()) {
-            Err(ConnaissanceClientError.AucuneModification)
-        } else {
-            Ok(modifications)
-        }
+        return Ok(modifications)
     }
 
     private fun stockerModifications(

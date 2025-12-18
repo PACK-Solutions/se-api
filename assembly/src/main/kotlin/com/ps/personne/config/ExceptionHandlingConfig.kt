@@ -1,6 +1,6 @@
 package com.ps.personne.config
 
-import com.ps.personne.problem.ErrorCodes
+import com.ps.personne.http.BusinessException
 import com.ps.personne.problem.respondProblem
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -17,25 +17,24 @@ object ExceptionHandlingConfig {
 
             exception<Throwable> { call, cause ->
                 when (cause) {
+                    is BusinessException -> call.respondProblem(cause.httpCode, cause.message, cause.errorCode)
+
                     is ParameterConversionException,
                     is MissingRequestParameterException,
-                    -> call.respondProblem(
-                        status = HttpStatusCode.BadRequest,
-                        problemDetail = cause.message,
-                        code = ErrorCodes.BAD_REQUEST,
-                    )
+                    -> {
+                        call.application.log.warn("Missing or invalid request parameter", cause)
+                        call.respondProblem(status = HttpStatusCode.BadRequest, problemDetail = cause.message)
+                    }
 
                     else -> {
                         call.application.log.error("Unexpected error", cause)
-                        call.respondProblem(
-                            status = HttpStatusCode.InternalServerError,
-                            problemDetail = cause.message,
-                            code = ErrorCodes.INTERNAL_SERVER_ERROR,
-                        )
+                        call.respondProblem(status = HttpStatusCode.InternalServerError, problemDetail = cause.message)
                     }
                 }
 
             }
         }
     }
+
+
 }

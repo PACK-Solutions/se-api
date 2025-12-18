@@ -4,6 +4,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
 import io.ktor.server.response.respondText
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 /**
@@ -16,13 +17,17 @@ private const val TYPE_DEFAULT = "about:blank"
  */
 public fun problem(block: ProblemBuilder.() -> Unit): Problem = ProblemBuilder().apply(block).build()
 
+@Serializable
+@JvmInline
+value class ErrorCode(val value: String)
+
 /**
  * Application Call extension to return problem details with the correct content type in ktor
  */
 suspend fun ApplicationCall.respondProblem(
     status: HttpStatusCode,
     problemDetail: String?,
-    code: String,
+    code: ErrorCode? = null,
 ) {
     respondText(
         Problem.of(
@@ -167,7 +172,7 @@ class Problem(
             problemType: String,
             problemDetail: String? = null,
             baseUrl: String? = "",
-            code: String,
+            code: ErrorCode,
         ) = problem {
             status = httpStatusCode.value
             title = httpStatusCode.description
@@ -185,13 +190,15 @@ class Problem(
         fun of(
             httpStatusCode: HttpStatusCode,
             problemDetail: String? = null,
-            code: String,
+            code: ErrorCode? = null,
         ): Problem =
             problem {
                 status = httpStatusCode.value
                 title = httpStatusCode.description
                 detail = problemDetail
-                extension("code", code)
+                if (code != null) {
+                    extension("code", code)
+                }
             }
     }
 }

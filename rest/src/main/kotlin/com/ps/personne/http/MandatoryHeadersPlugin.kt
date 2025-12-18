@@ -1,6 +1,5 @@
 package com.ps.personne.http
 
-import com.ps.personne.problem.ErrorCodes
 import com.ps.personne.problem.respondProblem
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
@@ -20,7 +19,6 @@ val MandatoryHeadersPlugin = createApplicationPlugin(name = "MandatoryHeadersPlu
             call.respondProblem(
                 status = HttpStatusCode.BadRequest,
                 problemDetail = String.format(MESSAGE_HEADER_MANQUANT, HeaderNames.LOGIN),
-                code = ErrorCodes.BAD_REQUEST,
             )
             return@onCall
         }
@@ -29,7 +27,6 @@ val MandatoryHeadersPlugin = createApplicationPlugin(name = "MandatoryHeadersPlu
             call.respondProblem(
                 status = HttpStatusCode.BadRequest,
                 problemDetail = String.format(MESSAGE_HEADER_MANQUANT, HeaderNames.TENANT_ID),
-                code = ErrorCodes.BAD_REQUEST,
             )
             return@onCall
         }
