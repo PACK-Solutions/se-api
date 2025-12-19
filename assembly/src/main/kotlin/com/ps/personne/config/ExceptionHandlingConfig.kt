@@ -13,15 +13,17 @@ object ExceptionHandlingConfig {
     fun Application.configureExceptionHandling() {
         install(StatusPages) {
             exception<Throwable> { call, cause ->
-                call.application.log.error("Unhandled exception", cause)
-                call.respondProblem(
-                    HttpStatusCode.InternalServerError,
-                    Problem.of(
-                        httpStatusCode = HttpStatusCode.InternalServerError,
-                        problemDetail = cause.message,
-                        code = ErrorCodes.INTERNAL_SERVER_ERROR,
-                    ),
-                )
+                "Unhandled technical error".also {
+                    call.application.log.error(it, cause)
+                    call.respondProblem(
+                        HttpStatusCode.InternalServerError,
+                        Problem.of(
+                            httpStatusCode = HttpStatusCode.InternalServerError,
+                            problemDetail = it,
+                            code = ErrorCodes.INTERNAL_SERVER_ERROR,
+                        ),
+                    )
+                }
             }
         }
     }
