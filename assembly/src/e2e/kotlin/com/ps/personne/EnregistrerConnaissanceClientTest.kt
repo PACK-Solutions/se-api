@@ -4,7 +4,9 @@ import com.ps.personne.fixtures.aConnaissanceClient
 import com.ps.personne.kyc.dto.request.ConnaissanceClientDto
 import com.ps.personne.kyc.dto.request.toDto
 import com.ps.personne.model.FonctionPPE
+import com.ps.personne.model.LienParente
 import com.ps.personne.tables.ConnaissanceClientTable
+import com.ps.personne.tables.HistoriqueTable
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.provided.KtorTestApp
@@ -17,6 +19,7 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class EnregistrerConnaissanceClientTest : ShouldSpec(
@@ -36,6 +39,7 @@ class EnregistrerConnaissanceClientTest : ShouldSpec(
         beforeEach {
             transaction {
                 ConnaissanceClientTable.deleteAll()
+                HistoriqueTable.deleteAll()
             }
         }
 
@@ -85,6 +89,21 @@ class EnregistrerConnaissanceClientTest : ShouldSpec(
                 contentType(ContentType.Application.Json)
                 setBody(aConnaissanceClient().defaultValue().toDto())
             }.status shouldBe HttpStatusCode.BadRequest
+        }
+
+        should("enregistrer l'historique des modifications") {
+            val id = 12345L
+            val modif1 = aConnaissanceClient().withStatutPPE(FonctionPPE.DIRIGEANT_PARTI).withVigilanceRenforcee().build().toDto()
+            val modif2 = aConnaissanceClient().withStatutProchePPE(LienParente.CONJOINT, FonctionPPE.DIRIGEANT_PARTI).withVigilanceRenforcee().build().toDto()
+
+            postConnaissanceClient(id, modif1)
+            postConnaissanceClient(id, modif2)
+
+
+            transaction {
+                HistoriqueTable.selectAll().count() shouldBe 2
+            }
+
         }
     },
 )

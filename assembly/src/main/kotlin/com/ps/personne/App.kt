@@ -1,5 +1,6 @@
 package com.ps.personne
 
+import com.ps.kommand.event.SynchronousEventBus
 import com.ps.personne.config.*
 import com.ps.personne.config.ContextProviderConfig.configureContextProvider
 import com.ps.personne.config.CorsConfig.configureCors
@@ -38,7 +39,8 @@ fun Application.personne() {
     configureHealthRoutes(HealthCheckService(sandbox))
     configureLogging()
     configureInstances(sandbox)
-    val commandBus = configureCommandBus(attributes[InstancesConfig.commandHandlersKey])
+    val eventBus = SynchronousEventBus(attributes[InstancesConfig.eventHandlersKey])
+    val commandBus = configureCommandBus(attributes[InstancesConfig.commandHandlersKey], eventBus)
     val queryBus = configureQueryBus(attributes[InstancesConfig.queryHandlersKey])
     configureConnaissanceClientRoutes(configureConnaissanceClientService(sandbox), queryBus, commandBus)
 }

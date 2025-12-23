@@ -1,14 +1,14 @@
+package com.ps.personne.usecases
+
+import aContext
 import com.ps.kommand.BasicCommandBus
 import com.ps.kommand.CommandResult
 import com.ps.kommand.middleware.CommandDispatcherMiddleware
+import com.ps.personne.events.ConnaissanceClientModifiee
 import com.ps.personne.fixtures.*
 import com.ps.personne.model.*
-import com.ps.personne.model.ConnaissanceClientEvent.ConnaissanceClientCreee
-import com.ps.personne.model.ConnaissanceClientEvent.ConnaissanceClientModifiee
 import com.ps.personne.ports.driven.ConnaissanceClientRepositoryError
 import com.ps.personne.ports.driven.InMemoryConnaissanceClientRepository
-import com.ps.personne.usecases.EnregistrerConnnaissanceClientCommand
-import com.ps.personne.usecases.EnregistrerConnnaissanceClientHandler
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.shouldBe
 
@@ -32,13 +32,18 @@ class EnregistrerConnaissanceClientTest : ShouldSpec(
 
             val result = bus.dispatch(command, aContext().build())
 
-            repository[idPersonne] shouldBe aConnaissanceClient(idPersonne)
+            val expectedConnaissanceClient = aConnaissanceClient(idPersonne)
                 .withVigilanceRenforcee()
                 .withoutStatutPPE()
                 .withoutStatutProchePPE()
                 .build()
 
-            result shouldBe CommandResult.Success(idPersonne, listOf(ConnaissanceClientCreee(idPersonne)))
+            repository[idPersonne] shouldBe expectedConnaissanceClient
+
+            result shouldBe CommandResult.Success(
+                idPersonne,
+                listOf(ConnaissanceClientModifiee(ConnaissanceClient.vierge(idPersonne), expectedConnaissanceClient)),
+            )
         }
 
         should("mettre à jour une connaissance client existante") {
@@ -49,8 +54,9 @@ class EnregistrerConnaissanceClientTest : ShouldSpec(
                 statutProchePPE = aProchePPE(FonctionPPE.DIRIGEANT_PARTI, LienParente.PARENT).build(),
                 vigilance = AvecVigilanceRenforcee(emptyList()),
             )
+            val connaissanceClientExistante = aConnaissanceClient(idPersonne).build()
 
-            repository.sauvegarder(aConnaissanceClient(idPersonne).build())
+            repository.sauvegarder(connaissanceClientExistante)
 
             val result = bus.dispatch(command, aContext().build())
 
@@ -60,7 +66,18 @@ class EnregistrerConnaissanceClientTest : ShouldSpec(
                 .withStatutProchePPE(LienParente.PARENT, FonctionPPE.DIRIGEANT_PARTI)
                 .build()
 
-            result shouldBe CommandResult.Success(idPersonne, listOf(ConnaissanceClientModifiee(idPersonne)))
+            result shouldBe CommandResult.Success(
+                idPersonne,
+                listOf(
+                    ConnaissanceClientModifiee(
+                        connaissanceClientExistante,
+                        aConnaissanceClient(idPersonne)
+                            .withStatutProchePPE(LienParente.PARENT, FonctionPPE.DIRIGEANT_PARTI)
+                            .withVigilanceRenforcee()
+                            .build(),
+                    ),
+                ),
+            )
         }
 
         should("ne pas enregistrer si la connaissance client est invalide et renvoyer une erreur") {

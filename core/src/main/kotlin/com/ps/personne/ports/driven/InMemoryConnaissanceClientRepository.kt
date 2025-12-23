@@ -21,18 +21,7 @@ class InMemoryConnaissanceClientRepository() :
     }
 
     override fun sauvegarder(connaissanceClient: ConnaissanceClient): IdPersonne {
-        connaissanceClients[connaissanceClient.idPersonne] = ConnaissanceClient(
-            idPersonne = connaissanceClient.idPersonne,
-            statutPPE = connaissanceClient.statutPPE,
-            statutProchePPE = connaissanceClient.statutProchePPE,
-            vigilance = connaissanceClient.vigilance,
-        )
-//
-//        connaissanceClient.modification?.let {
-//            historiqueModifications[connaissanceClient.idPersonne] =
-//                listOf(it) + (historiqueModifications[connaissanceClient.idPersonne] ?: emptyList())
-//        }
-
+        connaissanceClients[connaissanceClient.idPersonne] = connaissanceClient
         return connaissanceClient.idPersonne
     }
 
