@@ -1,0 +1,50 @@
+package com.ps.personne.rest.config
+
+import com.ps.personne.rest.problem.respondProblem
+import io.ktor.http.HttpStatusCode
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.createApplicationPlugin
+import io.ktor.server.request.uri
+import io.ktor.util.AttributeKey
+
+val MandatoryHeadersPlugin = createApplicationPlugin(name = "MandatoryHeadersPlugin") {
+    onCall { call ->
+        if (call.request.uri.startsWith("/health")) return@onCall
+        if (call.request.uri.startsWith("/swagger")) return@onCall
+        if (call.request.uri.startsWith("/metrics")) return@onCall
+        val login = call.request.headers[HeaderNames.LOGIN]
+        val tenantId = call.request.headers[HeaderNames.TENANT_ID]
+
+        if (login.isNullOrBlank()) {
+            call.respondProblem(
+                status = HttpStatusCode.BadRequest,
+                problemDetail = String.format(MESSAGE_HEADER_MANQUANT, HeaderNames.LOGIN),
+            )
+            return@onCall
+        }
+
+        if (tenantId.isNullOrBlank()) {
+            call.respondProblem(
+                status = HttpStatusCode.BadRequest,
+                problemDetail = String.format(MESSAGE_HEADER_MANQUANT, HeaderNames.TENANT_ID),
+            )
+            return@onCall
+        }
+
+        call.attributes.put(LoginAttributeKey, login)
+        call.attributes.put(TenantIdAttributeKey, tenantId)
+    }
+}
+
+fun ApplicationCall.login(): String = attributes[LoginAttributeKey]
+fun ApplicationCall.tenantId(): String = attributes[TenantIdAttributeKey]
+
+object HeaderNames {
+    const val LOGIN = "login"
+    const val TENANT_ID = "tenantId"
+}
+
+val LoginAttributeKey = AttributeKey<String>(HeaderNames.LOGIN)
+val TenantIdAttributeKey = AttributeKey<String>(HeaderNames.TENANT_ID)
+
+internal const val MESSAGE_HEADER_MANQUANT = "le header %s est manquant"

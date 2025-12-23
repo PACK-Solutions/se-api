@@ -11,15 +11,13 @@ plugins {
 }
 
 rootProject.name = "se-api"
-include("core")
-// configures and bootstrap the whole application
-include("assembly")
-// driving actors
-include("rest")
-// driven actors
-include("database")
-// Include integration-tests only when the directory exists (e.g., not in Docker image build context)
-if (file("integration-tests").isDirectory) {
-    include("integration-tests")
-}
+
 includeBuild("../kommand")
+
+val modulesDir = file("modules")
+modulesDir.listFiles()?.forEach { dir ->
+    if (dir.isDirectory) {
+        include(":${dir.name}")
+        project(":${dir.name}").projectDir = dir
+    }
+}
