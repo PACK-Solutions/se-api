@@ -1,9 +1,9 @@
 package com.ps.personne.config
 
-import com.ps.personne.ports.driven.InMemoryConnaissanceClientRepository
-import com.ps.personne.ports.driving.ConnaissanceClientService
 import com.ps.personne.database.repository.CoroutineContextTenantIdProvider
 import com.ps.personne.database.repository.ExposedConnaissanceClientRepository
+import com.ps.personne.ports.driven.InMemoryConnaissanceClientRepository
+import com.ps.personne.ports.driving.ConnaissanceClientService
 import com.ps.personne.services.ConnaissanceClientServiceImpl
 
 fun configureConnaissanceClientService(sandbox: Boolean): ConnaissanceClientService {

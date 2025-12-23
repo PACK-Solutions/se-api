@@ -7,10 +7,6 @@ import com.ps.personne.database.model.SyntheseModificationDto
 import com.ps.personne.database.model.TraceAuditDto
 import com.ps.personne.database.model.toDomain
 import com.ps.personne.database.model.toDto
-import com.ps.personne.model.*
-import com.ps.personne.ports.driven.ConnaissanceClientRepository
-import com.ps.personne.ports.driven.ConnaissanceClientRepositoryError
-import com.ps.personne.ports.driven.ModificationsConnaissanceClientRepository
 import com.ps.personne.database.tables.ConnaissanceClientHistoriqueTable
 import com.ps.personne.database.tables.ConnaissanceClientHistoriqueTable.auditDate
 import com.ps.personne.database.tables.ConnaissanceClientHistoriqueTable.auditType
@@ -18,6 +14,10 @@ import com.ps.personne.database.tables.ConnaissanceClientHistoriqueTable.auditUs
 import com.ps.personne.database.tables.ConnaissanceClientHistoriqueTable.modifications
 import com.ps.personne.database.tables.ConnaissanceClientTable
 import com.ps.personne.database.tables.ConnaissanceClientTable.personId
+import com.ps.personne.model.*
+import com.ps.personne.ports.driven.ConnaissanceClientRepository
+import com.ps.personne.ports.driven.ConnaissanceClientRepositoryError
+import com.ps.personne.ports.driven.ModificationsConnaissanceClientRepository
 import org.jetbrains.exposed.sql.and
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -40,7 +40,6 @@ class ExposedConnaissanceClientRepository(val tenantIdProvider: TenantIdProvider
                     ),
                 )
             } ?: Err(ConnaissanceClientRepositoryError.PersonneNonTrouvee)
-
     }
 
     override fun sauvegarder(connaissanceClient: ConnaissanceClient) = transaction {

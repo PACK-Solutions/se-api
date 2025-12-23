@@ -1,4 +1,4 @@
-package com.ps.personne.usecases
+package usecases
 
 import aContext
 import com.ps.kommand.BasicCommandBus
@@ -9,6 +9,8 @@ import com.ps.personne.fixtures.*
 import com.ps.personne.model.*
 import com.ps.personne.ports.driven.ConnaissanceClientRepositoryError
 import com.ps.personne.ports.driven.InMemoryConnaissanceClientRepository
+import com.ps.personne.usecases.EnregistrerConnnaissanceClientCommand
+import com.ps.personne.usecases.EnregistrerConnnaissanceClientHandler
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.shouldBe
 

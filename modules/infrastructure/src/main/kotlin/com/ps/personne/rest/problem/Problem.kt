@@ -40,7 +40,6 @@ suspend fun ApplicationCall.respondProblem(
     )
 }
 
-
 /**
  * Builder for a problem detail including all mutable components
  * Problem implements RFC 9457 (https://datatracker.ietf.org/doc/rfc9457/)

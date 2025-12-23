@@ -2,7 +2,7 @@ package com.ps.personne.model
 
 import java.time.LocalDate
 
-//TODO pas de localdate
+// TODO pas de localdate
 data class Mandat(val fonction: FonctionPPE, val dateFin: LocalDate?)
 
 sealed interface ExpositionPolitique {

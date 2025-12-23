@@ -1,9 +1,8 @@
-package com.ps.personne.database.historique
+package com.ps.personne.events
 
 import com.ps.kommand.Context
 import com.ps.kommand.event.EventHandler
-import com.ps.personne.events.AuditableEvent
-import com.ps.personne.database.repository.HistoriqueRepository
+import com.ps.personne.historique.*
 import java.time.Instant
 import java.util.*
 
@@ -17,7 +16,7 @@ class StoreHistoriqueOnAuditableEvent(val repository: HistoriqueRepository) :
                 typeObjet = event.getTypeObjet(),
                 idObjet = event.getIdObjet(),
                 changements = event.getChangements(),
-                performedBy = "unknown", //TODO record user
+                performedBy = "unknown", // TODO record user
                 occurredAt = Instant.now(),
             ),
         )

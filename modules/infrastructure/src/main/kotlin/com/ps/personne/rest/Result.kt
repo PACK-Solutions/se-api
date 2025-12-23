@@ -7,7 +7,6 @@ import com.ps.kommand.CommandResult
 import com.ps.kommand.QueryResult
 import com.ps.kommand.event.DomainEvent
 
-
 fun <R, E> CommandResult<R, E>.toResult(): Result<Pair<R, List<DomainEvent>>, E> = when (this) {
     is CommandResult.Success<R> -> Ok(this.result to this.events)
     is CommandResult.Failure<E> -> Err(error)

@@ -9,7 +9,7 @@ import com.ps.personne.events.ConnaissanceClientModifiee
 @JvmInline
 value class IdPersonne(val id: Long)
 
-//TODO rendre le constructeur privé pour garantir les invariants
+// TODO rendre le constructeur privé pour garantir les invariants
 data class ConnaissanceClient(
     val idPersonne: IdPersonne,
     val statutPPE: ExpositionPolitique.Ppe?,
@@ -29,9 +29,7 @@ data class ConnaissanceClient(
         return ConnaissanceClient(idPersonne, statutPPE, statutProchePPE, vigilance).let {
             Ok(it to ConnaissanceClientModifiee(this, it))
         }
-
     }
-
 
     companion object {
         fun vierge(idPersonne: IdPersonne): ConnaissanceClient {

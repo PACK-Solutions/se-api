@@ -20,12 +20,13 @@ class RecupererConnnaissanceClientHandler(val repository: ConnaissanceClientRepo
                 { QueryResult.Success(it) },
                 {
                     when (it) {
-                        is ConnaissanceClientRepositoryError.PersonneNonTrouvee -> QueryResult.Success(ConnaissanceClient.vierge(query.idPersonne))
+                        is ConnaissanceClientRepositoryError.PersonneNonTrouvee -> QueryResult.Success(
+                            ConnaissanceClient.vierge(query.idPersonne)
+                        )
                     }
                 },
             )
     }
-
 }
 
 data class RecupererConnaissanceClientQuery(

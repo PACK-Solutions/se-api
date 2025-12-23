@@ -1,4 +1,4 @@
-package com.ps.personne.database.historique
+package com.ps.personne.historique
 
 import com.ps.personne.events.AuditableEvent
 import com.ps.personne.events.ConnaissanceClientModifiee
@@ -14,7 +14,6 @@ fun AuditableEvent.getIdObjet(): String = when (this) {
     is ConnaissanceClientModifiee -> this.new.idPersonne.id.toString()
     else -> error("Event ${this.javaClass.simpleName} is flagged as auditable but audit rules are not implemented")
 }
-
 
 fun AuditableEvent.getChangements(): Set<Changement> = when (this) {
     is ConnaissanceClientModifiee -> changements(old, new) {
@@ -39,4 +38,3 @@ fun AuditableEvent.getChangements(): Set<Changement> = when (this) {
 
     else -> error("Event ${this.javaClass.simpleName} is flagged as auditable but audit rules are not implemented")
 }
-

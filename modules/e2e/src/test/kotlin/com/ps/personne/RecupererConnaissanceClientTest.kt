@@ -45,7 +45,9 @@ class RecupererConnaissanceClientTest : ShouldSpec(
 
         should("recuperer une connaissance client pour un client donné") {
             val id = 12345L
-            val connaissanceClientDto = aConnaissanceClient().withStatutPPE(FonctionPPE.DIRIGEANT_PARTI).withVigilanceRenforcee().build().toDto()
+            val connaissanceClientDto = aConnaissanceClient().withStatutPPE(
+                FonctionPPE.DIRIGEANT_PARTI
+            ).withVigilanceRenforcee().build().toDto()
             postConnaissanceClient(id, connaissanceClientDto)
 
             val response = getConnaissanceClient(id)
@@ -55,8 +57,12 @@ class RecupererConnaissanceClientTest : ShouldSpec(
 
         should("recuperer la connaissance client sur le bon tenant") {
             val id = 12345L
-            val connaissanceClientTenant1 = aConnaissanceClient().withStatutPPE(FonctionPPE.DIRIGEANT_PARTI).withVigilanceRenforcee().build().toDto()
-            val connaissanceClientTenant2 = aConnaissanceClient().withStatutPPE(FonctionPPE.MEMBRE_PARLEMENT).withVigilanceRenforcee().build().toDto()
+            val connaissanceClientTenant1 = aConnaissanceClient().withStatutPPE(
+                FonctionPPE.DIRIGEANT_PARTI
+            ).withVigilanceRenforcee().build().toDto()
+            val connaissanceClientTenant2 = aConnaissanceClient().withStatutPPE(
+                FonctionPPE.MEMBRE_PARLEMENT
+            ).withVigilanceRenforcee().build().toDto()
 
             postConnaissanceClient(id, connaissanceClientTenant1, "tenant1")
             postConnaissanceClient(id, connaissanceClientTenant2, "tenant2")
@@ -72,6 +78,5 @@ class RecupererConnaissanceClientTest : ShouldSpec(
         should("renvoyer une erreur 400 si l'id n'est pas au format attendu") {
             KtorTestApp.defaultHttpClient.get("/personnes/pwet/connaissance-client").status shouldBe HttpStatusCode.BadRequest
         }
-
     },
 )

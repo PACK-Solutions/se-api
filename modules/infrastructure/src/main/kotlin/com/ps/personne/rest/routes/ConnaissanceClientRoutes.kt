@@ -42,7 +42,10 @@ fun Application.configureConnaissanceClientRoutes(connaissanceClientService: Con
 
 private fun getConnaissanceClient(queryBus: QueryBus): suspend RoutingContext.() -> Unit = {
     val idPersonne = call.parameters.getOrFail<Long>("idPersonne")
-    val connaissanceClient = queryBus.dispatch(RecupererConnaissanceClientQuery(IdPersonne(idPersonne)), ContextProvider.Coroutine.current())
+    val connaissanceClient = queryBus.dispatch(
+        RecupererConnaissanceClientQuery(IdPersonne(idPersonne)),
+        ContextProvider.Coroutine.current()
+    )
         .toResult()
         .getOrThrow()
     call.respond(connaissanceClient.toDto())
@@ -74,5 +77,4 @@ private fun saveConnaissanceClient(commandBus: CommandBus): suspend RoutingConte
         .getOrThrow(::BusinessException)
 
     call.respond(HttpStatusCode.OK, connaissanceClientDto)
-
 }

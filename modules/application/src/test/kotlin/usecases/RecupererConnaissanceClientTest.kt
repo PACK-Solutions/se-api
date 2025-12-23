@@ -1,4 +1,4 @@
-package com.ps.personne.usecases
+package usecases
 
 import aContext
 import com.ps.kommand.BasicQueryBus
@@ -8,6 +8,8 @@ import com.ps.personne.fixtures.ConnaissanceClientFactory
 import com.ps.personne.fixtures.aConnaissanceClient
 import com.ps.personne.fixtures.anIdPersonne
 import com.ps.personne.ports.driven.InMemoryConnaissanceClientRepository
+import com.ps.personne.usecases.RecupererConnaissanceClientQuery
+import com.ps.personne.usecases.RecupererConnnaissanceClientHandler
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.shouldBe
 
@@ -40,11 +42,9 @@ class RecupererConnaissanceClientTest : ShouldSpec(
             val idPersonne = ConnaissanceClientFactory.creerIdPersonne()
             val query = RecupererConnaissanceClientQuery(idPersonne)
 
-
             val result = bus.dispatch(query, aContext().build())
 
             result shouldBe QueryResult.Success(aConnaissanceClient(idPersonne).defaultValue())
         }
-
     },
 )

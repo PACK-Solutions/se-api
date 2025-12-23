@@ -1,4 +1,5 @@
 dependencies {
+    implementation(project(":application"))
     implementation(project(":domain"))
 
     implementation(libs.bundles.ktor)

@@ -14,7 +14,6 @@ object ExceptionHandlingConfig {
 
     fun Application.configureExceptionHandling() {
         install(StatusPages) {
-
             exception<Throwable> { call, cause ->
                 when (cause) {
                     is BusinessException -> call.respondProblem(cause.httpCode, cause.message, cause.errorCode)
@@ -31,10 +30,7 @@ object ExceptionHandlingConfig {
                         call.respondProblem(status = HttpStatusCode.InternalServerError, problemDetail = cause.message)
                     }
                 }
-
             }
         }
     }
-
-
 }

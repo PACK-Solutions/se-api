@@ -14,5 +14,3 @@ fun configureQueryBus(queryHandlers: List<QueryHandler<*>>): QueryBus {
         ),
     )
 }
-
-

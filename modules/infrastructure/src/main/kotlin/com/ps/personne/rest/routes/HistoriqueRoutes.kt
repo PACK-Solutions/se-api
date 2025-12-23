@@ -1,8 +1,8 @@
 package com.ps.personne.rest.routes
 
 import com.ps.kommand.QueryBus
-import com.ps.personne.database.historique.Changement
-import com.ps.personne.database.historique.EntreeHistorique
+import com.ps.personne.database.model.ChangementDto
+import com.ps.personne.historique.EntreeHistorique
 import io.ktor.server.application.Application
 import io.ktor.server.routing.RoutingContext
 import io.ktor.server.routing.get
@@ -13,21 +13,20 @@ import kotlinx.serialization.Serializable
 fun Application.configureHistoriqueRoutes(queryBus: QueryBus) {
     routing {
         get("/personnes/{idPersonne}/historique/connaissance-client", getHistoriqueConnaissanceClient(queryBus))
-
     }
 }
 
 @Serializable
 data class EntreeHistoriqueDto(
     val idObjet: String,
-    val changements: Set<Changement>,
+    val changements: Set<ChangementDto>,
     val performedBy: String,
     val occurredAt: String,
 )
 
 private fun EntreeHistorique.toDto() = EntreeHistoriqueDto(
     idObjet = this.idObjet,
-    changements = this.changements,
+    changements = this.changements.map(ChangementDto::from).toSet(),
     performedBy = this.performedBy,
     occurredAt = this.occurredAt.toString(),
 )

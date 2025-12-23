@@ -4,8 +4,8 @@ import com.ps.kommand.Context
 import com.ps.kommand.Query
 import com.ps.kommand.QueryHandler
 import com.ps.kommand.QueryResult
-import com.ps.personne.database.historique.EntreeHistorique
-import com.ps.personne.database.repository.HistoriqueRepository
+import com.ps.personne.historique.EntreeHistorique
+import com.ps.personne.historique.HistoriqueRepository
 import com.ps.personne.model.IdPersonne
 
 class RecupererHistoriqueConnnaissanceClientHandler(val repository: HistoriqueRepository) : QueryHandler<RecupererHistoriqueConnaissanceClientQuery> {
@@ -16,7 +16,6 @@ class RecupererHistoriqueConnnaissanceClientHandler(val repository: HistoriqueRe
         error("Not yet implemented")
         //    return QueryResult.Success(repository.get("ConnaissanceClient", query.idPersonne.id.toString()))
     }
-
 }
 
 data class RecupererHistoriqueConnaissanceClientQuery(

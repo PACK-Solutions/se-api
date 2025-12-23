@@ -1,7 +1,9 @@
-package com.ps.personne.database.historique
+package com.ps.personne.historique
 
-
-fun <T> changements(old: T, new: T, block: ChangementsBuilder<T>.() -> Unit): Set<Changement> = ChangementsBuilder(old, new).apply(block).build()
+fun <T> changements(old: T, new: T, block: ChangementsBuilder<T>.() -> Unit): Set<Changement> = ChangementsBuilder(
+    old,
+    new
+).apply(block).build()
 
 class ChangementsBuilder<T>(val old: T, val new: T) {
     inner class ChangementBuilder<P>(val propriete: String) {
@@ -32,5 +34,3 @@ class ChangementsBuilder<T>(val old: T, val new: T) {
 
     fun build() = changements
 }
-
-

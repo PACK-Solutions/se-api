@@ -26,7 +26,6 @@ object GlobalPostgresContainer : PostgreSQLContainer(
     }
 }
 
-
 object KtorTestApp {
     val builder: ApplicationTestBuilder by lazy {
         ApplicationTestBuilder().apply(
@@ -51,7 +50,7 @@ object KtorTestApp {
         )
     }
 
-    val defaultTenantId = "pack"
+    const val defaultTenantId = "pack"
 
     /** basic client with pre-set login and tenantId (from defaultTenantId) headers */
     val defaultHttpClient: HttpClient by lazy {
@@ -64,11 +63,8 @@ object KtorTestApp {
         }
     }
 
-
     fun httpClient(block: HttpClientConfig<out HttpClientEngineConfig>.() -> Unit) = builder.createClient(block)
-
 }
-
 
 object KtorTestAppStartup : BeforeProjectListener, AfterProjectListener {
     override suspend fun beforeProject() {
@@ -79,7 +75,6 @@ object KtorTestAppStartup : BeforeProjectListener, AfterProjectListener {
 
     override suspend fun afterProject() {
         println("Stopping Ktor Test App")
-
     }
 }
 
@@ -102,6 +97,4 @@ object TestContainerStartup : BeforeProjectListener, AfterProjectListener, Befor
 
 class ProjectConfig : AbstractProjectConfig() {
     override val extensions = listOf(TestContainerStartup, KtorTestAppStartup)
-
-
 }

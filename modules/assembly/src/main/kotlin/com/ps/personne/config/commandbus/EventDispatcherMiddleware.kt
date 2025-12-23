@@ -23,5 +23,4 @@ class EventDispatcherMiddleware(val eventBus: EventBus, val next: CommandBusMidd
             )
         }
     }
-
 }

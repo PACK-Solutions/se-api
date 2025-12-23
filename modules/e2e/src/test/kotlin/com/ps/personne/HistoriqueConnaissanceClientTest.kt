@@ -43,12 +43,16 @@ class HistoriqueConnaissanceClientTest : ShouldSpec(
 
         should("enregistrer l'historique des modifications") {
             val id = 12345L
-            val modif1 = aConnaissanceClient().withStatutPPE(FonctionPPE.DIRIGEANT_PARTI).withVigilanceRenforcee().build().toDto()
-            val modif2 = aConnaissanceClient().withStatutProchePPE(LienParente.CONJOINT, FonctionPPE.DIRIGEANT_PARTI).withVigilanceRenforcee().build().toDto()
+            val modif1 = aConnaissanceClient().withStatutPPE(
+                FonctionPPE.DIRIGEANT_PARTI
+            ).withVigilanceRenforcee().build().toDto()
+            val modif2 = aConnaissanceClient().withStatutProchePPE(
+                LienParente.CONJOINT,
+                FonctionPPE.DIRIGEANT_PARTI
+            ).withVigilanceRenforcee().build().toDto()
 
             postConnaissanceClient(id, modif1)
             postConnaissanceClient(id, modif2)
-
 
             val result = getHistoriqueConnaissanceClient(id)
 

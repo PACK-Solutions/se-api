@@ -11,7 +11,6 @@ class BusinessException(error: BusinessError) : RuntimeException() {
     val errorCode = errorCode(error)
 }
 
-
 private fun httpCode(error: BusinessError): HttpStatusCode = when (error) {
     is ConnaissanceClientError.VigilanceRenforceeObligatoire -> HttpStatusCode.BadRequest
 }
@@ -23,5 +22,3 @@ private fun errorCode(error: BusinessError): ErrorCode = when (error) {
 private fun message(error: BusinessError): String? = when (error) {
     is ConnaissanceClientError.VigilanceRenforceeObligatoire -> "La vigilance renforcée est obligatoire pour un PPE ou un proche PPE"
 }
-
-

@@ -20,5 +20,4 @@ class CommandTransactionMiddleware(val next: CommandBusMiddleware) : CommandBusM
             )
         }
     }
-
 }

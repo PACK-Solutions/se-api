@@ -21,5 +21,4 @@ class QueryTransactionMiddleware(val next: QueryBusMiddleware) : QueryBusMiddlew
             )
         }
     }
-
 }

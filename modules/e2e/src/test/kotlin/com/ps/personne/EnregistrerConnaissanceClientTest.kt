@@ -45,7 +45,9 @@ class EnregistrerConnaissanceClientTest : ShouldSpec(
 
         should("enregistrer une connaissance client pour un client donné") {
             val id = 12345L
-            val connaissanceClientDto = aConnaissanceClient().withStatutPPE(FonctionPPE.DIRIGEANT_PARTI).withVigilanceRenforcee().build().toDto()
+            val connaissanceClientDto = aConnaissanceClient().withStatutPPE(
+                FonctionPPE.DIRIGEANT_PARTI
+            ).withVigilanceRenforcee().build().toDto()
 
             val postResponse = postConnaissanceClient(id, connaissanceClientDto)
 
@@ -55,8 +57,12 @@ class EnregistrerConnaissanceClientTest : ShouldSpec(
 
         should("enregistrer la connaissance client sur le bon tenant") {
             val id = 12345L
-            val connaissanceClientTenant1 = aConnaissanceClient().withStatutPPE(FonctionPPE.DIRIGEANT_PARTI).withVigilanceRenforcee().build().toDto()
-            val connaissanceClientTenant2 = aConnaissanceClient().withStatutPPE(FonctionPPE.MEMBRE_PARLEMENT).withVigilanceRenforcee().build().toDto()
+            val connaissanceClientTenant1 = aConnaissanceClient().withStatutPPE(
+                FonctionPPE.DIRIGEANT_PARTI
+            ).withVigilanceRenforcee().build().toDto()
+            val connaissanceClientTenant2 = aConnaissanceClient().withStatutPPE(
+                FonctionPPE.MEMBRE_PARLEMENT
+            ).withVigilanceRenforcee().build().toDto()
 
             postConnaissanceClient(id, connaissanceClientTenant1, "tenant1")
             postConnaissanceClient(id, connaissanceClientTenant2, "tenant2")
@@ -67,7 +73,9 @@ class EnregistrerConnaissanceClientTest : ShouldSpec(
 
         should("ne pas enregistrer si la connaissance client est invalide et renvoyer une erreur") {
             val id = 12345L
-            val connaissanceClientTenant1 = aConnaissanceClient().withStatutPPE(FonctionPPE.DIRIGEANT_PARTI).withoutVigilanceRenforcee().build().toDto()
+            val connaissanceClientTenant1 = aConnaissanceClient().withStatutPPE(
+                FonctionPPE.DIRIGEANT_PARTI
+            ).withoutVigilanceRenforcee().build().toDto()
 
             val result = postConnaissanceClient(id, connaissanceClientTenant1)
 
@@ -75,7 +83,6 @@ class EnregistrerConnaissanceClientTest : ShouldSpec(
 
             getConnaissanceClient(id) shouldBe aConnaissanceClient().defaultValue().toDto()
         }
-
 
         should("renvoyer une erreur 404 si l'id n'est pas fourni") {
             KtorTestApp.defaultHttpClient.post("/personnes//connaissance-client") {
@@ -93,17 +100,20 @@ class EnregistrerConnaissanceClientTest : ShouldSpec(
 
         should("enregistrer l'historique des modifications") {
             val id = 12345L
-            val modif1 = aConnaissanceClient().withStatutPPE(FonctionPPE.DIRIGEANT_PARTI).withVigilanceRenforcee().build().toDto()
-            val modif2 = aConnaissanceClient().withStatutProchePPE(LienParente.CONJOINT, FonctionPPE.DIRIGEANT_PARTI).withVigilanceRenforcee().build().toDto()
+            val modif1 = aConnaissanceClient().withStatutPPE(
+                FonctionPPE.DIRIGEANT_PARTI
+            ).withVigilanceRenforcee().build().toDto()
+            val modif2 = aConnaissanceClient().withStatutProchePPE(
+                LienParente.CONJOINT,
+                FonctionPPE.DIRIGEANT_PARTI
+            ).withVigilanceRenforcee().build().toDto()
 
             postConnaissanceClient(id, modif1)
             postConnaissanceClient(id, modif2)
 
-
             transaction {
                 HistoriqueTable.selectAll().count() shouldBe 2
             }
-
         }
     },
 )

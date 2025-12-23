@@ -1,10 +1,6 @@
 package com.ps.personne.database.tables
 
-import com.ps.personne.database.historique.Changement
-import com.ps.personne.database.model.AvecVigilanceRenforceeDto
-import com.ps.personne.database.model.ExpositionPolitiqueDto
-import com.ps.personne.database.model.ModificationConnaissanceClientDto
-import com.ps.personne.database.model.TypeOperationDto
+import com.ps.personne.database.model.*
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.javatime.timestamp
@@ -39,8 +35,7 @@ object HistoriqueTable : Table("historique") {
 
     val objectType = varchar("object_type", length = 50)
     val objectId = varchar("object_id", length = 50)
-    val changements = jsonb<Set<Changement>>("changements", jsonConfig)
+    val changements = jsonb<Set<ChangementDto>>("changements", jsonConfig)
     val performedBy = varchar("performed_by", length = 100)
     val occurredAt = timestamp("occurred_at")
-
 }
