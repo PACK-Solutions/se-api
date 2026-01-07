@@ -142,17 +142,20 @@ jobs:
             -t ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.sha_short }} \
             -f ./Dockerfile .
 
-      - name: Verify Docker config before push
+      - name: Install crane
         run: |
-          echo "=== Docker config check ==="
-          cat ~/.docker/config.json | jq 'keys' || echo "No config"
-          echo "=== Checking for Harbor auth ==="
-          cat ~/.docker/config.json | jq '.auths | keys' || echo "No auths"
+          curl -sL "https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz" | tar -xzf - crane
+          chmod +x crane
+          sudo mv crane /usr/local/bin/
 
-      - name: Push to Harbor
+      - name: Push to Harbor with crane
         run: |
-          docker push ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }}
-          docker push ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.sha_short }}
+          crane auth login ${{ env.HARBOR_REGISTRY }} -u "${{ secrets.HARBOR_USERNAME }}" -p "${{ secrets.HARBOR_PASSWORD }}"
+          # Save and push the primary tag
+          docker save ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }} -o /tmp/image.tar
+          crane push /tmp/image.tar ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }}
+          # Tag with sha short
+          crane tag ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }} ${{ steps.meta.outputs.sha_short }}
 
       - name: Tag and push to GHCR (backup)
         if: steps.ghcr_login.outcome == 'success'
