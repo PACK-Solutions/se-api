@@ -123,6 +123,8 @@ jobs:
       - name: Log in to Harbor
         run: |
           echo "${{ secrets.HARBOR_PASSWORD }}" | docker login ${{ env.HARBOR_REGISTRY }} -u "${{ secrets.HARBOR_USERNAME }}" --password-stdin
+          echo "Login exit code: $?"
+          cat ~/.docker/config.json | jq 'keys' || echo "No config or jq not available"
 
       - name: Log in to GHCR
         id: ghcr_login
@@ -139,6 +141,13 @@ jobs:
             -t ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }} \
             -t ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.sha_short }} \
             -f ./Dockerfile .
+
+      - name: Verify Docker config before push
+        run: |
+          echo "=== Docker config check ==="
+          cat ~/.docker/config.json | jq 'keys' || echo "No config"
+          echo "=== Checking for Harbor auth ==="
+          cat ~/.docker/config.json | jq '.auths | keys' || echo "No auths"
 
       - name: Push to Harbor
         run: |
