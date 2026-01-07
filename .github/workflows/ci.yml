@@ -120,12 +120,6 @@ jobs:
       - name: Build application JAR
         run: ./gradlew assembly:buildFatJar --no-daemon --parallel -x test
 
-      - name: Log in to Harbor
-        run: |
-          echo "${{ secrets.HARBOR_PASSWORD }}" | docker login ${{ env.HARBOR_REGISTRY }} -u "${{ secrets.HARBOR_USERNAME }}" --password-stdin
-          echo "Login exit code: $?"
-          cat ~/.docker/config.json | jq 'keys' || echo "No config or jq not available"
-
       - name: Log in to GHCR
         id: ghcr_login
         continue-on-error: true
@@ -142,20 +136,21 @@ jobs:
             -t ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.sha_short }} \
             -f ./Dockerfile .
 
-      - name: Install crane
+      - name: Install skopeo
         run: |
-          curl -sL "https://github.com/google/go-containerregistry/releases/latest/download/go-containerregistry_Linux_x86_64.tar.gz" | tar -xzf - crane
-          chmod +x crane
-          sudo mv crane /usr/local/bin/
+          sudo apt-get update && sudo apt-get install -y skopeo
 
-      - name: Push to Harbor with crane
+      - name: Push to Harbor with skopeo
         run: |
-          crane auth login ${{ env.HARBOR_REGISTRY }} -u "${{ secrets.HARBOR_USERNAME }}" -p "${{ secrets.HARBOR_PASSWORD }}"
-          # Save and push the primary tag
-          docker save ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }} -o /tmp/image.tar
-          crane push /tmp/image.tar ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }}
-          # Tag with sha short
-          crane tag ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }} ${{ steps.meta.outputs.sha_short }}
+          # Push primary tag (direct daemon→registry, no tarball)
+          skopeo copy --dest-creds "${{ secrets.HARBOR_USERNAME }}:${{ secrets.HARBOR_PASSWORD }}" \
+            docker-daemon:${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }} \
+            docker://${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }}
+
+          # Push sha short tag
+          skopeo copy --dest-creds "${{ secrets.HARBOR_USERNAME }}:${{ secrets.HARBOR_PASSWORD }}" \
+            docker-daemon:${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.sha_short }} \
+            docker://${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.sha_short }}
 
       - name: Tag and push to GHCR (backup)
         if: steps.ghcr_login.outcome == 'success'
