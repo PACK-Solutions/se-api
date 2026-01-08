@@ -5,6 +5,7 @@ flyway = "11.18.0"
 hikariCp = "7.0.2"
 jsonpathkt = "3.0.2"
 kotest = "6.0.5"
+kotest5 = "5.9.1"
 kotlin-jvm = "2.2.21"
 kotlin-logging = "7.0.13"
 kotlin-result = "2.1.0"
@@ -34,6 +35,9 @@ json-path-kt = { module = "com.eygraber:jsonpathkt-kotlinx", version.ref = "json
 kotest-assertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest" }
 kotest-engine = { module = "io.kotest:kotest-framework-engine-jvm", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
+kotest5-assertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest5" }
+kotest5-engine = { module = "io.kotest:kotest-framework-engine-jvm", version.ref = "kotest5" }
+kotest5-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest5" }
 kotest-testcontainers = { module = "io.kotest:kotest-extensions-testcontainers-jvm", version.ref = "kotest" }
 kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 kotlin-result = { module = "com.michael-bull.kotlin-result:kotlin-result", version.ref = "kotlin-result" }
@@ -65,6 +69,11 @@ kotest = [
     "kotest-assertions",
     "kotest-engine",
     "kotest-runner",
+]
+kotest5 = [
+    "kotest5-assertions",
+    "kotest5-engine",
+    "kotest5-runner",
 ]
 ktor = [
     "ktor-serialization-kotlinx-json",

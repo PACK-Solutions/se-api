@@ -96,5 +96,5 @@ object TestContainerStartup : BeforeProjectListener, AfterProjectListener, Befor
 }
 
 class ProjectConfig : AbstractProjectConfig() {
-    override val extensions = listOf(TestContainerStartup, KtorTestAppStartup)
+    override fun extensions() = listOf(TestContainerStartup, KtorTestAppStartup)
 }

@@ -20,6 +20,14 @@ dependencies {
     testImplementation(testFixtures(project(":domain")))
 }
 
+configurations.all {
+    resolutionStrategy {
+        force(libs.kotest5.assertions)
+        force(libs.kotest5.engine)
+        force(libs.kotest5.runner)
+    }
+}
+
 tasks.named<Test>("test") {
     enabled = false
 }
