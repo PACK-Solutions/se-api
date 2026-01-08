@@ -120,11 +120,12 @@ jobs:
       - name: Build application JAR
         run: ./gradlew assembly:buildFatJar --no-daemon --parallel -x test
 
-      - name: Log in to GHCR
-        id: ghcr_login
-        continue-on-error: true
-        run: |
-          echo "${{ secrets.GHCR_PAT }}" | docker login ${{ env.GHCR_REGISTRY }} -u "${{ github.actor }}" --password-stdin
+      # GHCR login disabled - Harbor only for now
+      # - name: Log in to GHCR
+      #   id: ghcr_login
+      #   continue-on-error: true
+      #   run: |
+      #     echo "${{ secrets.GHCR_PAT }}" | docker login ${{ env.GHCR_REGISTRY }} -u "${{ github.actor }}" --password-stdin
 
       - name: Build Docker image
         run: |
@@ -136,9 +137,15 @@ jobs:
             -t ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.sha_short }} \
             -f ./Dockerfile .
 
-      - name: Install skopeo
+      - name: Install skopeo and cosign
         run: |
           sudo apt-get update && sudo apt-get install -y skopeo
+          # Install cosign
+          COSIGN_VERSION="v2.4.1"
+          curl -sLO "https://github.com/sigstore/cosign/releases/download/${COSIGN_VERSION}/cosign-linux-amd64"
+          chmod +x cosign-linux-amd64
+          sudo mv cosign-linux-amd64 /usr/local/bin/cosign
+          cosign version
 
       - name: Push to Harbor with skopeo
         run: |
@@ -152,12 +159,48 @@ jobs:
             docker-daemon:${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.sha_short }} \
             docker://${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.sha_short }}
 
-      - name: Tag and push to GHCR (backup)
-        if: steps.ghcr_login.outcome == 'success'
+      # GHCR push disabled - Harbor only for now
+      # - name: Tag and push to GHCR (backup)
+      #   if: steps.ghcr_login.outcome == 'success'
+      #   run: |
+      #     docker tag ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }} \
+      #       ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE }}:${{ steps.meta.outputs.ghcr_tag }}
+      #     docker push ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE }}:${{ steps.meta.outputs.ghcr_tag }}
+
+      - name: Get image digest
+        id: digest
         run: |
-          docker tag ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }} \
-            ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE }}:${{ steps.meta.outputs.ghcr_tag }}
-          docker push ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE }}:${{ steps.meta.outputs.ghcr_tag }}
+          DIGEST=$(skopeo inspect --creds "${{ secrets.HARBOR_USERNAME }}:${{ secrets.HARBOR_PASSWORD }}" \
+            docker://${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }} \
+            | jq -r '.Digest')
+          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
+          echo "Image digest: ${DIGEST}"
+
+      - name: Authenticate to Vault
+        uses: hashicorp/vault-action@v3
+        with:
+          url: ${{ secrets.VAULT_ADDR }}
+          method: approle
+          roleId: ${{ secrets.VAULT_ROLE_ID }}
+          secretId: ${{ secrets.VAULT_SECRET_ID }}
+          exportToken: true
+
+      - name: Sign image with cosign
+        env:
+          VAULT_ADDR: ${{ secrets.VAULT_ADDR }}
+          VAULT_TOKEN: ${{ env.VAULT_TOKEN }}
+          TRANSIT_SECRET_ENGINE_PATH: operator-transit
+        run: |
+          IMAGE_REF="${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}@${{ steps.digest.outputs.digest }}"
+          echo "Signing image: ${IMAGE_REF}"
+
+          cosign sign --yes \
+            --key hashivault://cosign-key \
+            --registry-username "${{ secrets.HARBOR_USERNAME }}" \
+            --registry-password "${{ secrets.HARBOR_PASSWORD }}" \
+            "${IMAGE_REF}"
+
+          echo "Image signed successfully"
 
       - name: Summary
         run: |
@@ -167,7 +210,8 @@ jobs:
           echo "- \`${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- \`${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.sha_short }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "### GHCR (Backup)" >> $GITHUB_STEP_SUMMARY
-          echo "- \`${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE }}:${{ steps.meta.outputs.ghcr_tag }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "### Signing" >> $GITHUB_STEP_SUMMARY
+          echo "- **Digest:** \`${{ steps.digest.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Signed with:** Vault Transit (cosign-key)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
