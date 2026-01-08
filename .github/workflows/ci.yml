@@ -148,11 +148,18 @@ jobs:
           cosign version
 
       - name: Push to Harbor with skopeo
+        id: push
         run: |
-          # Push primary tag (direct daemon→registry, no tarball)
-          skopeo copy --dest-creds "${{ secrets.HARBOR_USERNAME }}:${{ secrets.HARBOR_PASSWORD }}" \
+          # Push primary tag and capture digest (direct daemon→registry, no tarball)
+          skopeo copy --digestfile=/tmp/digest.txt \
+            --dest-creds "${{ secrets.HARBOR_USERNAME }}:${{ secrets.HARBOR_PASSWORD }}" \
             docker-daemon:${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }} \
             docker://${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }}
+
+          # Capture digest from push (avoids registry query which may fail with content trust)
+          DIGEST=$(cat /tmp/digest.txt)
+          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
+          echo "Image digest: ${DIGEST}"
 
           # Push sha short tag
           skopeo copy --dest-creds "${{ secrets.HARBOR_USERNAME }}:${{ secrets.HARBOR_PASSWORD }}" \
@@ -166,15 +173,6 @@ jobs:
       #     docker tag ${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }} \
       #       ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE }}:${{ steps.meta.outputs.ghcr_tag }}
       #     docker push ${{ env.GHCR_REGISTRY }}/${{ env.GHCR_IMAGE }}:${{ steps.meta.outputs.ghcr_tag }}
-
-      - name: Get image digest
-        id: digest
-        run: |
-          DIGEST=$(skopeo inspect --creds "${{ secrets.HARBOR_USERNAME }}:${{ secrets.HARBOR_PASSWORD }}" \
-            docker://${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.harbor_primary_tag }} \
-            | jq -r '.Digest')
-          echo "digest=${DIGEST}" >> $GITHUB_OUTPUT
-          echo "Image digest: ${DIGEST}"
 
       - name: Authenticate to Vault
         uses: hashicorp/vault-action@v3
@@ -191,7 +189,7 @@ jobs:
           VAULT_TOKEN: ${{ env.VAULT_TOKEN }}
           TRANSIT_SECRET_ENGINE_PATH: operator-transit
         run: |
-          IMAGE_REF="${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}@${{ steps.digest.outputs.digest }}"
+          IMAGE_REF="${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}@${{ steps.push.outputs.digest }}"
           echo "Signing image: ${IMAGE_REF}"
 
           cosign sign --yes \
@@ -211,7 +209,7 @@ jobs:
           echo "- \`${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_IMAGE }}:${{ steps.meta.outputs.sha_short }}\`" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Signing" >> $GITHUB_STEP_SUMMARY
-          echo "- **Digest:** \`${{ steps.digest.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Digest:** \`${{ steps.push.outputs.digest }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- **Signed with:** Vault Transit (cosign-key)" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "**Commit:** \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
