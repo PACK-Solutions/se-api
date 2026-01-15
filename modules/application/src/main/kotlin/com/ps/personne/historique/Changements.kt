@@ -1,12 +1,18 @@
 package com.ps.personne.historique
 
-fun <T> changements(old: T, new: T, block: ChangementsBuilder<T>.() -> Unit): Set<Changement> = ChangementsBuilder(
+fun <T> changements(old: Old<T>, new: New<T>, block: ChangementsBuilder<T>.() -> Unit): Set<Changement> = ChangementsBuilder(
     old,
-    new
+    new,
 ).apply(block).build()
 
-class ChangementsBuilder<T>(val old: T, val new: T) {
-    inner class ChangementBuilder<P>(val propriete: String) {
+@JvmInline
+value class Old<T>(val value: T)
+
+@JvmInline
+value class New<T>(val value: T)
+
+class ChangementsBuilder<T>(val old: Old<T>, val new: New<T>) {
+    inner class ChangementBuilder<P>(val nom: String) {
         lateinit var accessor: (obj: T) -> P
 
         var createdPredicate: (old: P, new: P) -> Boolean = { old: P, _: P -> old == null }
@@ -14,14 +20,14 @@ class ChangementsBuilder<T>(val old: T, val new: T) {
         var notModifiedPredicate: (old: P, new: P) -> Boolean = { old: P, new: P -> old == new }
 
         fun build() {
-            val oldProp = accessor(old)
-            val newProp = accessor(new)
+            val oldProp = accessor(old.value)
+            val newProp = accessor(new.value)
             if (notModifiedPredicate(oldProp, newProp)) return
             changements.add(
                 when {
-                    createdPredicate(oldProp, newProp) -> Changement.Creation(propriete, newProp.toString())
-                    deletedPredicate(oldProp, newProp) -> Changement.Suppression(propriete, oldProp.toString())
-                    else -> Changement.Modification(propriete, newProp.toString(), oldProp.toString())
+                    createdPredicate(oldProp, newProp) -> Changement.Creation(nom, newProp.toString())
+                    deletedPredicate(oldProp, newProp) -> Changement.Suppression(nom, oldProp.toString())
+                    else -> Changement.Modification(nom, newProp.toString(), oldProp.toString())
                 },
             )
         }
@@ -29,8 +35,8 @@ class ChangementsBuilder<T>(val old: T, val new: T) {
 
     private val changements = mutableSetOf<Changement>()
 
-    fun <P> changement(propriete: String, block: ChangementBuilder<P>.() -> Unit): Unit =
-        ChangementBuilder<P>(propriete).apply(block).build()
+    fun <P> changement(nom: String, block: ChangementBuilder<P>.() -> Unit): Unit =
+        ChangementBuilder<P>(nom).apply(block).build()
 
     fun build() = changements
 }

@@ -16,7 +16,7 @@ fun AuditableEvent.getIdObjet(): String = when (this) {
 }
 
 fun AuditableEvent.getChangements(): Set<Changement> = when (this) {
-    is ConnaissanceClientModifiee -> changements(old, new) {
+    is ConnaissanceClientModifiee -> changements(Old(old), New(new)) {
         changement("fonction_ppe") { accessor = { it.statutPPE?.mandat?.fonction?.name } }
         changement("date_fin_fonction_ppe") { accessor = { it.statutPPE?.mandat?.dateFin?.toString() } }
         changement("vigilance") { accessor = { it.vigilance.vigilanceRenforcee } }
