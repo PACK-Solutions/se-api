@@ -17,6 +17,7 @@ dependencies {
     testImplementation(libs.hikaricp)
     testImplementation(libs.flyway.core)
     testImplementation(libs.flyway.postgres)
+    testImplementation(libs.selfie)
     testImplementation(testFixtures(project(":domain")))
 }
 
