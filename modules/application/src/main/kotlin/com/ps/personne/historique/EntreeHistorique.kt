@@ -3,19 +3,23 @@ package com.ps.personne.historique
 import java.time.Instant
 import java.util.*
 
+@JvmInline
+value class TypeObjet(val value: String)
+
+@JvmInline
+value class IdObjet(val value: String)
+
+@JvmInline
+value class Author(val value: String)
+
+
 data class EntreeHistorique(
     val id: UUID,
-    val typeObjet: String,
-    val idObjet: String,
-    val changements: Set<Changement> = emptySet(),
-    val performedBy: String,
+    val typeObjet: TypeObjet,
+    val idObjet: IdObjet,
+    val changements: Set<Diff> = emptySet(),
+    val performedBy: Author,
     val occurredAt: Instant,
 )
 
-sealed class Changement {
-    abstract val proprieteObjet: String
 
-    data class Creation(override val proprieteObjet: String, val newValue: String) : Changement()
-    data class Modification(override val proprieteObjet: String, val newValue: String, val oldValue: String) : Changement()
-    data class Suppression(override val proprieteObjet: String, val oldValue: String) : Changement()
-}

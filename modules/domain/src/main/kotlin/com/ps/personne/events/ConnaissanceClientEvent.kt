@@ -5,6 +5,6 @@ import com.ps.personne.model.ConnaissanceClient
 
 sealed interface ConnaissanceClientEvent : DomainEvent
 
-data class ConnaissanceClientModifiee(val old: ConnaissanceClient, val new: ConnaissanceClient) :
+data class ConnaissanceClientModifiee(override val old: ConnaissanceClient, override val new: ConnaissanceClient) :
     ConnaissanceClientEvent,
-    AuditableEvent
+    AuditableEvent<ConnaissanceClient>

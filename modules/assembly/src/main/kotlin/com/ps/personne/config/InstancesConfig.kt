@@ -13,8 +13,11 @@ import com.ps.personne.ports.driven.InMemoryConnaissanceClientRepository
 import com.ps.personne.ports.driven.ModificationsConnaissanceClientRepository
 import com.ps.personne.usecases.EnregistrerConnnaissanceClientHandler
 import com.ps.personne.usecases.RecupererConnnaissanceClientHandler
+import com.ps.personne.usecases.RecupererHistoriqueConnnaissanceClientHandler
 import io.ktor.server.application.Application
 import io.ktor.util.AttributeKey
+import java.time.Clock
+import java.util.*
 import kotlin.reflect.KClass
 
 object InstancesConfig {
@@ -24,7 +27,10 @@ object InstancesConfig {
     val queryHandlersKey = AttributeKey<List<QueryHandler<*>>>("QueryHandlers")
     val eventHandlersKey = AttributeKey<List<EventHandler<*>>>("EventHandlers")
 
+    val uuidGenerator: () -> UUID = UUID::randomUUID
+
     fun Application.configureInstances(sandBox: Boolean) {
+
         val tenantIdProvider = CoroutineContextTenantIdProvider()
         val connaissanceClientRepository = if (sandBox) {
             InMemoryConnaissanceClientRepository()
@@ -45,10 +51,11 @@ object InstancesConfig {
         )
         val queryHandlers = listOf(
             RecupererConnnaissanceClientHandler(connaissanceClientRepository),
+            RecupererHistoriqueConnnaissanceClientHandler(historiqueRepository),
         )
 
         val eventHandlers = listOf(
-            StoreHistoriqueOnAuditableEvent(historiqueRepository),
+            StoreHistoriqueOnAuditableEvent(historiqueRepository, uuidGenerator, Clock.systemUTC()),
         )
 
         this.attributes[commandHandlersKey] = commandHandlers

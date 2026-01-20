@@ -7,12 +7,8 @@ import com.ps.kommand.QueryBus
 import com.ps.personne.model.IdPersonne
 import com.ps.personne.ports.driving.ConnaissanceClientService
 import com.ps.personne.rest.BusinessException
-import com.ps.personne.rest.config.tenantId
 import com.ps.personne.rest.dto.request.ConnaissanceClientDto
 import com.ps.personne.rest.dto.request.toDto
-import com.ps.personne.rest.dto.response.toDto
-import com.ps.personne.rest.problem.ErrorCode
-import com.ps.personne.rest.problem.respondProblem
 import com.ps.personne.rest.toResult
 import com.ps.personne.usecases.EnregistrerConnnaissanceClientCommand
 import com.ps.personne.usecases.RecupererConnaissanceClientQuery
@@ -36,7 +32,6 @@ fun Application.configureConnaissanceClientRoutes(connaissanceClientService: Con
         get("/personnes/{idPersonne}/connaissance-client", getConnaissanceClient(queryBus))
         post("/personnes/{idPersonne}/connaissance-client", saveConnaissanceClient(commandBus))
         put("/personnes/{idPersonne}/connaissance-client", saveConnaissanceClient(commandBus))
-        getHistoriqueConnaissanceClientRoute(connaissanceClientService)
     }
 }
 
@@ -44,21 +39,13 @@ private fun getConnaissanceClient(queryBus: QueryBus): suspend RoutingContext.()
     val idPersonne = call.parameters.getOrFail<Long>("idPersonne")
     val connaissanceClient = queryBus.dispatch(
         RecupererConnaissanceClientQuery(IdPersonne(idPersonne)),
-        ContextProvider.Coroutine.current()
+        ContextProvider.Coroutine.current(),
     )
         .toResult()
         .getOrThrow()
     call.respond(connaissanceClient.toDto())
 }
 
-private fun Routing.getHistoriqueConnaissanceClientRoute(connaissanceClientService: ConnaissanceClientService) {
-    get("/personnes/{idPersonne}/historique-connaissance-client") {
-        call.parameters["idPersonne"]?.let { idPersonne ->
-            val idPersonne = IdPersonne(idPersonne.toLong())
-            call.respond(HttpStatusCode.OK, connaissanceClientService.getHistorique(call.tenantId(), idPersonne).toDto())
-        } ?: call.respondProblem(HttpStatusCode.BadRequest, String.format(MESSAGE_PARAMETRE_MANQUANT, "idPersonne"), ErrorCode("bad_request"))
-    }
-}
 
 private fun saveConnaissanceClient(commandBus: CommandBus): suspend RoutingContext.() -> Unit = {
     val idPersonne = IdPersonne(call.parameters.getOrFail<Long>("idPersonne"))

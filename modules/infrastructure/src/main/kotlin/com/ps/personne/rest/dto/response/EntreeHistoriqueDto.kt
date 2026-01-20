@@ -1,8 +1,18 @@
-package com.ps.personne.database.model
+package com.ps.personne.rest.dto.response
 
 import com.ps.personne.historique.Diff
+import com.ps.personne.historique.EntreeHistorique
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+
+
+@Serializable
+data class EntreeHistoriqueDto(
+    val idObjet: String,
+    val changements: Set<ChangementDto>,
+    val performedBy: String,
+    val occurredAt: String,
+)
 
 @Serializable
 sealed class ChangementDto {
@@ -20,12 +30,6 @@ sealed class ChangementDto {
     @SerialName("Suppression")
     data class Suppression(override val proprieteObjet: String, val oldValue: String) : ChangementDto()
 
-    fun toDiff() = when (this) {
-        is Creation -> Diff.Creation(proprieteObjet, newValue)
-        is Modification -> Diff.Modification(proprieteObjet, newValue, oldValue)
-        is Suppression -> Diff.Suppression(proprieteObjet, oldValue)
-    }
-
     companion object {
         fun from(changement: Diff) = when (changement) {
             is Diff.Creation -> Creation(changement.proprieteObjet, changement.newValue)
@@ -39,3 +43,10 @@ sealed class ChangementDto {
         }
     }
 }
+
+fun EntreeHistorique.toDto() = EntreeHistoriqueDto(
+    idObjet = this.idObjet.value,
+    changements = this.changements.map(ChangementDto::from).toSet(),
+    performedBy = this.performedBy.value,
+    occurredAt = this.occurredAt.toString(),
+)

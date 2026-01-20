@@ -4,8 +4,10 @@ import com.ps.kommand.Context
 import com.ps.kommand.Query
 import com.ps.kommand.QueryHandler
 import com.ps.kommand.QueryResult
+import com.ps.personne.historique.ConnaissanceClientHistoriqueProjection
 import com.ps.personne.historique.EntreeHistorique
 import com.ps.personne.historique.HistoriqueRepository
+import com.ps.personne.historique.IdObjet
 import com.ps.personne.model.IdPersonne
 
 class RecupererHistoriqueConnnaissanceClientHandler(val repository: HistoriqueRepository) : QueryHandler<RecupererHistoriqueConnaissanceClientQuery> {
@@ -13,8 +15,12 @@ class RecupererHistoriqueConnnaissanceClientHandler(val repository: HistoriqueRe
         context: Context,
         query: RecupererHistoriqueConnaissanceClientQuery,
     ): QueryResult<List<EntreeHistorique>, Nothing> {
-        error("Not yet implemented")
-        //    return QueryResult.Success(repository.get("ConnaissanceClient", query.idPersonne.id.toString()))
+        return QueryResult.Success(
+            repository.get(ConnaissanceClientHistoriqueProjection.typeObjet, IdObjet(query.idPersonne.id.toString()))
+                .sortedBy(EntreeHistorique::occurredAt),
+        )
+
+
     }
 }
 

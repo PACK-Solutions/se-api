@@ -1,15 +1,13 @@
-package usecases
+package com.ps.personne.usecases
 
-import aContext
 import com.ps.kommand.BasicQueryBus
 import com.ps.kommand.QueryResult
 import com.ps.kommand.middleware.QueryDispatcherMiddleware
+import com.ps.personne._testharness.fixtures.aContext
 import com.ps.personne.fixtures.ConnaissanceClientFactory
 import com.ps.personne.fixtures.aConnaissanceClient
 import com.ps.personne.fixtures.anIdPersonne
 import com.ps.personne.ports.driven.InMemoryConnaissanceClientRepository
-import com.ps.personne.usecases.RecupererConnaissanceClientQuery
-import com.ps.personne.usecases.RecupererConnnaissanceClientHandler
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.shouldBe
 
