@@ -1,6 +1,6 @@
 package com.ps.personne.historique
 
-//TODO move in dedicated library
+// TODO move in dedicated library
 
 sealed class Diff {
     abstract val proprieteObjet: String
@@ -10,15 +10,16 @@ sealed class Diff {
     data class Suppression(override val proprieteObjet: String, val oldValue: String) : Diff()
 }
 
-
 @JvmInline
 value class Old<T>(val value: T)
 
 @JvmInline
 value class New<T>(val value: T)
 
-
-fun <T> diff(old: Old<T>, new: New<T>, block: DiffBuilder<T>.() -> Unit): Set<Diff> = DiffBuilder(old, new).apply(block).build()
+fun <T> diff(old: Old<T>, new: New<T>, block: DiffBuilder<T>.() -> Unit): Set<Diff> = DiffBuilder(
+    old,
+    new
+).apply(block).build()
 
 class DiffBuilder<T>(val old: Old<T>, val new: New<T>) {
     inner class PropertyDiffBuilder<P>(val nom: String) {

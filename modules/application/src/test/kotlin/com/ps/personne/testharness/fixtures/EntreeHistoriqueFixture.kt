@@ -1,4 +1,4 @@
-package com.ps.personne._testharness.fixtures
+package com.ps.personne.testharness.fixtures
 
 import com.ps.personne.historique.*
 import java.time.Instant
@@ -8,7 +8,6 @@ fun anEntreeHistorique(typeObjet: TypeObjet, idObjet: IdObjet) = EntreeHistoriqu
 fun aCreation(nom: String, value: String) = Diff.Creation(nom, value)
 fun aModification(nom: String, oldValue: String, newValue: String) = Diff.Modification(nom, newValue, oldValue)
 fun aSuppression(nom: String, oldValue: String) = Diff.Suppression(nom, oldValue)
-
 
 class EntreeHistoriqueFixture(val typeObjet: TypeObjet, val idObjet: IdObjet) {
     private var id: UUID = UUID.randomUUID()
@@ -30,5 +29,4 @@ class EntreeHistoriqueFixture(val typeObjet: TypeObjet, val idObjet: IdObjet) {
         performedBy = userName,
         occurredAt = date,
     )
-
 }

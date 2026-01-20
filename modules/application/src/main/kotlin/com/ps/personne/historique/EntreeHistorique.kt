@@ -12,7 +12,6 @@ value class IdObjet(val value: String)
 @JvmInline
 value class Author(val value: String)
 
-
 data class EntreeHistorique(
     val id: UUID,
     val typeObjet: TypeObjet,
@@ -21,5 +20,3 @@ data class EntreeHistorique(
     val performedBy: Author,
     val occurredAt: Instant,
 )
-
-

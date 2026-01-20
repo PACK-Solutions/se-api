@@ -5,7 +5,6 @@ import com.ps.personne.historique.EntreeHistorique
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class EntreeHistoriqueDto(
     val idObjet: String,

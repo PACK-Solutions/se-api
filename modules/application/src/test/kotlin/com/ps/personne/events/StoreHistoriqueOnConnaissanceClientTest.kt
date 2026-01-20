@@ -1,12 +1,11 @@
 package com.ps.personne.events
 
 import com.ps.kommand.event.SynchronousEventBus
-import com.ps.personne._testharness.fixtures.aContext
-import com.ps.personne._testharness.fixtures.aModification
 import com.ps.personne.fixtures.aConnaissanceClient
 import com.ps.personne.fixtures.anIdPersonne
-import com.ps.personne.fixtures.historique.InMemoryHistoriqueRepository
 import com.ps.personne.historique.*
+import com.ps.personne.testharness.fixtures.aContext
+import com.ps.personne.testharness.fixtures.aModification
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.extensions.clock.TestClock
 import io.kotest.matchers.shouldBe
@@ -16,8 +15,6 @@ import java.util.*
 
 class StoreHistoriqueOnConnaissanceClientTest : ShouldSpec(
     {
-        val typeObjet = TypeObjet("ConnaissanceClient")
-
         val repository = InMemoryHistoriqueRepository()
 
         val generatedIds = mutableListOf<UUID>()
@@ -56,6 +53,5 @@ class StoreHistoriqueOnConnaissanceClientTest : ShouldSpec(
 
             repository.get(ConnaissanceClientHistoriqueProjection.typeObjet, IdObjet(idPersonne.id.toString()))[0].performedBy shouldBe Author("JeanMich")
         }
-
     },
 )

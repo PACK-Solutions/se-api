@@ -1,9 +1,4 @@
-package com.ps.personne.fixtures.historique
-
-import com.ps.personne.historique.EntreeHistorique
-import com.ps.personne.historique.HistoriqueRepository
-import com.ps.personne.historique.IdObjet
-import com.ps.personne.historique.TypeObjet
+package com.ps.personne.historique
 
 class InMemoryHistoriqueRepository : HistoriqueRepository {
     private val data = mutableMapOf<Pair<TypeObjet, IdObjet>, Set<EntreeHistorique>>()
@@ -16,6 +11,4 @@ class InMemoryHistoriqueRepository : HistoriqueRepository {
         typeObjet: TypeObjet,
         idObjet: IdObjet,
     ): List<EntreeHistorique> = data[Pair(typeObjet, idObjet)]?.toList() ?: emptyList()
-
-
 }

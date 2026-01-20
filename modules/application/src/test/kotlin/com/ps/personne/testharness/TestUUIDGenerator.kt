@@ -1,4 +1,4 @@
-package com.ps.personne._testharness
+package com.ps.personne.testharness
 
 import com.ps.personne.historique.EntreeHistoriqueIdGenerator
 import java.util.*

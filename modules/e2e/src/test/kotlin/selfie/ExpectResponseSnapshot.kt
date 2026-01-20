@@ -45,5 +45,3 @@ private val KTOR_RESPONSE_CAMERA: Camera<HttpResponse> = Camera { response: Http
 suspend fun expectResponseSnapshot(response: HttpResponse): StringSelfie {
     return expectSelfie(response, KTOR_RESPONSE_CAMERA)
 }
-
-

@@ -1,11 +1,11 @@
 package com.ps.personne.historique
 
-import com.ps.personne._testharness.fixtures.aCreation
-import com.ps.personne._testharness.fixtures.aModification
 import com.ps.personne.fixtures.aConnaissanceClient
 import com.ps.personne.model.FonctionPPE
 import com.ps.personne.model.LienParente
 import com.ps.personne.model.MotifVigilance
+import com.ps.personne.testharness.fixtures.aCreation
+import com.ps.personne.testharness.fixtures.aModification
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
@@ -13,7 +13,6 @@ import java.time.LocalDate
 
 class ConnaissanceClientHistoriqueProjectionTest : ShouldSpec(
     {
-
 
         should("record modifications on vigilance status") {
             ConnaissanceClientHistoriqueProjection(
@@ -69,7 +68,6 @@ class ConnaissanceClientHistoriqueProjectionTest : ShouldSpec(
                 New(aConnaissanceClient().withStatutProchePPE(LienParente.CONJOINT, FonctionPPE.DIRIGEANT_PARTI, newDate).build()),
             ).getChangements() shouldContain
                 aModification("DateFinFonctionProchePPE", "2028-01-01", "2029-01-01")
-
         }
 
         should("record modifications on motifs vigilance") {

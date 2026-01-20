@@ -67,10 +67,9 @@ class RecupererConnaissanceClientContractTest : ShouldSpec(
                 ╔═ [ContentType] ═╗
                 application/json; charset=UTF-8
                 ╔═ [StatusCode] ═╗
-                200""".trimIndent(),
+                200
+                """.trimIndent(),
             )
-
         }
-
     },
 )

@@ -19,8 +19,6 @@ class RecupererHistoriqueConnnaissanceClientHandler(val repository: HistoriqueRe
             repository.get(ConnaissanceClientHistoriqueProjection.typeObjet, IdObjet(query.idPersonne.id.toString()))
                 .sortedBy(EntreeHistorique::occurredAt),
         )
-
-
     }
 }
 

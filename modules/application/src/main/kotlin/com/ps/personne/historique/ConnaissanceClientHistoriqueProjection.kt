@@ -4,7 +4,6 @@ import com.ps.personne.model.AvecVigilanceRenforcee
 import com.ps.personne.model.ConnaissanceClient
 import com.ps.personne.model.SansVigilanceRenforcee
 
-
 class ConnaissanceClientHistoriqueProjection(val old: Old<ConnaissanceClient>, val new: New<ConnaissanceClient>) : HistoriqueProjection<ConnaissanceClient> {
     override fun getTypeObjet() = typeObjet
 
@@ -27,11 +26,12 @@ class ConnaissanceClientHistoriqueProjection(val old: Old<ConnaissanceClient>, v
         }
         propertyDiff("LienParenteProchePPE") { propertyValueGetter = { it.statutProchePPE?.lienParente?.name } }
         propertyDiff("FonctionProchePPE") { propertyValueGetter = { it.statutProchePPE?.mandat?.fonction?.name } }
-        propertyDiff("DateFinFonctionProchePPE") { propertyValueGetter = { it.statutProchePPE?.mandat?.dateFin?.toString() } }
+        propertyDiff(
+            "DateFinFonctionProchePPE"
+        ) { propertyValueGetter = { it.statutProchePPE?.mandat?.dateFin?.toString() } }
     }
 
     companion object {
         val typeObjet = TypeObjet("ConnaissanceClient")
     }
 }
-

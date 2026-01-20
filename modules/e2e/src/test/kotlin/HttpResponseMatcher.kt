@@ -9,9 +9,7 @@ infix fun HttpResponse.shouldHaveStatus(status: HttpStatusCode): HttpResponse {
     return this
 }
 
-
 inline infix fun <reified T> HttpResponse.shouldReturn(body: T): HttpResponse {
     runBlocking { this.body<T>() shouldBe body }
     return this
 }
-

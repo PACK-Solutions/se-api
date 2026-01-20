@@ -27,7 +27,6 @@ import tenantId
 class EnregistrerConnaissanceClientTest : ShouldSpec(
     {
 
-
         val client = TestApp.defaultClient
         suspend fun getConnaissanceClient(id: Long, tenant: String = TestApp.defaultTenantId): HttpResponse =
             client.get("/personnes/$id/connaissance-client") {

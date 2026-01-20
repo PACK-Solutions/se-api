@@ -22,7 +22,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 class RecupererConnaissanceClientTest : ShouldSpec(
     {
         val client = TestApp.defaultClient
-        
+
         suspend fun getConnaissanceClient(id: Long, tenant: String = TestApp.defaultTenantId): ConnaissanceClientDto =
             client.get("/personnes/$id/connaissance-client") {
                 header("tenantId", tenant)

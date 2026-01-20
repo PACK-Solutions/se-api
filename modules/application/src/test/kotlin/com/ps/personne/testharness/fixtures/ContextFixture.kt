@@ -1,4 +1,4 @@
-package com.ps.personne._testharness.fixtures
+package com.ps.personne.testharness.fixtures
 
 import com.ps.kommand.Context
 import com.ps.personne.PersonneContextKey

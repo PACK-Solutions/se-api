@@ -3,12 +3,12 @@ package com.ps.personne.usecases
 import com.ps.kommand.BasicCommandBus
 import com.ps.kommand.CommandResult
 import com.ps.kommand.middleware.CommandDispatcherMiddleware
-import com.ps.personne._testharness.fixtures.aContext
 import com.ps.personne.events.ConnaissanceClientModifiee
 import com.ps.personne.fixtures.*
 import com.ps.personne.model.*
 import com.ps.personne.ports.driven.ConnaissanceClientRepositoryError
 import com.ps.personne.ports.driven.InMemoryConnaissanceClientRepository
+import com.ps.personne.testharness.fixtures.aContext
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.shouldBe
 

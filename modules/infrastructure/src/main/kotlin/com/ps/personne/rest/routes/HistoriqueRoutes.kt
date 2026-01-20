@@ -25,12 +25,12 @@ fun Application.configureHistoriqueRoutes(queryBus: QueryBus) {
 private fun getHistoriqueConnaissanceClient(queryBus: QueryBus): suspend RoutingContext.() -> Unit = {
     val idPersonne = call.parameters.getOrFail<Long>("idPersonne")
 
-    val historique = queryBus.dispatch(RecupererHistoriqueConnaissanceClientQuery(IdPersonne(idPersonne)), ContextProvider.Coroutine.current())
+    val historique = queryBus.dispatch(
+        RecupererHistoriqueConnaissanceClientQuery(IdPersonne(idPersonne)),
+        ContextProvider.Coroutine.current()
+    )
         .toResult()
         .getOrThrow(::BusinessException)
         .map { it.toDto() }
     call.respond(HttpStatusCode.OK, historique)
 }
-
-
-

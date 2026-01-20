@@ -25,8 +25,8 @@ class StoreHistoriqueOnAuditableEvent(val repository: HistoriqueRepository, val 
     private fun getHistoriqueBuilder(event: AuditableEvent<*>): HistoriqueProjection<*> =
         when (event) {
             is ConnaissanceClientModifiee -> ConnaissanceClientHistoriqueProjection(Old(event.old), New(event.new))
-            else -> error("Event ${event.javaClass.simpleName} is flagged as auditable but audit rules are not implemented")
+            else -> error(
+                "Event ${event.javaClass.simpleName} is flagged as auditable but audit rules are not implemented"
+            )
         }
-
 }
-

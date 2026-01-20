@@ -3,17 +3,13 @@ package com.ps.personne.usecases
 import com.ps.kommand.BasicQueryBus
 import com.ps.kommand.QueryResult
 import com.ps.kommand.middleware.QueryDispatcherMiddleware
-import com.ps.personne._testharness.TestUUIDGenerator
-import com.ps.personne._testharness.fixtures.aContext
-import com.ps.personne._testharness.fixtures.aCreation
-import com.ps.personne._testharness.fixtures.aModification
-import com.ps.personne._testharness.fixtures.anEntreeHistorique
 import com.ps.personne.fixtures.anIdPersonne
-import com.ps.personne.fixtures.historique.InMemoryHistoriqueRepository
-import com.ps.personne.historique.Author
-import com.ps.personne.historique.EntreeHistorique
-import com.ps.personne.historique.IdObjet
-import com.ps.personne.historique.TypeObjet
+import com.ps.personne.historique.*
+import com.ps.personne.testharness.TestUUIDGenerator
+import com.ps.personne.testharness.fixtures.aContext
+import com.ps.personne.testharness.fixtures.aCreation
+import com.ps.personne.testharness.fixtures.aModification
+import com.ps.personne.testharness.fixtures.anEntreeHistorique
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.collections.shouldBeSortedBy
 import io.kotest.matchers.shouldBe
@@ -37,7 +33,6 @@ class RecupererHistoriqueConnaissanceClientTest : ShouldSpec(
             val result = bus.dispatch(RecupererHistoriqueConnaissanceClientQuery(idPersonne), aContext().build())
 
             result shouldBe QueryResult.Success(emptyList())
-
         }
         should("récuperer un historique de connaissance client existant") {
             val idPersonne = anIdPersonne()
@@ -85,11 +80,13 @@ class RecupererHistoriqueConnaissanceClientTest : ShouldSpec(
                         performedBy = Author("unknown"),
                         occurredAt = date.plus(5, ChronoUnit.MINUTES),
                     ),
-                ))
-
+                )
+                )
         }
 
-        should("ordonner les elements par date d'occurence croissante") { //TODO est-ce vraiment un tri croissant qu'on souhaite?
+        should(
+            "ordonner les elements par date d'occurence croissante",
+        ) { // TODO est-ce vraiment un tri croissant qu'on souhaite?
             val idPersonne = anIdPersonne()
             val idObjet = IdObjet(idPersonne.id.toString())
             val date = Instant.now()
@@ -107,6 +104,5 @@ class RecupererHistoriqueConnaissanceClientTest : ShouldSpec(
             result.shouldBeTypeOf<QueryResult.Success<List<EntreeHistorique>>>()
             result.result shouldBeSortedBy EntreeHistorique::occurredAt
         }
-
     },
 )
