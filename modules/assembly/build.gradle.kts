@@ -14,6 +14,7 @@ dependencies {
     implementation(libs.bundles.ktor)
     implementation(libs.kommand)
     implementation(libs.kotlin.logging)
+    implementation(libs.koin.ktor)
 
     detektPlugins(libs.detekt.formatting)
 

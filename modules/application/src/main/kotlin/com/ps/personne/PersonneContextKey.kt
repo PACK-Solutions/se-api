@@ -4,4 +4,5 @@ import com.ps.kommand.ContextKey
 
 sealed class PersonneContextKey<T : Any> : ContextKey<T> {
     object Login : PersonneContextKey<String>()
+    object TenantId : PersonneContextKey<String>()
 }

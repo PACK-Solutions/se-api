@@ -8,7 +8,10 @@ import com.ps.personne.model.FonctionPPE
 import com.ps.personne.model.LienParente
 import com.ps.personne.rest.dto.request.ConnaissanceClientDto
 import com.ps.personne.rest.dto.request.toDto
+import com.ps.personne.rest.dto.response.EntreeHistoriqueDto
 import io.kotest.core.spec.style.ShouldSpec
+import io.kotest.matchers.collections.shouldHaveSize
+import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
@@ -43,22 +46,23 @@ class HistoriqueConnaissanceClientTest : ShouldSpec(
             }
         }
 
-        should("enregistrer l'historique des modifications") {
+        should("renvoyer l'historique du bon tenant pour un id donné") {
             val id = 12345L
             val modif1 = aConnaissanceClient().withStatutPPE(
                 FonctionPPE.DIRIGEANT_PARTI,
             ).withVigilanceRenforcee().build().toDto()
             val modif2 = aConnaissanceClient().withStatutProchePPE(
                 LienParente.CONJOINT,
-                FonctionPPE.DIRIGEANT_PARTI,
+                FonctionPPE.MEMBRE_PARLEMENT,
             ).withVigilanceRenforcee().build().toDto()
 
-            postConnaissanceClient(id, modif1) shouldHaveStatus HttpStatusCode.OK
-            postConnaissanceClient(id, modif2) shouldHaveStatus HttpStatusCode.OK
+            postConnaissanceClient(id, modif1, "client1") shouldHaveStatus HttpStatusCode.OK
+            postConnaissanceClient(id, modif2, "client2") shouldHaveStatus HttpStatusCode.OK
 
-            val response = getHistoriqueConnaissanceClient(id)
+            val response = getHistoriqueConnaissanceClient(id, "client1")
 
-            response shouldHaveStatus HttpStatusCode.OK
+            response.body<List<EntreeHistoriqueDto>>() shouldHaveSize 1
+            // TODO improve
         }
     },
 )

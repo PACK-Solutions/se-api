@@ -5,7 +5,6 @@ import com.ps.kommand.CommandBus
 import com.ps.kommand.ContextProvider
 import com.ps.kommand.QueryBus
 import com.ps.personne.model.IdPersonne
-import com.ps.personne.ports.driving.ConnaissanceClientService
 import com.ps.personne.rest.BusinessException
 import com.ps.personne.rest.dto.request.ConnaissanceClientDto
 import com.ps.personne.rest.dto.request.toDto
@@ -27,7 +26,7 @@ val logger = KotlinLogging.logger {}
 /**
  * Configure connaissance client check routes
  */
-fun Application.configureConnaissanceClientRoutes(connaissanceClientService: ConnaissanceClientService, queryBus: QueryBus, commandBus: CommandBus) {
+fun Application.configureConnaissanceClientRoutes(queryBus: QueryBus, commandBus: CommandBus) {
     routing {
         get("/personnes/{idPersonne}/connaissance-client", getConnaissanceClient(queryBus))
         post("/personnes/{idPersonne}/connaissance-client", saveConnaissanceClient(commandBus))
@@ -45,7 +44,6 @@ private fun getConnaissanceClient(queryBus: QueryBus): suspend RoutingContext.()
         .getOrThrow()
     call.respond(connaissanceClient.toDto())
 }
-
 
 private fun saveConnaissanceClient(commandBus: CommandBus): suspend RoutingContext.() -> Unit = {
     val idPersonne = IdPersonne(call.parameters.getOrFail<Long>("idPersonne"))

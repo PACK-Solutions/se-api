@@ -1,5 +1,7 @@
 package com.ps.personne.rest.config
 
+import com.ps.kommand.ContextProvider
+import com.ps.personne.PersonneContextKey
 import com.ps.personne.rest.problem.respondProblem
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.ApplicationCall
@@ -33,6 +35,11 @@ val MandatoryHeadersPlugin = createApplicationPlugin(name = "MandatoryHeadersPlu
 
         call.attributes.put(LoginAttributeKey, login)
         call.attributes.put(TenantIdAttributeKey, tenantId)
+
+        ContextProvider.Coroutine.current().apply {
+            this[PersonneContextKey.TenantId] = call.tenantId()
+            this[PersonneContextKey.Login] = call.login()
+        }
     }
 }
 

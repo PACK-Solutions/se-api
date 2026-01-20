@@ -4,8 +4,10 @@ exposed = "0.61.0"
 flyway = "11.18.0"
 hikariCp = "7.0.2"
 jsonpathkt = "3.0.2"
+koin = "4.1.1"
 kotest = "6.0.5"
 kotest5 = "5.9.1"
+kotest5-clock = "1.0.0"
 kotlin-jvm = "2.2.21"
 kotlin-logging = "7.0.13"
 kotlin-result = "2.1.0"
@@ -33,12 +35,14 @@ flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
 flyway-postgres = { module = "org.flywaydb:flyway-database-postgresql", version.ref = "flyway" }
 hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikariCp" }
 json-path-kt = { module = "com.eygraber:jsonpathkt-kotlinx", version.ref = "jsonpathkt" }
+koin-ktor = { module = "io.insert-koin:koin-ktor", version.ref = "koin" }
 kotest-assertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest" }
 kotest-engine = { module = "io.kotest:kotest-framework-engine-jvm", version.ref = "kotest" }
 kotest-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest" }
 kotest5-assertions = { module = "io.kotest:kotest-assertions-core-jvm", version.ref = "kotest5" }
 kotest5-engine = { module = "io.kotest:kotest-framework-engine-jvm", version.ref = "kotest5" }
 kotest5-runner = { module = "io.kotest:kotest-runner-junit5-jvm", version.ref = "kotest5" }
+kotest5-extensions-clock = { module = "io.kotest.extensions:kotest-extensions-clock", version.ref = "kotest5-clock" }
 kotest-testcontainers = { module = "io.kotest:kotest-extensions-testcontainers-jvm", version.ref = "kotest" }
 kotlin-logging = { module = "io.github.oshai:kotlin-logging-jvm", version.ref = "kotlin-logging" }
 kotlin-result = { module = "com.michael-bull.kotlin-result:kotlin-result", version.ref = "kotlin-result" }
@@ -49,7 +53,6 @@ ktor-server-call-logging = { module = "io.ktor:ktor-server-call-logging", versio
 ktor-server-content-negotiation = { module = "io.ktor:ktor-server-content-negotiation-jvm", version.ref = "ktor" }
 ktor-server-core = { module = "io.ktor:ktor-server-core-jvm", version.ref = "ktor" }
 ktor-server-cors = { module = "io.ktor:ktor-server-cors-jvm", version.ref = "ktor" }
-ktor-server-di = { module = "io.ktor:ktor-server-di-jvm", version.ref = "ktor" }
 ktor-server-netty = { module = "io.ktor:ktor-server-netty-jvm", version.ref = "ktor" }
 ktor-server-status-pages = { module = "io.ktor:ktor-server-status-pages-jvm", version.ref = "ktor" }
 ktor-server-swagger = { module = "io.ktor:ktor-server-swagger-jvm", version.ref = "ktor" }
@@ -76,6 +79,7 @@ kotest5 = [
     "kotest5-assertions",
     "kotest5-engine",
     "kotest5-runner",
+    "kotest5-extensions-clock"
 ]
 ktor = [
     "ktor-serialization-kotlinx-json",
@@ -83,10 +87,12 @@ ktor = [
     "ktor-server-content-negotiation",
     "ktor-server-core",
     "ktor-server-cors",
-    "ktor-server-di",
     "ktor-server-netty",
     "ktor-server-status-pages",
     "ktor-server-swagger",
+]
+koin = [
+    "koin-ktor"
 ]
 
 [plugins]

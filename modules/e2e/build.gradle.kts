@@ -8,7 +8,7 @@ dependencies {
     testImplementation(project(":assembly"))
     testImplementation(project(":infrastructure"))
     testImplementation(libs.testcontainers.postgresql)
-    testImplementation(libs.bundles.kotest)
+    testImplementation(libs.bundles.kotest5)
     testImplementation(libs.bundles.ktor)
     testImplementation(libs.bundles.exposed)
     testImplementation(libs.ktor.server.test.host)
@@ -18,7 +18,10 @@ dependencies {
     testImplementation(libs.flyway.core)
     testImplementation(libs.flyway.postgres)
     testImplementation(libs.selfie)
+    testImplementation(libs.koin.ktor)
     testImplementation(testFixtures(project(":domain")))
+    testImplementation((project(":application")))
+    testImplementation(libs.kommand)
 }
 
 configurations.all {
@@ -26,6 +29,7 @@ configurations.all {
         force(libs.kotest5.assertions)
         force(libs.kotest5.engine)
         force(libs.kotest5.runner)
+        force(libs.kotest5.extensions.clock)
     }
 }
 
