@@ -1,6 +1,7 @@
 dependencies {
     implementation(project(":domain"))
     implementation(libs.kommand)
+    implementation(libs.kotlin.logging)
 
     detektPlugins(libs.detekt.formatting)
 

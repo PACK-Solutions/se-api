@@ -64,5 +64,24 @@ class HistoriqueConnaissanceClientTest : ShouldSpec(
             response.body<List<EntreeHistoriqueDto>>() shouldHaveSize 1
             // TODO improve
         }
+
+        should("enregistrer et renvoyer l'historique des modifications") {
+//            val id = 12345L
+//            val modif1 = aConnaissanceClient().withStatutPPE(
+//                FonctionPPE.DIRIGEANT_PARTI,
+//            ).withVigilanceRenforcee().build().toDto()
+//            val modif2 = aConnaissanceClient().withStatutProchePPE(
+//                LienParente.CONJOINT,
+//                FonctionPPE.DIRIGEANT_PARTI,
+//            ).withVigilanceRenforcee().build().toDto()
+//
+//            postConnaissanceClient(id, modif1)
+//            postConnaissanceClient(id, modif2)
+//
+//            transaction {
+//                HistoriqueTable.selectAll().count() shouldBe 2
+//            }
+            TODO()
+        }
     },
 )
