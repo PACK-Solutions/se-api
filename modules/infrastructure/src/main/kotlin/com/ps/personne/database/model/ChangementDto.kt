@@ -1,6 +1,6 @@
 package com.ps.personne.database.model
 
-import com.ps.personne.historique.Diff
+import com.ps.framework.components.diff.Diff
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -14,28 +14,30 @@ sealed class ChangementDto {
 
     @Serializable
     @SerialName("Modification")
-    data class Modification(override val proprieteObjet: String, val newValue: String, val oldValue: String) : ChangementDto()
+    data class Modification(override val proprieteObjet: String, val newValue: String, val oldValue: String) :
+        ChangementDto()
 
     @Serializable
     @SerialName("Suppression")
     data class Suppression(override val proprieteObjet: String, val oldValue: String) : ChangementDto()
 
     fun toDiff() = when (this) {
-        is Creation -> Diff.Creation(proprieteObjet, newValue)
-        is Modification -> Diff.Modification(proprieteObjet, newValue, oldValue)
-        is Suppression -> Diff.Suppression(proprieteObjet, oldValue)
+        is Creation -> Diff.Create(proprieteObjet, newValue)
+        is Modification -> Diff.Update(proprieteObjet, newValue, oldValue)
+        is Suppression -> Diff.Delete(proprieteObjet, oldValue)
     }
 
     companion object {
         fun from(changement: Diff) = when (changement) {
-            is Diff.Creation -> Creation(changement.proprieteObjet, changement.newValue)
-            is Diff.Modification -> Modification(
+            is Diff.Create -> Creation(changement.proprieteObjet, changement.newValue)
+
+            is Diff.Update -> Modification(
                 changement.proprieteObjet,
                 changement.newValue,
                 changement.oldValue,
             )
 
-            is Diff.Suppression -> Suppression(changement.proprieteObjet, changement.oldValue)
+            is Diff.Delete -> Suppression(changement.proprieteObjet, changement.oldValue)
         }
     }
 }

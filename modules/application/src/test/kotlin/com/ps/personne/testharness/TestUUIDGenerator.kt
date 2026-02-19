@@ -1,9 +1,9 @@
 package com.ps.personne.testharness
 
-import com.ps.personne.historique.EntreeHistoriqueIdGenerator
+import com.ps.framework.components.id.IdGenerator
 import java.util.*
 
-class TestUUIDGenerator : EntreeHistoriqueIdGenerator {
+class TestUUIDGenerator : IdGenerator {
 
     private val generatedIds = mutableListOf<UUID>()
 

@@ -1,9 +1,8 @@
 package com.ps.personne.usecases
 
-import com.ps.kommand.BasicQueryBus
-import com.ps.kommand.QueryResult
-import com.ps.kommand.middleware.QueryDispatcherMiddleware
-import com.ps.personne.fixtures.ConnaissanceClientFactory
+import com.ps.framework.cqrs.bus.query.BasicQueryBus
+import com.ps.framework.cqrs.bus.query.QueryResult
+import com.ps.framework.cqrs.bus.query.middleware.QueryDispatcherMiddleware
 import com.ps.personne.fixtures.aConnaissanceClient
 import com.ps.personne.fixtures.anIdPersonne
 import com.ps.personne.ports.driven.InMemoryConnaissanceClientRepository
@@ -37,7 +36,7 @@ class RecupererConnaissanceClientTest : ShouldSpec(
         }
 
         should("renvoyer la connaissance client par défaut si elle n'existe pas") {
-            val idPersonne = ConnaissanceClientFactory.creerIdPersonne()
+            val idPersonne = anIdPersonne()
             val query = RecupererConnaissanceClientQuery(idPersonne)
 
             val result = bus.dispatch(query, aContext().build())

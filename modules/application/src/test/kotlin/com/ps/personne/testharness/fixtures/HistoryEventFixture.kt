@@ -1,15 +1,19 @@
 package com.ps.personne.testharness.fixtures
 
-import com.ps.personne.historique.*
+import com.ps.framework.components.diff.Diff
+import com.ps.framework.components.history.Author
+import com.ps.framework.components.history.HistoryEvent
+import com.ps.framework.components.history.IdObjet
+import com.ps.framework.components.history.TypeObjet
 import java.time.Instant
 import java.util.*
 
-fun anEntreeHistorique(typeObjet: TypeObjet, idObjet: IdObjet) = EntreeHistoriqueFixture(typeObjet, idObjet)
-fun aCreation(nom: String, value: String) = Diff.Creation(nom, value)
-fun aModification(nom: String, oldValue: String, newValue: String) = Diff.Modification(nom, newValue, oldValue)
-fun aSuppression(nom: String, oldValue: String) = Diff.Suppression(nom, oldValue)
+fun anHistoryEvent(typeObjet: TypeObjet, idObjet: IdObjet) = HistoryEventFixture(typeObjet, idObjet)
+fun aCreation(nom: String, value: String) = Diff.Create(nom, value)
+fun aModification(nom: String, oldValue: String, newValue: String) = Diff.Update(nom, newValue, oldValue)
+fun aSuppression(nom: String, oldValue: String) = Diff.Delete(nom, oldValue)
 
-class EntreeHistoriqueFixture(val typeObjet: TypeObjet, val idObjet: IdObjet) {
+class HistoryEventFixture(val typeObjet: TypeObjet, val idObjet: IdObjet) {
     private var id: UUID = UUID.randomUUID()
     private var date: Instant = Instant.now()
     private var userName = Author("unknown")
@@ -21,7 +25,7 @@ class EntreeHistoriqueFixture(val typeObjet: TypeObjet, val idObjet: IdObjet) {
     fun withChangement(changement: Diff) = this.apply { changements.add(changement) }
     fun withChangements(vararg changements: Diff) = this.apply { this.changements.addAll(changements) }
 
-    fun build() = EntreeHistorique(
+    fun build() = HistoryEvent(
         id,
         typeObjet,
         idObjet,

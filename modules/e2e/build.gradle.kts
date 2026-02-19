@@ -21,7 +21,7 @@ dependencies {
     testImplementation(libs.koin.ktor)
     testImplementation(testFixtures(project(":domain")))
     testImplementation((project(":application")))
-    testImplementation(libs.kommand)
+    testImplementation(libs.ps.framework.components)
 }
 
 configurations.all {

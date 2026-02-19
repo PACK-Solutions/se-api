@@ -1,12 +1,9 @@
 package com.ps.personne.rest.routes
 
-import com.github.michaelbull.result.getOrThrow
-import com.ps.kommand.ContextProvider
-import com.ps.kommand.QueryBus
+import com.ps.framework.cqrs.bus.ContextProvider
+import com.ps.framework.cqrs.bus.query.QueryBus
 import com.ps.personne.model.IdPersonne
-import com.ps.personne.rest.BusinessException
 import com.ps.personne.rest.dto.response.toDto
-import com.ps.personne.rest.toResult
 import com.ps.personne.usecases.RecupererHistoriqueConnaissanceClientQuery
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
@@ -25,12 +22,10 @@ fun Application.configureHistoriqueRoutes(queryBus: QueryBus) {
 private fun getHistoriqueConnaissanceClient(queryBus: QueryBus): suspend RoutingContext.() -> Unit = {
     val idPersonne = call.parameters.getOrFail<Long>("idPersonne")
 
-    val historique = queryBus.dispatch(
+    val historique = queryBus.dispatchThrowing(
         RecupererHistoriqueConnaissanceClientQuery(IdPersonne(idPersonne)),
-        ContextProvider.Coroutine.current()
+        ContextProvider.Coroutine.current(),
     )
-        .toResult()
-        .getOrThrow(::BusinessException)
         .map { it.toDto() }
     call.respond(HttpStatusCode.OK, historique)
 }

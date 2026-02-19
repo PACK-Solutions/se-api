@@ -3,6 +3,7 @@ package com.ps.personne.database.repository
 import com.github.michaelbull.result.Err
 import com.github.michaelbull.result.Ok
 import com.github.michaelbull.result.Result
+import com.ps.framework.cqrs.multitenancy.TenantIdProvider
 import com.ps.personne.database.model.SyntheseModificationDto
 import com.ps.personne.database.model.TraceAuditDto
 import com.ps.personne.database.model.toDomain

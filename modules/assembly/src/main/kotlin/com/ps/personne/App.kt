@@ -1,14 +1,14 @@
 package com.ps.personne
 
-import com.ps.kommand.CommandBus
-import com.ps.kommand.QueryBus
+import com.ps.framework.cqrs.bus.command.CommandBus
+import com.ps.framework.cqrs.bus.query.QueryBus
+import com.ps.framework.ktor.configuration.configureCors
+import com.ps.framework.ktor.configuration.configureSwagger
 import com.ps.personne.config.ContextProviderConfig.configureContextProvider
-import com.ps.personne.config.CorsConfig.configureCors
 import com.ps.personne.config.ExceptionHandlingConfig.configureExceptionHandling
 import com.ps.personne.config.InstancesConfig.configureKoin
 import com.ps.personne.config.LoggingConfig.configureLogging
 import com.ps.personne.config.SerializationConfig.configureSerialization
-import com.ps.personne.config.SwaggerConfig.configureSwagger
 import com.ps.personne.database.config.DatabaseConfig
 import com.ps.personne.database.health.HealthCheckService
 import com.ps.personne.rest.config.MandatoryHeadersPlugin
@@ -29,8 +29,9 @@ fun main(args: Array<String>) {
 }
 
 fun Application.personne(moduleOverrides: Module.() -> Unit = {}) {
+    // psDefaults()
     configureCors()
-    configureSwagger()
+    configureSwagger("/openapi/documentation.yaml")
     configureSerialization()
     configureExceptionHandling()
     configureContextProvider()

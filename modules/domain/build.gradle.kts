@@ -9,5 +9,5 @@ dependencies {
     testImplementation(libs.bundles.kotest)
     testFixturesImplementation(libs.bundles.kotest)
     detektPlugins(libs.detekt.formatting)
-    implementation(libs.kommand)
+    implementation(libs.ps.framework.cqrs)
 }

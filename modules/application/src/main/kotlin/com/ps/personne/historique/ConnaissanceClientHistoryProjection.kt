@@ -1,10 +1,17 @@
 package com.ps.personne.historique
 
+import com.ps.framework.components.diff.New
+import com.ps.framework.components.diff.Old
+import com.ps.framework.components.diff.diff
+import com.ps.framework.components.history.HistoryProjection
+import com.ps.framework.components.history.IdObjet
+import com.ps.framework.components.history.TypeObjet
 import com.ps.personne.model.AvecVigilanceRenforcee
 import com.ps.personne.model.ConnaissanceClient
 import com.ps.personne.model.SansVigilanceRenforcee
 
-class ConnaissanceClientHistoriqueProjection(val old: Old<ConnaissanceClient>, val new: New<ConnaissanceClient>) : HistoriqueProjection<ConnaissanceClient> {
+class ConnaissanceClientHistoryProjection(val old: Old<ConnaissanceClient>, val new: New<ConnaissanceClient>) :
+    HistoryProjection<ConnaissanceClient> {
     override fun getTypeObjet() = typeObjet
 
     override fun getIdObjet() = IdObjet(new.value.idPersonne.id.toString())
@@ -27,7 +34,7 @@ class ConnaissanceClientHistoriqueProjection(val old: Old<ConnaissanceClient>, v
         propertyDiff("LienParenteProchePPE") { propertyValueGetter = { it.statutProchePPE?.lienParente?.name } }
         propertyDiff("FonctionProchePPE") { propertyValueGetter = { it.statutProchePPE?.mandat?.fonction?.name } }
         propertyDiff(
-            "DateFinFonctionProchePPE"
+            "DateFinFonctionProchePPE",
         ) { propertyValueGetter = { it.statutProchePPE?.mandat?.dateFin?.toString() } }
     }
 

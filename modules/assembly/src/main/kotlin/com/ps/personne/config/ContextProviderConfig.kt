@@ -1,7 +1,7 @@
 package com.ps.personne.config
 
-import com.ps.kommand.Context
-import com.ps.kommand.withCommandContext
+import com.ps.framework.cqrs.bus.Context
+import com.ps.framework.cqrs.bus.withCommandContext
 import io.ktor.server.application.Application
 import io.ktor.server.application.ApplicationCallPipeline
 

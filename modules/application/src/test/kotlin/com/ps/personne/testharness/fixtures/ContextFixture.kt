@@ -1,6 +1,6 @@
 package com.ps.personne.testharness.fixtures
 
-import com.ps.kommand.Context
+import com.ps.framework.cqrs.bus.Context
 import com.ps.personne.PersonneContextKey
 
 class ContextFixture {

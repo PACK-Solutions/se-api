@@ -12,7 +12,7 @@ plugins {
 
 rootProject.name = "se-api"
 
-includeBuild("../kommand")
+includeBuild("../api-framework")
 
 val modulesDir = file("modules")
 modulesDir.listFiles()?.forEach { dir ->

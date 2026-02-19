@@ -1,5 +1,5 @@
 [versions]
-detekt = "1.23.8"
+detekt = "2.0.0-alpha.2"
 exposed = "0.61.0"
 flyway = "11.18.0"
 hikariCp = "7.0.2"
@@ -8,11 +8,11 @@ koin = "4.1.1"
 kotest = "6.0.5"
 kotest5 = "5.9.1"
 kotest5-clock = "1.0.0"
-kotlin-jvm = "2.2.21"
+kotlin-jvm = "2.3.10"
 kotlin-logging = "7.0.13"
 kotlin-result = "2.1.0"
 kotlinx-serialization = "1.9.0"
-ktor = "3.3.3"
+ktor = "3.4.0"
 logback = "1.5.21"
 postgres = "42.7.8"
 selfie = "2.3.0"
@@ -20,12 +20,16 @@ test-containers = "2.0.2"
 version-catalog-update = "1.0.1"
 versions = "0.53.0"
 kommand = "1.0-SNAPSHOT"
+ps-framework = "1.0-SNAPSHOT"
 coroutines = "1.10.2"
 
 [libraries]
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+ps-framework-cqrs = { module = "com.ps.api-framework:cqrs", version.ref = "ps-framework" }
+ps-framework-components = { module = "com.ps.api-framework:components", version.ref = "ps-framework" }
+ps-framework-ktor = { module = "com.ps.api-framework:ktor", version.ref = "ps-framework" }
 kommand = { module = "com.ps:kommand", version.ref = "kommand" }
-detekt-formatting = { module = "io.gitlab.arturbosch.detekt:detekt-formatting", version.ref = "detekt" }
+detekt-formatting = { module = "dev.detekt:detekt-rules-ktlint-wrapper", version.ref = "detekt" }
 exposed-core = { module = "org.jetbrains.exposed:exposed-core", version.ref = "exposed" }
 exposed-dao = { module = "org.jetbrains.exposed:exposed-dao", version.ref = "exposed" }
 exposed-java-time = { module = "org.jetbrains.exposed:exposed-java-time", version.ref = "exposed" }
@@ -96,7 +100,7 @@ koin = [
 ]
 
 [plugins]
-detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
 kotest = { id = "io.kotest", version.ref = "kotest" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin-jvm" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin-jvm" }

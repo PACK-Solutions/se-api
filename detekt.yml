@@ -5,7 +5,7 @@ style:
         active: true
         maxLineLength: 160
 
-formatting:
+ktlint:
     NoWildcardImports:
         active: false
     MaximumLineLength:
@@ -17,10 +17,11 @@ formatting:
 complexity:
     LongParameterList:
         active: true
-        functionThreshold: 10
-        constructorThreshold: 10
+        allowedFunctionParameters: 10
+        allowedConstructorParameters: 10
         ignoreDefaultParameters: true
-        ignoreAnnotated: Factory
+        ignoreAnnotatedParameter:
+            - Factory
 
 exceptions:
     TooGenericExceptionThrown:

@@ -1,14 +1,11 @@
 package com.ps.personne.rest.routes
 
-import com.github.michaelbull.result.getOrThrow
-import com.ps.kommand.CommandBus
-import com.ps.kommand.ContextProvider
-import com.ps.kommand.QueryBus
+import com.ps.framework.cqrs.bus.ContextProvider
+import com.ps.framework.cqrs.bus.command.CommandBus
+import com.ps.framework.cqrs.bus.query.QueryBus
 import com.ps.personne.model.IdPersonne
-import com.ps.personne.rest.BusinessException
 import com.ps.personne.rest.dto.request.ConnaissanceClientDto
 import com.ps.personne.rest.dto.request.toDto
-import com.ps.personne.rest.toResult
 import com.ps.personne.usecases.EnregistrerConnnaissanceClientCommand
 import com.ps.personne.usecases.RecupererConnaissanceClientQuery
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -28,20 +25,25 @@ val logger = KotlinLogging.logger {}
  */
 fun Application.configureConnaissanceClientRoutes(queryBus: QueryBus, commandBus: CommandBus) {
     routing {
-        get("/personnes/{idPersonne}/connaissance-client", getConnaissanceClient(queryBus))
-        post("/personnes/{idPersonne}/connaissance-client", saveConnaissanceClient(commandBus))
-        put("/personnes/{idPersonne}/connaissance-client", saveConnaissanceClient(commandBus))
+        route("personnes") {
+            route("{idPersonne}") {
+                route("connaissance-client") {
+                    get(getConnaissanceClient(queryBus))
+                    post(saveConnaissanceClient(commandBus))
+                    put(saveConnaissanceClient(commandBus))
+                }
+            }
+        }
     }
 }
 
 private fun getConnaissanceClient(queryBus: QueryBus): suspend RoutingContext.() -> Unit = {
     val idPersonne = call.parameters.getOrFail<Long>("idPersonne")
-    val connaissanceClient = queryBus.dispatch(
+    val connaissanceClient = queryBus.dispatchThrowing(
         RecupererConnaissanceClientQuery(IdPersonne(idPersonne)),
         ContextProvider.Coroutine.current(),
     )
-        .toResult()
-        .getOrThrow()
+
     call.respond(connaissanceClient.toDto())
 }
 
@@ -50,7 +52,7 @@ private fun saveConnaissanceClient(commandBus: CommandBus): suspend RoutingConte
     val connaissanceClientDto = call.receive<ConnaissanceClientDto>()
     val connaissanceClient = connaissanceClientDto.toDomain(idPersonne)
 
-    commandBus.dispatch(
+    commandBus.dispatchThrowing(
         EnregistrerConnnaissanceClientCommand(
             idPersonne,
             connaissanceClient.statutPPE,
@@ -58,8 +60,7 @@ private fun saveConnaissanceClient(commandBus: CommandBus): suspend RoutingConte
             connaissanceClient.vigilance,
         ),
         ContextProvider.Coroutine.current(),
-    ).toResult()
-        .getOrThrow(::BusinessException)
+    )
 
     call.respond(HttpStatusCode.OK, connaissanceClientDto)
 }

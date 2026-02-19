@@ -1,4 +1,4 @@
-import com.ps.personne.historique.EntreeHistoriqueIdGenerator
+import com.ps.framework.components.id.IdGenerator
 import com.ps.personne.personne
 import io.kotest.provided.GlobalPostgresContainer
 import io.ktor.client.HttpClient
@@ -18,7 +18,7 @@ import java.time.ZoneId
 import java.time.temporal.TemporalAmount
 import java.util.*
 
-object TestUUIDGenerator : EntreeHistoriqueIdGenerator {
+object TestUUIDGenerator : IdGenerator {
 
     private val generatedIds = mutableListOf<UUID>()
 
@@ -70,6 +70,7 @@ object TestApp {
                     personne {
                         single<Clock> { FixedTestClockWithFixedIncrement }
                         single<EntreeHistoriqueIdGenerator> { TestUUIDGenerator }
+                        single<IdGenerator> { TestUUIDGenerator }
                     }
                 }
             },

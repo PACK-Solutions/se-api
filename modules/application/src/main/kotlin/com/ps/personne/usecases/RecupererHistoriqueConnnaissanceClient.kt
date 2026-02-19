@@ -1,27 +1,24 @@
 package com.ps.personne.usecases
 
-import com.ps.kommand.Context
-import com.ps.kommand.Query
-import com.ps.kommand.QueryHandler
-import com.ps.kommand.QueryResult
-import com.ps.personne.historique.ConnaissanceClientHistoriqueProjection
-import com.ps.personne.historique.EntreeHistorique
-import com.ps.personne.historique.HistoriqueRepository
-import com.ps.personne.historique.IdObjet
+import com.ps.framework.components.history.HistoryEvent
+import com.ps.framework.components.history.HistoryEventRepository
+import com.ps.framework.components.history.IdObjet
+import com.ps.framework.cqrs.bus.Context
+import com.ps.framework.cqrs.bus.query.Query
+import com.ps.framework.cqrs.bus.query.QueryHandler
+import com.ps.framework.cqrs.bus.query.QueryResult
+import com.ps.personne.historique.ConnaissanceClientHistoryProjection
 import com.ps.personne.model.IdPersonne
 
-class RecupererHistoriqueConnnaissanceClientHandler(val repository: HistoriqueRepository) : QueryHandler<RecupererHistoriqueConnaissanceClientQuery> {
+class RecupererHistoriqueConnnaissanceClientHandler(val repository: HistoryEventRepository) :
+    QueryHandler<RecupererHistoriqueConnaissanceClientQuery> {
     override fun handle(
         context: Context,
         query: RecupererHistoriqueConnaissanceClientQuery,
-    ): QueryResult<List<EntreeHistorique>, Nothing> {
-        return QueryResult.Success(
-            repository.get(ConnaissanceClientHistoriqueProjection.typeObjet, IdObjet(query.idPersonne.id.toString()))
-                .sortedBy(EntreeHistorique::occurredAt),
-        )
-    }
+    ): QueryResult<List<HistoryEvent>, Nothing> = QueryResult.Success(
+        repository.get(ConnaissanceClientHistoryProjection.typeObjet, IdObjet(query.idPersonne.id.toString()))
+            .sortedBy(HistoryEvent::occurredAt),
+    )
 }
 
-data class RecupererHistoriqueConnaissanceClientQuery(
-    val idPersonne: IdPersonne,
-) : Query<List<EntreeHistorique>, Nothing>
+data class RecupererHistoriqueConnaissanceClientQuery(val idPersonne: IdPersonne) : Query<List<HistoryEvent>, Nothing>

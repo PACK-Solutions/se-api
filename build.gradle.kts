@@ -19,18 +19,18 @@ subprojects {
     // Apply common plugins to all subprojects
     apply(plugin = "org.jetbrains.kotlin.jvm")
     apply(plugin = "io.kotest")
-    apply(plugin = "io.gitlab.arturbosch.detekt")
+    apply(plugin = "dev.detekt")
     apply(plugin = "version-catalog")
 
     // Configure Java toolchain for all JVM projects
     extensions.configure<JavaPluginExtension> {
         toolchain {
-            languageVersion.set(JavaLanguageVersion.of(21))
+            languageVersion.set(JavaLanguageVersion.of(25))
         }
     }
 
-    // Detekt configuration
-    extensions.configure<DetektExtension> {
+
+    detekt {
         config.setFrom("${rootProject.projectDir}/detekt.yml")
         buildUponDefaultConfig = true
         autoCorrect = true

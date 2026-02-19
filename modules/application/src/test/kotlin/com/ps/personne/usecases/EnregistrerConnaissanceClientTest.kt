@@ -1,8 +1,8 @@
 package com.ps.personne.usecases
 
-import com.ps.kommand.BasicCommandBus
-import com.ps.kommand.CommandResult
-import com.ps.kommand.middleware.CommandDispatcherMiddleware
+import com.ps.framework.cqrs.bus.command.BasicCommandBus
+import com.ps.framework.cqrs.bus.command.CommandResult
+import com.ps.framework.cqrs.bus.command.middleware.CommandDispatcherMiddleware
 import com.ps.personne.events.ConnaissanceClientModifiee
 import com.ps.personne.fixtures.*
 import com.ps.personne.model.*

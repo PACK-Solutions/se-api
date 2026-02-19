@@ -1,7 +1,7 @@
 package com.ps.personne.rest.routes
 
+import com.ps.framework.ktor.problem.respondProblem
 import com.ps.personne.database.health.HealthCheckService
-import com.ps.personne.rest.problem.respondProblem
 import io.ktor.http.HttpStatusCode
 import io.ktor.server.application.Application
 import io.ktor.server.application.log

@@ -1,23 +1,14 @@
 package com.ps.personne.config
 
-import io.ktor.serialization.kotlinx.json.json
+import com.ps.framework.ktor.configuration.psDefaults
 import io.ktor.server.application.Application
 import io.ktor.server.application.install
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
-import kotlinx.serialization.json.Json
 
 object SerializationConfig {
     fun Application.configureSerialization() {
         install(ContentNegotiation) {
-            json(
-                Json {
-                    prettyPrint = true
-                    isLenient = true
-                    ignoreUnknownKeys = true
-                    explicitNulls = false
-                    coerceInputValues = true
-                },
-            )
+            psDefaults()
         }
     }
 }

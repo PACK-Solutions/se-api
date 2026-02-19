@@ -1,15 +1,19 @@
 package com.ps.personne.usecases
 
-import com.ps.kommand.BasicQueryBus
-import com.ps.kommand.QueryResult
-import com.ps.kommand.middleware.QueryDispatcherMiddleware
+import com.ps.framework.components.history.Author
+import com.ps.framework.components.history.HistoryEvent
+import com.ps.framework.components.history.IdObjet
+import com.ps.framework.components.history.TypeObjet
+import com.ps.framework.cqrs.bus.query.BasicQueryBus
+import com.ps.framework.cqrs.bus.query.QueryResult
+import com.ps.framework.cqrs.bus.query.middleware.QueryDispatcherMiddleware
 import com.ps.personne.fixtures.anIdPersonne
-import com.ps.personne.historique.*
+import com.ps.personne.historique.InMemoryHistoryEventRepository
 import com.ps.personne.testharness.TestUUIDGenerator
 import com.ps.personne.testharness.fixtures.aContext
 import com.ps.personne.testharness.fixtures.aCreation
 import com.ps.personne.testharness.fixtures.aModification
-import com.ps.personne.testharness.fixtures.anEntreeHistorique
+import com.ps.personne.testharness.fixtures.anHistoryEvent
 import io.kotest.core.spec.style.ShouldSpec
 import io.kotest.matchers.collections.shouldBeSortedBy
 import io.kotest.matchers.shouldBe
@@ -23,7 +27,7 @@ class RecupererHistoriqueConnaissanceClientTest : ShouldSpec(
 
         val uuidGenerator = TestUUIDGenerator()
 
-        val repository = InMemoryHistoriqueRepository()
+        val repository = InMemoryHistoryEventRepository()
         val queryHandler = RecupererHistoriqueConnnaissanceClientHandler(repository)
 
         val bus = BasicQueryBus(linkedSetOf(QueryDispatcherMiddleware.builder(listOf(queryHandler))))
@@ -40,7 +44,7 @@ class RecupererHistoriqueConnaissanceClientTest : ShouldSpec(
             val date = Instant.now()
 
             repository.store(
-                anEntreeHistorique(typeObjet, idObjet)
+                anHistoryEvent(typeObjet, idObjet)
                     .withID(uuidGenerator.next())
                     .withChangements(
                         aModification("vigilance", "false", "true"),
@@ -50,7 +54,7 @@ class RecupererHistoriqueConnaissanceClientTest : ShouldSpec(
                     .build(),
             )
             repository.store(
-                anEntreeHistorique(typeObjet, idObjet)
+                anHistoryEvent(typeObjet, idObjet)
                     .withID(uuidGenerator.next())
                     .withChangement(aCreation("motifs_vigilance", "[MONTANT_ELEVE, AGE_AVANCE]"))
                     .occuringAt(date.plus(5, ChronoUnit.MINUTES))
@@ -58,25 +62,25 @@ class RecupererHistoriqueConnaissanceClientTest : ShouldSpec(
             )
 
             val result = bus.dispatch(RecupererHistoriqueConnaissanceClientQuery(idPersonne), aContext().build())
-            result.shouldBeTypeOf<QueryResult.Success<List<EntreeHistorique>>>()
+            result.shouldBeTypeOf<QueryResult.Success<List<HistoryEvent>>>()
             result.result shouldBe (
                 listOf(
-                    EntreeHistorique(
+                    HistoryEvent(
                         id = uuidGenerator[0],
                         typeObjet,
                         idObjet = IdObjet(idPersonne.id.toString()),
-                        changements = setOf(
+                        diffs = setOf(
                             aCreation("fonction_ppe", "MEMBRE_PARLEMENT"),
                             aModification("vigilance", "false", "true"),
                         ),
                         performedBy = Author("unknown"),
                         occurredAt = date,
                     ),
-                    EntreeHistorique(
+                    HistoryEvent(
                         id = uuidGenerator[1],
                         typeObjet,
                         idObjet = IdObjet(idPersonne.id.toString()),
-                        changements = setOf(aCreation("motifs_vigilance", "[MONTANT_ELEVE, AGE_AVANCE]")),
+                        diffs = setOf(aCreation("motifs_vigilance", "[MONTANT_ELEVE, AGE_AVANCE]")),
                         performedBy = Author("unknown"),
                         occurredAt = date.plus(5, ChronoUnit.MINUTES),
                     ),
@@ -86,12 +90,13 @@ class RecupererHistoriqueConnaissanceClientTest : ShouldSpec(
 
         should(
             "ordonner les elements par date d'occurence croissante",
-        ) { // TODO est-ce vraiment un tri croissant qu'on souhaite?
+        ) {
+            // TODO est-ce vraiment un tri croissant qu'on souhaite?
             val idPersonne = anIdPersonne()
             val idObjet = IdObjet(idPersonne.id.toString())
             val date = Instant.now()
 
-            val template = anEntreeHistorique(typeObjet, idObjet)
+            val template = anHistoryEvent(typeObjet, idObjet)
                 .withID(uuidGenerator.next())
                 .withChangements(
                     aModification("vigilance", "false", "true"),
@@ -101,8 +106,8 @@ class RecupererHistoriqueConnaissanceClientTest : ShouldSpec(
             repository.store(template.occuringAt(date).build())
 
             val result = bus.dispatch(RecupererHistoriqueConnaissanceClientQuery(idPersonne), aContext().build())
-            result.shouldBeTypeOf<QueryResult.Success<List<EntreeHistorique>>>()
-            result.result shouldBeSortedBy EntreeHistorique::occurredAt
+            result.shouldBeTypeOf<QueryResult.Success<List<HistoryEvent>>>()
+            result.result shouldBeSortedBy HistoryEvent::occurredAt
         }
     },
 )

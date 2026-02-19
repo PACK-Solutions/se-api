@@ -1,6 +1,8 @@
 package com.ps.personne
 
 import TestApp
+import com.ps.framework.components.history.IdObjet
+import com.ps.framework.components.history.TypeObjet
 import com.ps.personne.database.tables.ConnaissanceClientTable
 import com.ps.personne.database.tables.HistoriqueTable
 import com.ps.personne.fixtures.aConnaissanceClient

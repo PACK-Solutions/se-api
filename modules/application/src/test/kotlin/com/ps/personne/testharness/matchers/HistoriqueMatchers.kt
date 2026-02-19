@@ -1,10 +1,10 @@
 package com.ps.personne.testharness.matchers
 
-import com.ps.personne.historique.EntreeHistorique
+import com.ps.framework.components.history.HistoryEvent
 import io.kotest.matchers.shouldBe
 import java.time.Instant
 
-infix fun EntreeHistorique.shouldHaveDate(date: Instant): EntreeHistorique {
+infix fun HistoryEvent.shouldHaveDate(date: Instant): HistoryEvent {
     this.occurredAt shouldBe date
     return this
 }

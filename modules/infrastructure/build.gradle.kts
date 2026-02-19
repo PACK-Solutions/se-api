@@ -14,7 +14,9 @@ dependencies {
     implementation(libs.kotlin.logging)
     implementation(libs.logback)
 
-    implementation(libs.kommand)
+    implementation(libs.ps.framework.cqrs)
+    implementation(libs.ps.framework.components)
+    implementation(libs.ps.framework.ktor)
 
     detektPlugins(libs.detekt.formatting)
 
@@ -24,3 +26,14 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
+
+ktor {
+
+    openApi {
+        enabled = true
+        codeInferenceEnabled = false
+        onlyCommented = false
+        debug = true
+
+    }
+}

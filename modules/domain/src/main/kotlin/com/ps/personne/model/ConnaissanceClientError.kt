@@ -1,5 +1,7 @@
 package com.ps.personne.model
 
-sealed interface ConnaissanceClientError : BusinessError {
+import com.ps.framework.cqrs.bus.command.CommandError
+
+sealed interface ConnaissanceClientError : CommandError {
     object VigilanceRenforceeObligatoire : ConnaissanceClientError
 }

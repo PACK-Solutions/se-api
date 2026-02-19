@@ -1,10 +1,10 @@
 package com.ps.personne.usecases
 
 import com.github.michaelbull.result.fold
-import com.ps.kommand.Context
-import com.ps.kommand.Query
-import com.ps.kommand.QueryHandler
-import com.ps.kommand.QueryResult
+import com.ps.framework.cqrs.bus.Context
+import com.ps.framework.cqrs.bus.query.Query
+import com.ps.framework.cqrs.bus.query.QueryHandler
+import com.ps.framework.cqrs.bus.query.QueryResult
 import com.ps.personne.model.ConnaissanceClient
 import com.ps.personne.model.IdPersonne
 import com.ps.personne.ports.driven.ConnaissanceClientRepository

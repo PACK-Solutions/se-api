@@ -12,9 +12,11 @@ dependencies {
     implementation(project(":application"))
     implementation(project(":infrastructure"))
     implementation(libs.bundles.ktor)
-    implementation(libs.kommand)
     implementation(libs.kotlin.logging)
     implementation(libs.koin.ktor)
+    implementation(libs.ps.framework.ktor)
+    implementation(libs.ps.framework.cqrs)
+    implementation(libs.ps.framework.components)
 
     detektPlugins(libs.detekt.formatting)
 

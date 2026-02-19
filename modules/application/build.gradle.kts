@@ -1,7 +1,9 @@
 dependencies {
     implementation(project(":domain"))
-    implementation(libs.kommand)
     implementation(libs.kotlin.logging)
+
+    implementation(libs.ps.framework.cqrs)
+    implementation(libs.ps.framework.components)
 
     detektPlugins(libs.detekt.formatting)
 
