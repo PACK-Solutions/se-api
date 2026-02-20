@@ -12,10 +12,7 @@ import com.ps.personne.model.IdPersonne
 
 class RecupererHistoriqueConnnaissanceClientHandler(val repository: HistoryEventRepository) :
     QueryHandler<RecupererHistoriqueConnaissanceClientQuery> {
-    override fun handle(
-        context: Context,
-        query: RecupererHistoriqueConnaissanceClientQuery,
-    ): QueryResult<List<HistoryEvent>, Nothing> = QueryResult.Success(
+    override fun handle(context: Context, query: RecupererHistoriqueConnaissanceClientQuery): QueryResult<List<HistoryEvent>, Nothing> = QueryResult.Success(
         repository.get(ConnaissanceClientHistoryProjection.typeObjet, IdObjet(query.idPersonne.id.toString()))
             .sortedBy(HistoryEvent::occurredAt),
     )

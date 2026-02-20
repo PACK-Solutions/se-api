@@ -77,17 +77,17 @@ object TestApp {
         )
     }
 
-    const val defaultTenantId = "pack"
+    const val DEFAULT_TENANT_ID = "pack"
 
-    const val defaultLogin = "john.doe"
+    const val DEFAULT_LOGIN = "john.doe"
 
     /** basic client with pre-set login and tenantId (from defaultTenantId) headers */
     val defaultClient: HttpClient by lazy {
         httpClient {
             install(ContentNegotiation) { json(Json { prettyPrint = true }) }
             defaultRequest {
-                headers.appendIfNameAbsent("login", defaultLogin)
-                headers.appendIfNameAbsent("tenantId", defaultTenantId)
+                headers.appendIfNameAbsent("login", DEFAULT_LOGIN)
+                headers.appendIfNameAbsent("tenantId", DEFAULT_TENANT_ID)
             }
         }
     }

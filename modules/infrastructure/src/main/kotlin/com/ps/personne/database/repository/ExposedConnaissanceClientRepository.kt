@@ -15,7 +15,10 @@ import com.ps.personne.database.tables.ConnaissanceClientHistoriqueTable.auditUs
 import com.ps.personne.database.tables.ConnaissanceClientHistoriqueTable.modifications
 import com.ps.personne.database.tables.ConnaissanceClientTable
 import com.ps.personne.database.tables.ConnaissanceClientTable.personId
-import com.ps.personne.model.*
+import com.ps.personne.model.ConnaissanceClient
+import com.ps.personne.model.HistoriqueModifications
+import com.ps.personne.model.IdPersonne
+import com.ps.personne.model.SyntheseModifications
 import com.ps.personne.ports.driven.ConnaissanceClientRepository
 import com.ps.personne.ports.driven.ConnaissanceClientRepositoryError
 import com.ps.personne.ports.driven.ModificationsConnaissanceClientRepository
@@ -26,22 +29,20 @@ import org.jetbrains.exposed.sql.upsert
 
 class ExposedConnaissanceClientRepository(val tenantIdProvider: TenantIdProvider) : ConnaissanceClientRepository, ModificationsConnaissanceClientRepository {
 
-    override fun recuperer(idPersonne: IdPersonne): Result<ConnaissanceClient, ConnaissanceClientRepositoryError> {
-        return ConnaissanceClientTable
-            .selectAll()
-            .where { (personId eq idPersonne.id) and (ConnaissanceClientTable.tenantId eq tenantIdProvider.tenantId()) }
-            .singleOrNull()
-            ?.let {
-                Ok(
-                    ConnaissanceClient(
-                        idPersonne = idPersonne,
-                        statutPPE = it[ConnaissanceClientTable.statutPPE]?.toDomain(),
-                        statutProchePPE = it[ConnaissanceClientTable.statutProchePPE]?.toDomain(),
-                        vigilance = it[ConnaissanceClientTable.vigilance].toDomain(),
-                    ),
-                )
-            } ?: Err(ConnaissanceClientRepositoryError.PersonneNonTrouvee)
-    }
+    override fun recuperer(idPersonne: IdPersonne): Result<ConnaissanceClient, ConnaissanceClientRepositoryError> = ConnaissanceClientTable
+        .selectAll()
+        .where { (personId eq idPersonne.id) and (ConnaissanceClientTable.tenantId eq tenantIdProvider.tenantId()) }
+        .singleOrNull()
+        ?.let {
+            Ok(
+                ConnaissanceClient(
+                    idPersonne = idPersonne,
+                    statutPPE = it[ConnaissanceClientTable.statutPPE]?.toDomain(),
+                    statutProchePPE = it[ConnaissanceClientTable.statutProchePPE]?.toDomain(),
+                    vigilance = it[ConnaissanceClientTable.vigilance].toDomain(),
+                ),
+            )
+        } ?: Err(ConnaissanceClientRepositoryError.PersonneNonTrouvee)
 
     override fun sauvegarder(connaissanceClient: ConnaissanceClient) = transaction {
         ConnaissanceClientTable

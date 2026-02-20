@@ -8,9 +8,7 @@ object SansVigilanceRenforcee : Vigilance {
     override val vigilanceRenforcee: Boolean = false
 }
 
-data class AvecVigilanceRenforcee(
-    val motifs: List<MotifVigilance>,
-) : Vigilance {
+data class AvecVigilanceRenforcee(val motifs: List<MotifVigilance>) : Vigilance {
     override val vigilanceRenforcee: Boolean = true
 }
 

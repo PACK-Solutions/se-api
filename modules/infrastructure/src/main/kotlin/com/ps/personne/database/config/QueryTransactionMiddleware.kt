@@ -9,10 +9,9 @@ import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransacti
 
 class QueryTransactionMiddleware(val next: QueryBusMiddleware) : QueryBusMiddleware {
 
-    override suspend fun <Q : Query<R, E>, R, E : QueryError> handle(query: Q, context: Context): QueryResult<R, E> =
-        newSuspendedTransaction {
-            next.handle(query, context)
-        }
+    override suspend fun <Q : Query<R, E>, R, E : QueryError> handle(query: Q, context: Context): QueryResult<R, E> = newSuspendedTransaction {
+        next.handle(query, context)
+    }
 
     companion object {
         fun builder() = { next: QueryBusMiddleware? ->

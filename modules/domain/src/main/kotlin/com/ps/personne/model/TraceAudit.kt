@@ -13,5 +13,5 @@ value class User(val login: String)
 
 enum class TypeOperation {
     MODIFICATION,
-    CORRECTION
+    CORRECTION,
 }

@@ -13,6 +13,19 @@ ktlint:
         maxLineLength: 160
     ParameterListWrapping:
         active: false
+    ClassSignature:
+        active: false
+    BlankLineBetweenWhenConditions:
+        active: false
+    FunctionSignature:
+        active: true
+        maxLineLength: 160
+        forceMultilineWhenParameterCountGreaterOrEqualThan: 999
+    ArgumentListWrapping:
+        active: true
+        maxLineLength: 160
+    BinaryExpressionWrapping:
+        maxLineLength: 160
 
 complexity:
     LongParameterList:

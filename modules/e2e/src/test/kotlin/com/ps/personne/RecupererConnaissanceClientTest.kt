@@ -23,12 +23,12 @@ class RecupererConnaissanceClientTest : ShouldSpec(
     {
         val client = TestApp.defaultClient
 
-        suspend fun getConnaissanceClient(id: Long, tenant: String = TestApp.defaultTenantId): ConnaissanceClientDto =
+        suspend fun getConnaissanceClient(id: Long, tenant: String = TestApp.DEFAULT_TENANT_ID): ConnaissanceClientDto =
             client.get("/personnes/$id/connaissance-client") {
                 header("tenantId", tenant)
             }.body()
 
-        suspend fun postConnaissanceClient(id: Long, connaissanceClientDto: ConnaissanceClientDto, tenant: String = TestApp.defaultTenantId) =
+        suspend fun postConnaissanceClient(id: Long, connaissanceClientDto: ConnaissanceClientDto, tenant: String = TestApp.DEFAULT_TENANT_ID) =
             client.post("/personnes/$id/connaissance-client") {
                 header("tenantId", tenant)
                 contentType(ContentType.Application.Json)

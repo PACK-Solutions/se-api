@@ -29,12 +29,12 @@ class HistoriqueConnaissanceClientTest : ShouldSpec(
     {
         val client = TestApp.defaultClient
 
-        suspend fun getHistoriqueConnaissanceClient(id: Long, tenant: String = TestApp.defaultTenantId) =
+        suspend fun getHistoriqueConnaissanceClient(id: Long, tenant: String = TestApp.DEFAULT_TENANT_ID) =
             client.get("/personnes/$id/historique/connaissance-client") {
                 tenantId(tenant)
             }
 
-        suspend fun postConnaissanceClient(id: Long, connaissanceClientDto: ConnaissanceClientDto, tenant: String = TestApp.defaultTenantId) =
+        suspend fun postConnaissanceClient(id: Long, connaissanceClientDto: ConnaissanceClientDto, tenant: String = TestApp.DEFAULT_TENANT_ID) =
             client.post("/personnes/$id/connaissance-client") {
                 tenantId(tenant)
                 contentType(ContentType.Application.Json)

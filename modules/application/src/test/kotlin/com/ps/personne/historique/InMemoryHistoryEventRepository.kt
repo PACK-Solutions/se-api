@@ -17,6 +17,5 @@ class InMemoryHistoryEventRepository : HistoryEventRepository {
         ] = data[Pair(entry.typeObjet, entry.idObjet)]?.plus(entry) ?: setOf(entry)
     }
 
-    override fun get(typeObjet: TypeObjet, idObjet: IdObjet): List<HistoryEvent> =
-        data[Pair(typeObjet, idObjet)]?.toList() ?: emptyList()
+    override fun get(typeObjet: TypeObjet, idObjet: IdObjet): List<HistoryEvent> = data[Pair(typeObjet, idObjet)]?.toList() ?: emptyList()
 }

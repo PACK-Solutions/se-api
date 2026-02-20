@@ -79,7 +79,6 @@ fun com.ps.personne.model.ModificationConnaissanceClient.toDto(): ModificationCo
     is com.ps.personne.model.AjoutMotifVigilance -> AjoutMotifVigilanceDto(
         this.motifs.map { MotifVigilanceDto.valueOf(it.name) },
     )
-
     is com.ps.personne.model.SuppressionMotifVigilance -> SuppressionMotifVigilanceDto
     is com.ps.personne.model.ModificationMotifVigilance -> ModificationMotifVigilanceDto(
         this.motifs.map { MotifVigilanceDto.valueOf(it.name) },
@@ -92,28 +91,26 @@ fun com.ps.personne.model.SyntheseModifications.toDto(): SyntheseModificationDto
 )
 
 fun ModificationConnaissanceClientDto.toDomain(): com.ps.personne.model.ModificationConnaissanceClient = when (this) {
-    is AjoutStatutPPEDto -> _root_ide_package_.com.ps.personne.model.AjoutStatutPPE
-    is SuppressionStatutPPEDto -> _root_ide_package_.com.ps.personne.model.SuppressionStatutPPE
-    is ModificationFonctionPPEDto -> _root_ide_package_.com.ps.personne.model.ModificationFonctionPPE
-    is ModificationDateFinFonctionPPEDto -> _root_ide_package_.com.ps.personne.model.ModificationDateFinFonctionPPE
-    is AjoutStatutProchePPEDto -> _root_ide_package_.com.ps.personne.model.AjoutStatutProchePPE
-    is SuppressionStatutProchePPEDto -> _root_ide_package_.com.ps.personne.model.SuppressionStatutProchePPE
-    is ModificationLienParenteDto -> _root_ide_package_.com.ps.personne.model.ModificationLienParente
-    is ModificationFonctionProchePPEDto -> _root_ide_package_.com.ps.personne.model.ModificationFonctionProchePPE
-    is AjoutVigilanceDto -> _root_ide_package_.com.ps.personne.model.AjoutVigilance
-    is SuppressionVigilanceDto -> _root_ide_package_.com.ps.personne.model.SuppressionVigilance
-    is AjoutMotifVigilanceDto -> _root_ide_package_.com.ps.personne.model.AjoutMotifVigilance(
-        this.motifs.map { _root_ide_package_.com.ps.personne.model.MotifVigilance.valueOf(it.name) },
+    is AjoutStatutPPEDto -> com.ps.personne.model.AjoutStatutPPE
+    is SuppressionStatutPPEDto -> com.ps.personne.model.SuppressionStatutPPE
+    is ModificationFonctionPPEDto -> com.ps.personne.model.ModificationFonctionPPE
+    is ModificationDateFinFonctionPPEDto -> com.ps.personne.model.ModificationDateFinFonctionPPE
+    is AjoutStatutProchePPEDto -> com.ps.personne.model.AjoutStatutProchePPE
+    is SuppressionStatutProchePPEDto -> com.ps.personne.model.SuppressionStatutProchePPE
+    is ModificationLienParenteDto -> com.ps.personne.model.ModificationLienParente
+    is ModificationFonctionProchePPEDto -> com.ps.personne.model.ModificationFonctionProchePPE
+    is AjoutVigilanceDto -> com.ps.personne.model.AjoutVigilance
+    is SuppressionVigilanceDto -> com.ps.personne.model.SuppressionVigilance
+    is AjoutMotifVigilanceDto -> com.ps.personne.model.AjoutMotifVigilance(
+        this.motifs.map { com.ps.personne.model.MotifVigilance.valueOf(it.name) },
     )
-
-    is SuppressionMotifVigilanceDto -> _root_ide_package_.com.ps.personne.model.SuppressionMotifVigilance
-    is ModificationMotifVigilanceDto -> _root_ide_package_.com.ps.personne.model.ModificationMotifVigilance(
-        this.motifs.map { _root_ide_package_.com.ps.personne.model.MotifVigilance.valueOf(it.name) },
+    is SuppressionMotifVigilanceDto -> com.ps.personne.model.SuppressionMotifVigilance
+    is ModificationMotifVigilanceDto -> com.ps.personne.model.ModificationMotifVigilance(
+        this.motifs.map { com.ps.personne.model.MotifVigilance.valueOf(it.name) },
     )
 }
 
-fun SyntheseModificationDto.toDomain(): com.ps.personne.model.SyntheseModifications =
-    _root_ide_package_.com.ps.personne.model.SyntheseModifications(
-        traceAudit = this.traceAudit.toDomain(),
-        modifications = this.modifications.map { it.toDomain() }.toSet(),
-    )
+fun SyntheseModificationDto.toDomain(): com.ps.personne.model.SyntheseModifications = com.ps.personne.model.SyntheseModifications(
+    traceAudit = this.traceAudit.toDomain(),
+    modifications = this.modifications.map { it.toDomain() }.toSet(),
+)

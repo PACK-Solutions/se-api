@@ -13,17 +13,15 @@ import com.ps.personne.ports.driven.ConnaissanceClientRepository
 
 class EnregistrerConnnaissanceClientHandler(val connaissanceClientRepository: ConnaissanceClientRepository) :
     CommandHandler<EnregistrerConnnaissanceClientCommand> {
-    override fun handle(
-        context: Context,
-        command: EnregistrerConnnaissanceClientCommand,
-    ): CommandResult<IdPersonne, ConnaissanceClientError> = connaissanceClientRepository.recuperer(command.idPersonne)
-        .recover { ConnaissanceClient.vierge(command.idPersonne) }
-        .andThen { it.mettreAJour(command.statutPPE, command.statutProchePPE, command.vigilance) }
-        .onSuccess { connaissanceClientRepository.sauvegarder(it.first) }
-        .fold(
-            { CommandResult.Success(command.idPersonne, listOf(it.second)) },
-            { CommandResult.Failure(it) },
-        )
+    override fun handle(context: Context, command: EnregistrerConnnaissanceClientCommand): CommandResult<IdPersonne, ConnaissanceClientError> =
+        connaissanceClientRepository.recuperer(command.idPersonne)
+            .recover { ConnaissanceClient.vierge(command.idPersonne) }
+            .andThen { it.mettreAJour(command.statutPPE, command.statutProchePPE, command.vigilance) }
+            .onSuccess { connaissanceClientRepository.sauvegarder(it.first) }
+            .fold(
+                { CommandResult.Success(command.idPersonne, listOf(it.second)) },
+                { CommandResult.Failure(it) },
+            )
 }
 
 data class EnregistrerConnnaissanceClientCommand(

@@ -8,8 +8,7 @@ import com.ps.personne.model.HistoriqueModifications
 import com.ps.personne.model.IdPersonne
 import com.ps.personne.model.SyntheseModifications
 
-class InMemoryConnaissanceClientRepository :
-    ConnaissanceClientRepository, ModificationsConnaissanceClientRepository {
+class InMemoryConnaissanceClientRepository : ConnaissanceClientRepository, ModificationsConnaissanceClientRepository {
 
     val connaissanceClients = mutableMapOf<IdPersonne, ConnaissanceClient>()
     val historiqueModifications = mutableMapOf<IdPersonne, List<SyntheseModifications>>()

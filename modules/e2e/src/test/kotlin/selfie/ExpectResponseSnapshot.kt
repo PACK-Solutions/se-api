@@ -13,24 +13,19 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 
-fun canonicalizeAndClean(
-    element: JsonElement,
-): JsonElement =
-    when (element) {
-        is JsonObject -> JsonObject(
-            element.entries
-                .sortedBy { it.key }
-                .associate { (k, v) ->
-                    k to canonicalizeAndClean(v)
-                },
-        )
-
-        is JsonArray -> JsonArray(
-            element.map { canonicalizeAndClean(it) },
-        )
-
-        else -> element
-    }
+fun canonicalizeAndClean(element: JsonElement): JsonElement = when (element) {
+    is JsonObject -> JsonObject(
+        element.entries
+            .sortedBy { it.key }
+            .associate { (k, v) ->
+                k to canonicalizeAndClean(v)
+            },
+    )
+    is JsonArray -> JsonArray(
+        element.map { canonicalizeAndClean(it) },
+    )
+    else -> element
+}
 
 private val KTOR_RESPONSE_CAMERA: Camera<HttpResponse> = Camera { response: HttpResponse ->
     runBlocking {
@@ -42,6 +37,4 @@ private val KTOR_RESPONSE_CAMERA: Camera<HttpResponse> = Camera { response: Http
     }
 }
 
-suspend fun expectResponseSnapshot(response: HttpResponse): StringSelfie {
-    return expectSelfie(response, KTOR_RESPONSE_CAMERA)
-}
+suspend fun expectResponseSnapshot(response: HttpResponse): StringSelfie = expectSelfie(response, KTOR_RESPONSE_CAMERA)

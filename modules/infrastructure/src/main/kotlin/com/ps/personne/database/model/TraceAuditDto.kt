@@ -6,7 +6,7 @@ import java.time.Instant
 @Serializable
 enum class TypeOperationDto {
     MODIFICATION,
-    CORRECTION
+    CORRECTION,
 }
 
 @Serializable
